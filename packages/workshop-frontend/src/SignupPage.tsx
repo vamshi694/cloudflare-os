@@ -118,8 +118,9 @@ export default function SignupPage({ rpcStub }: SignupPageProps) {
   const hasInvite = typeof invite === "object" && invite !== null;
   // Legal OS: a live invitation opens signup on an invite-only firm.
   const signupsEnabled = serverConfig.signupsEnabled || hasInvite;
-  // The password create-account form requires both password auth AND open signups (or an invite).
-  const passwordAuthEnabled = serverConfig.passwordAuthEnabled && signupsEnabled;
+  // The form is always offered when password auth is on; the server is the authority on who may
+  // create an account (open signups, a live invitation, or a configured bootstrap admin username).
+  const passwordAuthEnabled = serverConfig.passwordAuthEnabled;
 
   return (
     <div className="relative flex h-full min-h-0 flex-col items-center justify-start overflow-y-auto bg-kumo-base px-4 py-8">
