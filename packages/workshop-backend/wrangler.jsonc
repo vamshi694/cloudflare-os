@@ -56,6 +56,11 @@
       // login back to the waiting browser.
       "tag": "v2",
       "new_sqlite_classes": [ "PendingLogin" ]
+    },
+    {
+      // Legal OS: the deployment-wide usage ledger (one row per model turn).
+      "tag": "v3",
+      "new_sqlite_classes": [ "UsageLedger" ]
     }
   ],
 

@@ -5,6 +5,7 @@ import { Hexagon, ShieldWarning, UserPlus } from '@phosphor-icons/react'
 import { useAuthenticatedApi } from './AuthContext'
 import { AdminApi, AdminFormat, AdminResourceVendor, AmbientGatekeeperMode, MAX_INSTANCE_INSTRUCTIONS_LENGTH, MAX_ANNOUNCEMENT_LENGTH, MAX_SITE_NAME_LENGTH, DEFAULT_SITE_NAME, BannerColor, BANNER_COLORS, DEFAULT_BANNER_COLOR } from '@gadgets/workshop-shared/api'
 import InvitesPanel from './components/InvitesPanel'
+import UsagePanel from './components/UsagePanel'
 import { applyAccentColor, DEFAULT_ACCENT_COLOR } from './theme'
 import { cacheBustSiteLogoUrl, prepareSiteLogo } from './siteLogoUtils'
 import SiteLogo from './components/SiteLogo'
@@ -405,8 +406,13 @@ export default function AdminPage() {
           { value: 'gatekeepers', label: 'Gatekeepers' },
           { value: 'formats', label: 'Formats' },
           { value: 'access', label: 'Access' },
+          { value: 'usage', label: 'Usage' },
         ]}
       />
+
+      {activeTab === 'usage' && admin && (
+        <UsagePanel api={admin.api} />
+      )}
 
       {/* Standard output formats */}
       {activeTab === 'formats' && admin && (

@@ -5773,6 +5773,29 @@ class OverseerImpl implements AgentHooks {
         }
       }
 
+      // Legal OS: a firm admin's monthly ceiling pauses AUTOMATED work (spawned agents, callbacks,
+      // scheduled turns) at the limit; interactive chat never gates. The ceiling comes from the
+      // admin config mirror (cheap), the spend from the usage ledger.
+      if ((callbackInitiated || initiator.type === "gadget") && this.ownerId) {
+        let limits = (await readAdminConfig(this.env)).monthlyLimits ?? {};
+        let limit = limits[this.ownerId] ?? 0;
+        if (limit > 0) {
+          let monthStart = new Date();
+          monthStart.setUTCDate(1); monthStart.setUTCHours(0, 0, 0, 0);
+          let spent = await this.ctx.exports.UsageLedger.getByName("").spentSince(this.ownerId, monthStart.toISOString());
+          if (spent >= limit) {
+            this.postAgentErrorMessage(chatId, aiModel.profile,
+                "The firm has paused automated work on this matter for the month: this account reached its monthly allowance. Chat still works; an admin can raise the allowance under Admin → Usage.",
+                "firm_limit");
+            turnLogger.debug("agent run finished", {
+              event: "agent.run.finished", outcome: "firm_limit",
+              durationMs: Date.now() - startedAt,
+            });
+            return;
+          }
+        }
+      }
+
       let sessionAffinity = await computeSessionAffinity(this.ctx.id.toString(), chatId);
       let chosenModel = getModel(
           this.env, aiModel.config, initiator, {
@@ -7170,11 +7193,12 @@ class OverseerImpl implements AgentHooks {
     if (aiGatewayLogId && aiGatewayLogRoute) {
       // Best-effort UI accounting only. The log ID is not persisted, so a DO restart can lose
       // this update. Do not use this total as a billing source of truth.
-      void this.#getCostFromAiGateway(chatId, aiGatewayLogRoute, aiGatewayLogId, estimatedCost);
+      void this.#getCostFromAiGateway(chatId, aiGatewayLogRoute, aiGatewayLogId, estimatedCost,
+                                      { author, totalTokens });
     } else if (estimatedCost) {
       // No AI Gateway log to consult (direct provider access, or a gateway response that didn't
       // surface a log id): fall back to the caller's catalog-priced estimate.
-      this.#addChatCost(chatId, estimatedCost);
+      this.#addChatCost(chatId, estimatedCost, { author, totalTokens });
     }
   }
 
@@ -7184,11 +7208,23 @@ class OverseerImpl implements AgentHooks {
   }
 
   // Adds an inference cost (in dollars) to a chat's running total and the workspace-wide total.
-  #addChatCost(chatId: number, cost: number) {
+  #addChatCost(chatId: number, cost: number,
+               turn?: { author: AiChatAuthorInfo; totalTokens?: number; modelId?: string }) {
     let meta = this.storage.chatMeta.get(chatId);
     if (!meta) {
       // Chat thread deleted?
       return;
+    }
+
+    // Legal OS: one ledger row per turn, fire-and-forget (accounting must never slow the work).
+    // A spawned agent's author.id is already the owning user's id, so attribution is uniform.
+    if (turn && this.ownerId) {
+      let ledger = this.ctx.exports.UsageLedger.getByName("");
+      void ledger.record({
+        userId: turn.author.id || this.ownerId, workspaceId: this.ctx.id.toString(), chatId,
+        modelId: turn.modelId ?? null, automated: turn.author.type === "gadget",
+        totalTokens: turn.totalTokens ?? null, cost,
+      }).catch((err: unknown) => this.logger.warn("usage ledger write failed", { event: "usage.ledger.failed", error: err }));
     }
 
     meta.totalCost = (meta.totalCost ?? 0) + cost;
@@ -7209,7 +7245,7 @@ class OverseerImpl implements AgentHooks {
   // TODO: Get AI gateway to add cost data to response headers -- it's dumb that we need a
   //   separate request!
   async #getCostFromAiGateway(chatId: number, route: AiGatewayLogRoute, aiGatewayLogId: string,
-                              estimatedCost?: number) {
+                               estimatedCost?: number, turn?: { author: AiChatAuthorInfo; totalTokens?: number }) {
     let cost: number | undefined;
     try {
       for (let attempt = 0; attempt < 4; ++attempt) {
@@ -7233,7 +7269,7 @@ class OverseerImpl implements AgentHooks {
 
     cost ||= estimatedCost;
     if (cost) {
-      this.#addChatCost(chatId, cost);
+      this.#addChatCost(chatId, cost, turn);
     }
   }
 

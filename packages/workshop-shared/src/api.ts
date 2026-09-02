@@ -873,6 +873,19 @@ export const MAX_SITE_LOGO_BYTES = 256 * 1024;
 /** Maximum width or height of an admin-uploaded site logo in pixels. */
 export const MAX_SITE_LOGO_DIMENSION = 512;
 
+/** Legal OS: deployment-wide model usage, from the usage ledger. Costs in dollars. */
+export type UsageSummary = {
+  days: number;
+  since: string;
+  turns: number;
+  cost: number;
+  tokens: number;
+  byUser: { userId: string; turns: number; cost: number; tokens: number; automatedTurns: number; workspaces: number }[];
+  byDay: { day: string; turns: number; cost: number; tokens: number }[];
+  byModel: { modelId: string; turns: number; cost: number }[];
+  byWorkspace: { workspaceId: string; userId: string; turns: number; cost: number }[];
+};
+
 /** Legal OS: an invitation to create an account on this firm's deployment. */
 export type Invite = {
   token: string;
@@ -973,6 +986,15 @@ export interface AdminApi {
 
   /** Legal OS: kill an invitation link. */
   revokeInvite(token: string): Promise<void>;
+
+  /** Legal OS: model usage across the deployment for the last `days` days. */
+  getUsageSummary(days: number): Promise<UsageSummary>;
+
+  /** Legal OS: per-user monthly spend ceilings in dollars (absent or 0 = no ceiling). */
+  getUserMonthlyLimits(): Promise<Record<string, number>>;
+
+  /** Legal OS: set (or clear with 0) a user's monthly ceiling. Automated agent work pauses at the ceiling; chat never does. */
+  setUserMonthlyLimit(userId: string, dollars: number): Promise<void>;
 
   /**
    * Set the site name shown next to the top-bar logo. Pass "" to reset to DEFAULT_SITE_NAME.

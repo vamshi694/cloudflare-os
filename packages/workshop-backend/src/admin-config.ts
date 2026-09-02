@@ -38,6 +38,8 @@ export type AdminConfig = {
   disabledResources: Record<string, string[]>;
   /** Fully-disabled gatekeeper vendor ids. */
   disabledGatekeepers: string[];
+  /** Legal OS: per-user monthly spend ceilings in dollars (user id -> dollars; absent or 0 = none). */
+  monthlyLimits: Record<string, number>;
   /**
    * Per-vendor provisioning mode for auto-provisioning ("ambient") gatekeepers (e.g. the Context
    * Library). Absent ⇒ the default ("optional", see provisioning-policy.ts). Only meaningful for
@@ -82,6 +84,7 @@ export type FormatCuration = {
 export const DEFAULT_ADMIN_CONFIG: AdminConfig = {
   // Legal OS: a firm is invite only by construction. Admins may open signups in /admin.
   signupsEnabled: false,
+  monthlyLimits: {},
   siteName: "",
   siteLogoConfigured: false,
   instanceInstructions: "",
@@ -301,6 +304,10 @@ export function parseAdminConfig(raw: string | null): AdminConfig {
     }
     return {
       signupsEnabled: typeof p.signupsEnabled === "boolean" ? p.signupsEnabled : false,
+      monthlyLimits: (p.monthlyLimits && typeof p.monthlyLimits === "object")
+        ? Object.fromEntries(Object.entries(p.monthlyLimits as Record<string, unknown>)
+            .filter(([, v]) => typeof v === "number" && v > 0) as [string, number][])
+        : {},
       siteName: typeof p.siteName === "string" ? p.siteName : "",
       siteLogoConfigured: typeof p.siteLogoConfigured === "boolean" ? p.siteLogoConfigured : false,
       instanceInstructions: typeof p.instanceInstructions === "string" ? p.instanceInstructions : "",

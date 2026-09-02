@@ -1,4 +1,5 @@
-import { AdminApi, AdminFormat, AdminFormatPatch, AdminResourceVendor, AdminSettingsView, AmbientGatekeeperMode, BannerColor, BlueprintPublicInfo, Invite, MAX_ANNOUNCEMENT_LENGTH, MAX_INSTANCE_INSTRUCTIONS_LENGTH, MAX_SITE_NAME_LENGTH, isAmbientGatekeeperMode, isBannerColor, isHexColor } from '@gadgets/workshop-shared/api';
+import type { UsageLedger } from './usage-ledger.js';
+import { AdminApi, AdminFormat, AdminFormatPatch, AdminResourceVendor, AdminSettingsView, AmbientGatekeeperMode, BannerColor, BlueprintPublicInfo, Invite, UsageSummary, MAX_ANNOUNCEMENT_LENGTH, MAX_INSTANCE_INSTRUCTIONS_LENGTH, MAX_SITE_NAME_LENGTH, isAmbientGatekeeperMode, isBannerColor, isHexColor } from '@gadgets/workshop-shared/api';
 
 // Legal OS: an attorney joins this week or gets re-invited (Counsel OS used 30 days for attorneys).
 const INVITE_TTL_MS = 30 * 24 * 60 * 60 * 1000;
@@ -368,6 +369,11 @@ export class AdminSettings extends DurableObject<Cloudflare.Env> {
     return this.#mutateAdminConfig(config => ({ ...config, ...patch }));
   }
 
+  /** The stored config as-is (Legal OS: read by AdminApiImpl for monthly limits). */
+  async readConfig(): Promise<AdminConfig> {
+    return this.#config();
+  }
+
   /**
    * Read all admin-managed settings for the admin UI in one call: the stored config plus the live
    * resource catalog (every bound gatekeeper's resource types annotated with their enabled state).
@@ -636,8 +642,28 @@ export class AdminApiImpl extends RpcTarget implements AdminApi {
    * `adminUserId` is the requesting admin's identity, forwarded to gatekeepers when listing the
    * resource catalog (some are RBAC-gated per user). It's plain data — not a user-DO dependency.
    */
-  constructor(private admin: DurableObjectStub<AdminSettings>, private adminUserId: string) {
+  constructor(private admin: DurableObjectStub<AdminSettings>, private adminUserId: string,
+              private ledger: DurableObjectStub<UsageLedger>) {
     super();
+  }
+
+  getUsageSummary(days: number): Promise<UsageSummary> {
+    return this.ledger.summary(days);
+  }
+
+  async getUserMonthlyLimits(): Promise<Record<string, number>> {
+    return (await this.admin.readConfig()).monthlyLimits;
+  }
+
+  async setUserMonthlyLimit(userId: string, dollars: number): Promise<void> {
+    if (!/^[a-z][a-z0-9_]*$/.test(userId) && !/^[^@\s]+@[^@\s]+$/.test(userId)) {
+      throw new Error("Enter the member's username.");
+    }
+    if (!Number.isFinite(dollars) || dollars < 0) throw new Error("The ceiling must be a number of dollars.");
+    let current = (await this.admin.readConfig()).monthlyLimits;
+    let next = { ...current };
+    if (dollars > 0) next[userId] = dollars; else delete next[userId];
+    await this.admin.updateAdminConfig({ monthlyLimits: next });
   }
 
   getSettings(): Promise<AdminSettingsView> {
