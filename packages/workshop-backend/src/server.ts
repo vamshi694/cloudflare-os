@@ -619,16 +619,51 @@ class AuthenticatedApiImpl extends RpcTarget implements AuthenticatedApi {
     // The stub's mapped types lose the nested RpcTarget's methods; the wire shape is MatterDesk.
     let matter = await desk.openMatter(matterId) as unknown as MatterDesk;
     let overview = await matter.overview();
-    if (overview.workspaceId) return overview.workspaceId;
+    if (overview.workspaceId) {
+      // A matter opened before the specialists existed gets its spawner on this open, once. The
+      // matter gatekeeper is always-available, so the ambient set already carries it.
+      if (!(await this.#user.hasSpecialists(overview.workspaceId))) {
+        let existing = await this.openGadget(overview.workspaceId);
+        if (existing) await this.#ensureSpecialists(existing, overview.workspaceId, {});
+      }
+      return overview.workspaceId;
+    }
     let url = await desk.matterResourceUrl(matterId);
     let id = this.overseers.newUniqueId().toString();
     await this.#user.newGadget(id, `${overview.title} (${overview.clientName})`);
     let overseer = await this.openGadget(id);
     if (!overseer) throw new Error("Open failed despite newly-created workspace?");
     await overseer.setTitle(`${overview.title} (${overview.clientName})`);
-    await overseer.newGatekeeper(accountId, url, {alwaysAvailable: true});
+    let matterGatekeeper = await overseer.newGatekeeper(accountId, url, {alwaysAvailable: true});
     await matter.setWorkspace(id);
+    let matterId_ = matterGatekeeper ? await matterGatekeeper.getId() : null;
+    await this.#ensureSpecialists(overseer, id, matterId_ === null ? {} : { MATTER: matterId_ });
     return id;
+  }
+
+  /**
+   * The counsel's specialists: an agent spawner on the matter workspace whose agents hold the
+   * matter and the ambient resources (the firm's method, the firm-wide matters). Best effort: a
+   * spawner that cannot be made must never cost the lawyer the conversation itself.
+   */
+  async #ensureSpecialists(overseer: RpcStub<Overseer>, workspaceId: string, env: Record<string, WorkpieceId>): Promise<void> {
+    try {
+      let context = await this.#user.getExternalMessageChatContext(null);
+      let modelId = context.aiModel?.profile.id ?? null;
+      if (!modelId) {
+        logger.warn("no model for the specialists spawner; spawned chats will wait for a model", {
+          event: "legal.specialists.no_model", gadgetId: workspaceId,
+        });
+      }
+      await overseer.newAgentSpawnerGatekeeper(
+        { displayName: "Specialists", modelId, env },
+        { alwaysAvailable: true, includeAmbient: true });
+      await this.#user.markSpecialists(workspaceId);
+    } catch (err) {
+      logger.warn("could not create the specialists spawner for a matter workspace", {
+        event: "legal.specialists.spawner.failed", gadgetId: workspaceId, error: err,
+      });
+    }
   }
 
   async getPlaybookDesk(): Promise<RpcStub<PlaybookDesk> | null> {

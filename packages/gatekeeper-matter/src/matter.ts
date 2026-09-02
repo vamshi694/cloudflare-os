@@ -34,6 +34,8 @@ import type { FirmMattersSession } from "./types.js";
 import type { FirmAdminApi } from "./firm-index.js";
 import type { LetterState, MatterIntelligence, MatterRecommenders, RecommenderState } from "./types.js";
 import { IntelligenceImpl } from "./intel-session.js";
+import { SPECIALIST_ROLES, composeBrief, specialistRunning } from "./specialists.js";
+import type { MatterSpecialists, SpecialistRole, SpecialistScope } from "./types.js";
 import type { RecommendationLetter, Recommender } from "@gadgets/workshop-shared/legal";
 
 export const MATTER_ICON = {
@@ -680,6 +682,26 @@ function letterState(l: RecommendationLetter): LetterState {
   };
 }
 
+// ---- WP-10: the specialists ------------------------------------------------------------------
+
+@validateRpc()
+class SpecialistsImpl extends RpcTarget implements MatterSpecialists {
+  constructor(private readonly q: ObservationQueue, private readonly store: DurableObjectStub<MatterStore>) { super(); }
+
+  async brief(role: SpecialistRole, scope: SpecialistScope, instruction?: string): Promise<{ title: string; prompt: string }> {
+    if (!SPECIALIST_ROLES.includes(role)) throw new Error(`No such specialist: ${role}. Roles: ${SPECIALIST_ROLES.join(", ")}.`);
+    const ctx = await this.store.specialistContext(role, scope, instruction?.trim() || null);
+    const brief = composeBrief(role, ctx);
+    await observe(this.q, "Brief a specialist", `Briefed the ${brief.title.toLowerCase()} on ${ctx.matterTitle}.`);
+    return brief;
+  }
+
+  async running(role: SpecialistRole, scope: SpecialistScope): Promise<boolean> {
+    const files = await this.store.deskList();
+    return specialistRunning(files.map(f => ({ path: f.path, updatedAt: f.updatedAt })), role, scope, new Date());
+  }
+}
+
 /** Recommenders and their letters, for the agent (WP-6 wiring). */
 @validateRpc()
 class RecommendersImpl extends RpcTarget implements MatterRecommenders {
@@ -770,6 +792,8 @@ export class MatterSessionImpl extends RpcTarget implements MatterSession {
   // WP-6 and WP-5: recommenders and the case intelligence.
   async recommenders(): Promise<MatterRecommenders> { return new RecommendersImpl(this.q, this.store); }
   async intelligence(): Promise<MatterIntelligence> { return new IntelligenceImpl(this.q, this.store); }
+  // WP-10: the specialists the counsel briefs and spawns.
+  async specialists(): Promise<MatterSpecialists> { return new SpecialistsImpl(this.q, this.store); }
 
   async proposePlan(summary: string): Promise<{ id: string }> {
     const r = await this.store.proposePlan(summary.trim());

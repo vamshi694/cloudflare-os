@@ -713,3 +713,37 @@ export interface MatterPetition {
   /** The drafting lane in flight (sections drafted of total, failures), or null when none runs. */
   lane(): Promise<{ id: string; total: number; drafted: number; failed: number; inFlight: number; startedAt: string } | null>;
 }
+
+// ── Specialists (WP-10): the roster under the counsel, through the agent spawner ─────────────────
+// The counsel briefs a specialist from the matter and spawns it with the workspace's spawner
+// binding (env.AGENT_SPAWNER). Specialists are chats on this matter; they hold MATTER and FIRM.
+
+/** gap_analyst (what the record lacks and the client asks), drafter (one section), officer (the adversarial read of the letter), forms_filler (one government form), letter_writer (one recommender's letter). */
+export type SpecialistRole = "gap_analyst" | "drafter" | "officer" | "forms_filler" | "letter_writer";
+
+/** What the specialist works on. `matter` for the gap analyst and the officer; a section key for the drafter; a form code; a recommender id. */
+export type SpecialistScope =
+  | { kind: "matter" }
+  | { kind: "section"; key: string }
+  | { kind: "letter" }
+  | { kind: "form"; code: string }
+  | { kind: "recommender"; id: string };
+
+export interface MatterSpecialists {
+  /**
+   * The brief a specialist starts from: its doctrine, the scope's facts with exhibit numbers, the
+   * playbook passage, the standing rules, the attorney's directives, and the exact calls that land
+   * the work. Spawn it with `env.AGENT_SPAWNER.spawnCallable(brief.title, brief.prompt)` and
+   * `await stub.run()` for the result, or `spawn(title, prompt)` when the work lands on the matter
+   * by itself. `instruction` is what you want done, in your words (an attorney's redraft note, a
+   * reviewer's weakness).
+   */
+  brief(role: SpecialistRole, scope: SpecialistScope, instruction?: string): Promise<{ title: string; prompt: string }>;
+  /** True when a specialist with this role and scope is already at work (its desk file is fresh). Never brief the same job twice. */
+  running(role: SpecialistRole, scope: SpecialistScope): Promise<boolean>;
+}
+
+export interface MatterSession {
+  /** The specialists you can brief and spawn. */
+  specialists(): Promise<MatterSpecialists>;
+}

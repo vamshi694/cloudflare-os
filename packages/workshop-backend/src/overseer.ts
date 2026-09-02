@@ -6429,7 +6429,8 @@ class OverseerImpl implements AgentHooks {
       // since-disconnected one stays in the frozen list but becomes inert.
       context.alwaysAvailableCapsuleIds = [...this.storage.gatekeepers.list()]
           .filter(gk => gk.creationSpec?.type === "ambient"
-              || (gk.creationSpec?.type === "gatekeeper" && gk.creationSpec.alwaysAvailable === true))
+              || (gk.creationSpec?.type === "gatekeeper" && gk.creationSpec.alwaysAvailable === true)
+              || (gk.creationSpec?.type === "agentSpawner" && gk.creationSpec.alwaysAvailable === true))
           .map(gk => gk.id)
           .toSorted((a, b) => a - b);
       dirty = true;
@@ -9450,7 +9451,33 @@ class OverseerClientInterface extends RpcTarget implements Overseer {
     return result;
   }
 
-  async newAgentSpawnerGatekeeper(config: AgentSpawnerConfig): Promise<GatekeeperClient<any>> {
+  async newAgentSpawnerGatekeeper(config: AgentSpawnerConfig,
+                                  options?: { alwaysAvailable?: boolean; includeAmbient?: boolean })
+      : Promise<GatekeeperClient<any>> {
+    // Legal OS: a specialist holds what the counsel holds. The ambient resources (the firm's
+    // method, the firm-wide matters) and the workspace's always-available gatekeepers join the
+    // spawned agents' env under their own suggested binding names, unless the caller named them.
+    if (options?.includeAmbient) {
+      let env: Record<string, WorkpieceId> = { ...config.env };
+      let taken = new Set(Object.values(env));
+      for (let gk of this.impl.storage.gatekeepers.list()) {
+        let spec = gk.creationSpec;
+        let ambient = spec?.type === "ambient"
+            || (spec?.type === "gatekeeper" && spec.alwaysAvailable === true);
+        if (!ambient || taken.has(gk.id)) continue;
+        try {
+          let name = (await this.impl.getGatekeeperFacet(gk.id).describe()).suggestedBindingName;
+          if (!name || name in env) continue;
+          validateBindingName(name);
+          env[name] = gk.id;
+        } catch (err) {
+          this.impl.logger.warn("could not name an ambient resource for the spawner", {
+            event: "spawner.ambient.describe.failed", gatekeeperId: gk.id, error: err,
+          });
+        }
+      }
+      config = { ...config, env };
+    }
     // Validate the configured env: names must be valid binding names and targets must exist --
     // and must not be gadgets still provisional to some chat, which belong to that chat's
     // unaccepted proposal, not (yet) to the workspace. (Spawn-time snapshotting tolerates targets
@@ -9479,6 +9506,7 @@ class OverseerClientInterface extends RpcTarget implements Overseer {
     let creationSpec: GatekeeperCreationSpec = {
       type: "agentSpawner",
       config,
+      ...(options?.alwaysAvailable ? {alwaysAvailable: true} : {}),
     };
     if (config.modelId) {
       let chatMeta = await retryOnDoReset(
@@ -10731,7 +10759,9 @@ class UseOverseerInterface extends RpcTarget implements Overseer {
                       _options?: { alwaysAvailable?: boolean })
       : Promise<GatekeeperClient<any> | null> { this.#deny(); }
   async newAiModelGatekeeper(_modelId: string): Promise<GatekeeperClient<any>> { this.#deny(); }
-  async newAgentSpawnerGatekeeper(_config: AgentSpawnerConfig): Promise<GatekeeperClient<any>> {
+  async newAgentSpawnerGatekeeper(_config: AgentSpawnerConfig,
+                                  _options?: { alwaysAvailable?: boolean; includeAmbient?: boolean })
+      : Promise<GatekeeperClient<any>> {
     this.#deny();
   }
   // Pending actions are queried eagerly for the badge; resolved history is demand-loaded. Return

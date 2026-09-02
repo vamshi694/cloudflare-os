@@ -1949,7 +1949,15 @@ export interface Overseer extends RpcTarget {
    * Create a new gatekeeper for an agent spawner binding. This allows the gadget to
    * programmatically spawn AI agents to complete tasks.
    */
-  newAgentSpawnerGatekeeper(config: AgentSpawnerConfig): Promise<GatekeeperClient<any>>;
+  newAgentSpawnerGatekeeper(config: AgentSpawnerConfig, options?: {
+    /** Fold the spawner into every chat's env (Legal OS: the counsel's specialists). */
+    alwaysAvailable?: boolean;
+    /**
+     * Add the workspace's ambient resources (and always-available gatekeepers) to the spawned
+     * agents' env under their suggested binding names, so a specialist holds what the counsel holds.
+     */
+    includeAmbient?: boolean;
+  }): Promise<GatekeeperClient<any>>;
 
   /**
    * Fetch one page of action history, newest first by id (creation order). "all" (the default)
@@ -3771,6 +3779,11 @@ export type GatekeeperCreationSpec = {
    */
   modelProvider?: string;
   modelName?: string;
+  /**
+   * Legal OS: fold this spawner into every chat's env like an ambient capsule, named by its
+   * suggested binding name, so the counsel can spawn specialists on any conversation.
+   */
+  alwaysAvailable?: boolean;
 } | {
   /**
    * A singleton gatekeeper account (e.g. the Context Library) auto-provided to every gadget as an

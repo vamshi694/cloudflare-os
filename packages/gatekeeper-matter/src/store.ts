@@ -23,7 +23,8 @@ import { filenameFamily, foldText } from "./pure.js";
 import { holdLine, ownershipTransition, searchTerms } from "./process.js";
 import type { MatterDirective, MemoryNote } from "@gadgets/workshop-shared/legal";
 import { computeReadiness, derivePhase, firstNameOf, portalDocumentState, portalStatusLine, wakeInstruction } from "./rules.js";
-import { firmGuidance, firmRemember, firmSectionPlan, orderSections } from "./firm-library.js";
+import { firmGuidance, firmRemember, firmRules, firmSectionPlan, orderSections } from "./firm-library.js";
+import type { BriefFact, BriefSection, SpecialistContext, SpecialistRole, SpecialistScope } from "./specialists.js";
 import type { Db, Row } from "./store-db.js";
 import * as K from "./store-knowledge.js";
 import * as P from "./store-petition.js";
@@ -1358,6 +1359,65 @@ export class MatterStore extends DurableObject<Cloudflare.Env> implements IntelS
   }
 
   // ---- the filing (WP-6): packet, manifest, Word, recommenders, letters, deliverables ---------------
+
+  // ---- specialists (WP-10): the context a spawned specialist's brief is composed from ----------
+
+  /**
+   * Everything a specialist's brief needs for one role and scope: the sections in scope with
+   * their drafts and reviewer notes, the facts it may quote with their exhibit numbers, the
+   * playbook passage, the standing rules and the attorney's directives. Read only.
+   */
+  async specialistContext(role: SpecialistRole, scope: SpecialistScope, instruction: string | null): Promise<SpecialistContext> {
+    const meta = await this.#requireMeta();
+    const spec = this.#spec(meta);
+    const petition = await this.petition();
+    const readiness = await this.readiness();
+    const exhibitOf = new Map(petition.exhibits.map(e => [e.documentId, e.exhibitNo]));
+    const readinessOf = new Map(readiness.sections.map(s => [s.key, s]));
+    const toBriefSection = (s: PetitionSection): BriefSection => ({
+      key: s.key, title: s.title, criterion: s.criterion, purpose: s.purpose, status: s.status, draft: s.body,
+      weaknesses: s.review?.weaknesses ?? [], unverifiedQuotes: s.unverifiedQuotes.map(u => u.quote),
+      guidance: s.guidance, evidence: readinessOf.get(s.key)?.evidence ?? s.evidence,
+      stillNeeded: readinessOf.get(s.key)?.stillNeeded ?? [],
+    });
+    const sections = scope.kind === "section"
+      ? petition.sections.filter(s => s.key === scope.key).map(toBriefSection)
+      : scope.kind === "letter" || role === "officer" || role === "gap_analyst"
+        ? petition.sections.map(toBriefSection)
+        : [];
+    // The facts in scope: for a section, the facts behind the claims that argue it; otherwise the
+    // whole record, most confident first.
+    const factRows = scope.kind === "section"
+      ? this.#sql(`${this.#factSelect()} AND f.id IN (
+            SELECT cf.fact_id FROM claims c JOIN claim_facts cf ON cf.claim_id = c.id
+            WHERE c.removed = 0 AND c.criteria LIKE ?) ORDER BY f.confidence DESC`, `%"${scope.key}"%`)
+      : this.#sql(`${this.#factSelect()} ORDER BY f.confidence DESC LIMIT 400`);
+    const facts: BriefFact[] = factRows.map(r => this.#toFact(r)).map(f => ({
+      id: f.id, exhibitNo: exhibitOf.get(f.documentId) ?? null, documentTitle: f.documentTitle, page: f.page,
+      statement: f.statement, quote: f.quote,
+    }));
+    const guidance = await firmGuidance(this.env, spec);
+    const style = scope.kind === "section"
+      ? guidance.get(scope.key)?.guidance ?? null
+      : [...guidance.values()].slice(0, 6).map(g => `${g.title}: ${g.guidance}`).join("\n\n") || null;
+    const rules = (await firmRules(this.env, meta.caseType ?? "")).map(r => ({ rule: r.rule, why: r.why }));
+    const directives = D.listDirectives(this.#db).map(d => d.text);
+    const form = scope.kind === "form"
+      ? (await this.forms()).filter(f => f.code === scope.code).map(f => ({
+          code: f.code, title: f.title, fields: f.fields.map(x => ({ name: x.name, label: x.label, value: x.value })),
+        }))[0] ?? null
+      : null;
+    const recommender = scope.kind === "recommender"
+      ? FL.listRecommenders(this.#db).filter(r => r.id === scope.id).map(r => ({
+          id: r.id, name: r.name, title: r.title, organization: r.organization, relationship: r.relationship, basis: r.basis,
+        }))[0] ?? null
+      : null;
+    return {
+      matterTitle: meta.title, clientName: meta.clientName, caseType: meta.caseType,
+      petitionTitle: petition.petitionTitle || null, scope, sections, facts, style, rules, directives, form, recommender,
+      instruction,
+    };
+  }
 
   async recommenders(): Promise<Recommender[]> { return FL.listRecommenders(this.#db); }
 

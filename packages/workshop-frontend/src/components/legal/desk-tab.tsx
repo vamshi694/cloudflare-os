@@ -17,6 +17,15 @@ export function deskFileLabel(path: string): string {
   if (parts[0] === 'delegations' && parts.length >= 3) {
     return `${tidy(parts[1])} — ${tidy(parts.slice(2).join(' '))}`
   }
+  // A specialist's work product: delegations/<role>-<scope>.md ("drafter-awards" → "Drafter · Awards").
+  if (parts[0] === 'delegations' && parts.length === 2) {
+    const role = ['gap-analyst', 'forms-filler', 'letter-writer', 'drafter', 'officer'].find((r) => parts[1] === r || parts[1].startsWith(`${r}-`))
+    if (role) {
+      const scope = parts[1].slice(role.length + 1)
+      const roleLabel = role === 'officer' ? "Officer's review" : tidy(role)
+      return scope && scope !== 'matter' ? `${roleLabel} · ${tidy(scope)}` : roleLabel
+    }
+  }
   return tidy(parts[parts.length - 1] ?? path)
 }
 

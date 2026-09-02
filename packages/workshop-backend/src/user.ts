@@ -215,6 +215,9 @@ function makeUserStorage(storage: DurableObjectStorage) {
 
       // Legal OS: the workspace whose chat is this lawyer's firm-wide conversation ("Ask the firm").
       firmWorkspaceId: <string | null>null,
+      // Legal OS: matter workspaces that already carry the Specialists spawner, so a matter opened
+      // before the spawner existed gets one on its next open, exactly once.
+      specialistsWorkspaces: <string[]>[],
 
       // Per-user free-tier daily LLM-call counter (only used when ENABLE_CLOUDFLARE_LIMITS is on).
       // Stores the current UTC day and the calls made that day; a stale `day` implicitly resets the
@@ -1426,6 +1429,15 @@ export class UserDurableObject extends DurableObject<Cloudflare.Env> {
     // The workspace may have been deleted from the Conversations list; forget it then.
     if (id && !this.storage.gadgets.get(id)) { this.storage.firmWorkspaceId.put(null); return null; }
     return id;
+  }
+
+  async hasSpecialists(workspaceId: string): Promise<boolean> {
+    return this.storage.specialistsWorkspaces.get().includes(workspaceId);
+  }
+
+  async markSpecialists(workspaceId: string): Promise<void> {
+    const ids = this.storage.specialistsWorkspaces.get();
+    if (!ids.includes(workspaceId)) this.storage.specialistsWorkspaces.put([...ids, workspaceId]);
   }
 
   async setFirmWorkspaceId(id: string): Promise<void> {
