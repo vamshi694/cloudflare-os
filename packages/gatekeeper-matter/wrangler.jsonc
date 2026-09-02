@@ -1,0 +1,35 @@
+{
+  "name": "gatekeeper-matter",
+  "main": ".wrangler/validate/src/index.ts",
+  "build": {
+    "command": "pnpm exec capnweb-validate build --out .wrangler/validate",
+    "watch_dir": "src"
+  },
+  "compatibility_date": "2026-08-04",
+  "compatibility_flags": ["allow_irrevocable_stub_storage", "nodejs_compat"],
+  "rules": [
+    { "type": "Text", "globs": ["**/*.txt", "**/*.svg"], "fallthrough": false }
+  ],
+  "migrations": [
+    { "tag": "v0", "new_sqlite_classes": ["MatterAccount", "MatterGatekeeper", "MatterStore"] }
+  ],
+  "durable_objects": {
+    "bindings": [{ "name": "MATTER_STORE", "class_name": "MatterStore" }]
+  },
+  "r2_buckets": [{ "binding": "MATTER_FILES", "bucket_name": "legal-os-matters" }],
+  "queues": {
+    "producers": [{ "binding": "INGEST_QUEUE", "queue": "legal-os-ingest" }],
+    "consumers": [{ "queue": "legal-os-ingest", "max_batch_size": 5, "max_retries": 6, "max_concurrency": 4 }]
+  },
+  "ai": { "binding": "AI" },
+  "vectorize": [{ "binding": "FACT_VECTORS", "index_name": "legal-os-facts" }],
+  "vars": {
+    // OpenRouter model used to read documents into facts. Reasoning is disabled for this lane.
+    "UNDERSTAND_MODEL": "deepseek/deepseek-v4-pro"
+  },
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1,
+    "logs": { "invocation_logs": false }
+  }
+}
