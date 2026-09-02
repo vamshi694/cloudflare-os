@@ -2396,3 +2396,1320 @@
     at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
     at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
     at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:01:05.176Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:01:14.178Z] [error] WebSocket is already in CLOSING or CLOSED state.
+[2026-09-02T15:01:14.179Z] [warning] RPC connection lost: Error: Peer closed WebSocket: 1006 
+    at WebSocket.<anonymous> (https://ocios.app/assets/index-BrExI4k2.js:10:160565)
+[2026-09-02T15:01:14.179Z] [warning] RPC connection broken: Error: Peer closed WebSocket: 1006 
+    at WebSocket.<anonymous> (https://ocios.app/assets/index-BrExI4k2.js:10:160565)
+[2026-09-02T15:01:14.180Z] [debug] Polled read failed: Error: Peer closed WebSocket: 1006 
+    at WebSocket.<anonymous> (https://ocios.app/assets/index-BrExI4k2.js:10:160565)
+[2026-09-02T15:01:14.183Z] [debug] Polled read failed: Error: Attempted to use RPC stub after it has been disposed.
+    at https://ocios.app/assets/index-BrExI4k2.js:10:117981
+[2026-09-02T15:01:14.592Z] [warning] RPC connection restored.
+[2026-09-02T15:01:15.358Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:01:21.618Z] [error] WebSocket is already in CLOSING or CLOSED state.
+[2026-09-02T15:01:21.618Z] [warning] RPC connection lost: Error: Peer closed WebSocket: 1006 
+    at WebSocket.<anonymous> (https://ocios.app/assets/index-BrExI4k2.js:10:160565)
+[2026-09-02T15:01:21.618Z] [warning] RPC connection broken: Error: Peer closed WebSocket: 1006 
+    at WebSocket.<anonymous> (https://ocios.app/assets/index-BrExI4k2.js:10:160565)
+[2026-09-02T15:01:21.620Z] [debug] Polled read failed: Error: Peer closed WebSocket: 1006 
+    at WebSocket.<anonymous> (https://ocios.app/assets/index-BrExI4k2.js:10:160565)
+[2026-09-02T15:01:21.622Z] [debug] Polled read failed: Error: Attempted to use RPC stub after it has been disposed.
+    at https://ocios.app/assets/index-BrExI4k2.js:10:117981
+[2026-09-02T15:01:22.038Z] [warning] RPC connection restored.
+[2026-09-02T15:01:22.562Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:01:23.076Z] [debug] Polled read failed: Error: Network connection lost.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:01:37.559Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:01:52.557Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:02:07.577Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:02:22.563Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:02:22.769Z] [debug] Failed to enable the matter wake hook: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:02:27.552Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:02:28.224Z] [debug] Polled read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:02:28.262Z] [debug] Polled read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:02:32.558Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:02:37.550Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:02:37.552Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:02:37.722Z] [debug] Failed to enable the matter wake hook: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:02:42.552Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:02:47.549Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:02:53.735Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T15:02:53.739Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T15:02:54.117Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T15:02:54.117Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T15:02:54.117Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T15:02:54.117Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T15:02:56.991Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T15:02:56.991Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T15:02:56.991Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T15:02:56.991Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T15:02:56.991Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T15:02:57.069Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T15:02:57.069Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T15:02:57.069Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T15:02:57.069Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T15:02:57.069Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T15:02:57.097Z] [error] Failed to save instructions: Error: Instructions too long (max 8000 characters).
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:02:57.097Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T15:02:57.097Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T15:02:57.097Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T15:02:57.097Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T15:02:57.097Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T15:03:01.344Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:03:02.153Z] [debug] Polled read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:03:02.186Z] [debug] Polled read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:03:06.153Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:03:11.122Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:03:16.124Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:03:16.249Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:03:16.339Z] [debug] Failed to enable the matter wake hook: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:03:21.122Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:03:26.173Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:03:31.121Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:03:31.143Z] [debug] Polled read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:03:31.175Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:03:31.184Z] [debug] Polled read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:03:31.340Z] [debug] Failed to enable the matter wake hook: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:03:36.193Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:03:41.122Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:03:46.125Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:03:46.175Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:03:46.339Z] [debug] Failed to enable the matter wake hook: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:03:51.123Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:03:56.126Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:04:01.124Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:04:01.146Z] [debug] Polled read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:04:01.176Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:04:01.197Z] [debug] Polled read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:04:01.340Z] [debug] Failed to enable the matter wake hook: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:04:01.381Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:04:06.133Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:04:11.122Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:04:16.130Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:04:16.174Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:04:16.340Z] [debug] Failed to enable the matter wake hook: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:04:21.125Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:04:26.124Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:04:31.185Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:04:31.185Z] [debug] Polled read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:04:31.215Z] [debug] Polled read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:04:31.217Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:04:31.341Z] [debug] Failed to enable the matter wake hook: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:04:36.130Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:04:41.207Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:04:46.126Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:04:46.177Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:04:46.395Z] [debug] Failed to enable the matter wake hook: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:04:51.138Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:04:56.127Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:05:01.123Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:05:01.144Z] [debug] Polled read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:05:01.175Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:05:01.199Z] [debug] Polled read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:05:01.342Z] [debug] Failed to enable the matter wake hook: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:05:01.378Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:05:06.132Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:05:11.122Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:05:16.125Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:05:16.176Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:05:16.338Z] [debug] Failed to enable the matter wake hook: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:05:21.120Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:05:26.120Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:05:31.135Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:05:31.143Z] [debug] Polled read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:05:31.173Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:05:31.196Z] [debug] Polled read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:05:31.342Z] [debug] Failed to enable the matter wake hook: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:05:36.197Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:05:41.121Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:05:46.160Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:05:46.189Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:05:46.338Z] [debug] Failed to enable the matter wake hook: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:05:51.122Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:05:56.150Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:06:01.121Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:06:01.145Z] [debug] Polled read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:06:01.177Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:06:01.200Z] [debug] Polled read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:06:01.391Z] [debug] Failed to enable the matter wake hook: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:06:01.413Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:06:06.126Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:06:11.122Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:06:16.122Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:06:16.176Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:06:16.342Z] [debug] Failed to enable the matter wake hook: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:06:21.125Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:06:26.120Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:06:31.123Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:06:31.143Z] [debug] Polled read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:06:31.175Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:06:31.248Z] [debug] Polled read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:06:31.339Z] [debug] Failed to enable the matter wake hook: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:06:36.187Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:06:41.123Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:06:46.122Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:06:46.175Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:06:46.341Z] [debug] Failed to enable the matter wake hook: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:06:51.172Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:06:56.123Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:07:01.161Z] [debug] Polled read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:07:01.164Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:07:01.176Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:07:01.182Z] [debug] Polled read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:07:01.341Z] [debug] Failed to enable the matter wake hook: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:07:01.380Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:07:06.131Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:07:11.123Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:07:16.126Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:07:16.176Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:07:16.366Z] [debug] Failed to enable the matter wake hook: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:07:21.120Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:07:26.130Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:07:31.129Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:07:31.141Z] [debug] Polled read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:07:31.175Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:07:31.197Z] [debug] Polled read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:07:31.340Z] [debug] Failed to enable the matter wake hook: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:07:36.128Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:07:41.130Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:07:46.125Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:07:46.221Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:07:46.345Z] [debug] Failed to enable the matter wake hook: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:07:51.124Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:07:56.182Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:08:01.121Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:08:01.144Z] [debug] Polled read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:08:01.179Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:08:01.200Z] [debug] Polled read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:08:01.340Z] [debug] Failed to enable the matter wake hook: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:08:01.425Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:08:06.175Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:08:11.122Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:08:16.138Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:08:16.175Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:08:16.338Z] [debug] Failed to enable the matter wake hook: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:08:21.169Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:08:26.128Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:08:31.120Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:08:31.143Z] [debug] Polled read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:08:31.175Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:08:31.197Z] [debug] Polled read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:08:31.340Z] [debug] Failed to enable the matter wake hook: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:08:36.124Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:08:41.124Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:08:46.124Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:08:46.175Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:08:46.339Z] [debug] Failed to enable the matter wake hook: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:08:51.129Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:08:56.128Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:09:01.121Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:09:01.194Z] [debug] Polled read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:09:01.226Z] [debug] Polled read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:09:01.228Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:09:01.340Z] [debug] Failed to enable the matter wake hook: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:09:01.381Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:09:06.123Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:09:11.186Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:09:16.121Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:09:16.176Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:09:16.399Z] [debug] Failed to enable the matter wake hook: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:09:21.148Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:09:26.121Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:09:31.121Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:09:31.144Z] [debug] Polled read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:09:31.174Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:09:31.197Z] [debug] Polled read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:09:31.341Z] [debug] Failed to enable the matter wake hook: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:09:36.124Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:09:41.128Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:09:46.121Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:09:46.174Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:09:46.342Z] [debug] Failed to enable the matter wake hook: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:09:51.127Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:09:56.144Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:10:01.122Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:10:01.145Z] [debug] Polled read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:10:01.174Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:10:01.196Z] [debug] Polled read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:10:01.339Z] [debug] Failed to enable the matter wake hook: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:10:01.379Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:10:06.283Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:10:11.125Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:10:16.185Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:10:16.215Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:10:16.340Z] [debug] Failed to enable the matter wake hook: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:10:21.127Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:10:26.158Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:10:31.129Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:10:31.143Z] [debug] Polled read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:10:31.177Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:10:31.198Z] [debug] Polled read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:10:31.402Z] [debug] Failed to enable the matter wake hook: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:10:36.169Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:10:41.126Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:10:46.126Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:10:46.174Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:10:46.339Z] [debug] Failed to enable the matter wake hook: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:10:51.126Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:10:56.116Z] [error] WebSocket is already in CLOSING or CLOSED state.
+[2026-09-02T15:10:56.116Z] [warning] RPC connection lost: Error: Peer closed WebSocket: 1006 
+    at WebSocket.<anonymous> (https://ocios.app/assets/index-BrExI4k2.js:10:160565)
+[2026-09-02T15:10:56.117Z] [warning] RPC connection broken: Error: Peer closed WebSocket: 1006 
+    at WebSocket.<anonymous> (https://ocios.app/assets/index-BrExI4k2.js:10:160565)
+[2026-09-02T15:10:56.124Z] [debug] A matter read failed: Error: Peer closed WebSocket: 1006 
+    at WebSocket.<anonymous> (https://ocios.app/assets/index-BrExI4k2.js:10:160565)
+[2026-09-02T15:10:56.124Z] [debug] Polled read failed: Error: Peer closed WebSocket: 1006 
+    at WebSocket.<anonymous> (https://ocios.app/assets/index-BrExI4k2.js:10:160565)
+[2026-09-02T15:10:56.128Z] [debug] Polled read failed: Error: Attempted to use RPC stub after it has been disposed.
+    at https://ocios.app/assets/index-BrExI4k2.js:10:117981
+[2026-09-02T15:10:56.140Z] [error] WebSocket connection to 'wss://ocios.app/api' failed: Error in connection establishment: net::ERR_NAME_NOT_RESOLVED
+[2026-09-02T15:10:56.140Z] [debug] Reconnect attempt failed: Error: WebSocket connection failed.
+    at WebSocket.<anonymous> (https://ocios.app/assets/index-BrExI4k2.js:10:160665)
+[2026-09-02T15:10:57.038Z] [error] WebSocket connection to 'wss://ocios.app/api' failed: Error in connection establishment: net::ERR_NAME_NOT_RESOLVED
+[2026-09-02T15:10:57.038Z] [debug] Reconnect attempt failed: Error: WebSocket connection failed.
+    at WebSocket.<anonymous> (https://ocios.app/assets/index-BrExI4k2.js:10:160665)
+[2026-09-02T15:10:58.828Z] [error] WebSocket connection to 'wss://ocios.app/api' failed: Error in connection establishment: net::ERR_NAME_NOT_RESOLVED
+[2026-09-02T15:10:58.829Z] [debug] Reconnect attempt failed: Error: WebSocket connection failed.
+    at WebSocket.<anonymous> (https://ocios.app/assets/index-BrExI4k2.js:10:160665)
+[2026-09-02T15:11:02.599Z] [error] WebSocket connection to 'wss://ocios.app/api' failed: Error in connection establishment: net::ERR_NAME_NOT_RESOLVED
+[2026-09-02T15:11:02.600Z] [debug] Reconnect attempt failed: Error: WebSocket connection failed.
+    at WebSocket.<anonymous> (https://ocios.app/assets/index-BrExI4k2.js:10:160665)
+[2026-09-02T15:11:09.931Z] [error] WebSocket connection to 'wss://ocios.app/api' failed: Error in connection establishment: net::ERR_NAME_NOT_RESOLVED
+[2026-09-02T15:11:09.931Z] [debug] Reconnect attempt failed: Error: WebSocket connection failed.
+    at WebSocket.<anonymous> (https://ocios.app/assets/index-BrExI4k2.js:10:160665)
+[2026-09-02T15:11:20.382Z] [error] WebSocket connection to 'wss://ocios.app/api' failed: Error in connection establishment: net::ERR_NAME_NOT_RESOLVED
+[2026-09-02T15:11:20.382Z] [debug] Reconnect attempt failed: Error: WebSocket connection failed.
+    at WebSocket.<anonymous> (https://ocios.app/assets/index-BrExI4k2.js:10:160665)
+[2026-09-02T15:11:30.821Z] [error] WebSocket connection to 'wss://ocios.app/api' failed: Error in connection establishment: net::ERR_NAME_NOT_RESOLVED
+[2026-09-02T15:11:30.821Z] [debug] Reconnect attempt failed: Error: WebSocket connection failed.
+    at WebSocket.<anonymous> (https://ocios.app/assets/index-BrExI4k2.js:10:160665)
+[2026-09-02T15:11:39.685Z] [error] WebSocket connection to 'wss://ocios.app/api' failed: Error in connection establishment: net::ERR_NAME_NOT_RESOLVED
+[2026-09-02T15:11:39.686Z] [debug] Reconnect attempt failed: Error: WebSocket connection failed.
+    at WebSocket.<anonymous> (https://ocios.app/assets/index-BrExI4k2.js:10:160665)
+[2026-09-02T15:11:48.244Z] [error] WebSocket connection to 'wss://ocios.app/api' failed: Error in connection establishment: net::ERR_NAME_NOT_RESOLVED
+[2026-09-02T15:11:48.244Z] [debug] Reconnect attempt failed: Error: WebSocket connection failed.
+    at WebSocket.<anonymous> (https://ocios.app/assets/index-BrExI4k2.js:10:160665)
+[2026-09-02T15:12:31.687Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:12:46.639Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:12:59.508Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:13:09.498Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:13:17.500Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:13:25.506Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:13:30.839Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:13:41.574Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:13:49.592Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:13:57.572Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:14:03.300Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:14:18.306Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:14:28.931Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:14:36.858Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:14:44.860Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:14:52.858Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:15:00.906Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:15:08.862Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:15:16.862Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:15:24.860Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
