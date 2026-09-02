@@ -762,6 +762,10 @@ class PublicApiImpl extends RpcTarget implements PublicApi {
       throw createAuthError(AUTH_ERROR_CODES.invalidSessionToken);
     }
 
+    // Legal OS: a removed member's sessions end at once, not at their next sign-in.
+    if (await this.ctx.exports.AdminSettings.getByName("").isRemoved(split[0])) {
+      throw createAuthError(AUTH_ERROR_CODES.invalidSessionToken);
+    }
     let userId = this.users.idFromName(split[0]);
     await this.users.get(userId).authenticate(split[1]);
     recordAnalytics(this.ctx, this.env, {
@@ -806,6 +810,8 @@ class PublicApiImpl extends RpcTarget implements PublicApi {
     }
 
     username = normalizeUsername(username);
+    // Legal OS: the firm removed this member; the password still exists but the door is shut.
+    if (await this.ctx.exports.AdminSettings.getByName("").isRemoved(username)) return null;
 
     let id = this.users.idFromName(username);
     let token = await this.users.get(id).login(passwordHash);

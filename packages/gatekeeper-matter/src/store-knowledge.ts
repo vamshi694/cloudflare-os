@@ -71,6 +71,7 @@ export function listMap(db: Db): CaseMap {
     building: db.metaGet("knowledge_building") === "1",
     fromDocuments: Number(db.metaGet("knowledge_from_documents") ?? "0"),
     note: db.metaGet("knowledge_note"),
+    progress: null,
   };
 }
 

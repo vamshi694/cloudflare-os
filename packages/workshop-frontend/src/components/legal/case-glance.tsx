@@ -4,6 +4,7 @@ import type { MatterDesk, Readiness } from '@gadgets/workshop-shared/legal'
 import { useDeskData } from './useMatterDesk'
 import { plural } from './labels'
 import { MethodPanel } from './method-panel'
+import { CaseAssessment } from './case-assessment'
 
 /**
  * THE CASE AT A GLANCE — the conversation tab's quiet right rail. Only what a lawyer acts on: which
@@ -14,10 +15,12 @@ import { MethodPanel } from './method-panel'
 export function CaseGlance({
   desk,
   onOpenPetition,
+  onOpenDesk,
   pollMs = 15000,
 }: {
   desk: RpcStub<MatterDesk>
   onOpenPetition: () => void
+  onOpenDesk?: () => void
   pollMs?: number
 }) {
   const load = useCallback(() => desk.readiness(), [desk])
@@ -110,6 +113,7 @@ export function CaseGlance({
         )}
       </section>
     </div>
+    <CaseAssessment desk={desk} onOpenDesk={onOpenDesk ?? onOpenPetition} />
     <MethodPanel desk={desk} />
     </div>
   )

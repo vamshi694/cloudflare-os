@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import type { RpcStub } from 'capnweb'
-import type { MatterDesk } from '@gadgets/workshop-shared/legal'
+import type { MatterDesk, MatterDirective, MemoryNote } from '@gadgets/workshop-shared/legal'
 import { MarkdownMessage } from '../../ChatInterface'
 import styles from '../../ChatInterface.module.css'
 import { logRpcFailure } from '../../rpcErrors'
@@ -54,6 +54,8 @@ export function DeskTab({ desk }: { desk: RpcStub<MatterDesk> }) {
   }, [files])
 
   return (
+    <div className="space-y-6">
+    <ProcessPanels desk={desk} />
     <ThreeState
       items={files}
       failed={failed}
@@ -117,6 +119,113 @@ export function DeskTab({ desk }: { desk: RpcStub<MatterDesk> }) {
         </div>
       )}
     </ThreeState>
+    </div>
+  )
+}
+
+/**
+ * WP-8: the two things on the desk the attorney writes, not just reads. Standing directives are
+ * instructions the counsel reads every turn on this matter alone; memory notes are what the firm
+ * keeps outside the record (never evidence). Both are plain rows: add, read, withdraw.
+ */
+function ProcessPanels({ desk }: { desk: RpcStub<MatterDesk> }) {
+  const loadDirectives = useCallback(() => desk.directives(), [desk])
+  const loadNotes = useCallback(() => desk.memoryNotes(), [desk])
+  const directives = useDeskData<MatterDirective[]>(loadDirectives, { pollMs: 20000 })
+  const notes = useDeskData<MemoryNote[]>(loadNotes, { pollMs: 20000 })
+  const [directiveText, setDirectiveText] = useState('')
+  const [scope, setScope] = useState<MatterDirective['scope']>('matter')
+  const [noteText, setNoteText] = useState('')
+  const [busy, setBusy] = useState<string | null>(null)
+  const [failure, setFailure] = useState<string | null>(null)
+
+  const run = async (key: string, work: () => Promise<void>) => {
+    if (busy) return
+    setBusy(key)
+    setFailure(null)
+    try {
+      await work()
+    } catch (err) {
+      logRpcFailure(`Desk write failed (${key}):`, err)
+      setFailure(`That didn't save: ${err instanceof Error ? err.message : 'try again'}. Nothing has changed.`)
+    } finally {
+      setBusy(null)
+    }
+  }
+
+  return (
+    <div className="grid gap-4 lg:grid-cols-2">
+      <section className="rounded-[14px] border border-kumo-line bg-kumo-base px-5 py-4">
+        <Eyebrow>Standing directives</Eyebrow>
+        <p className="m-0 mt-1 text-[12.5px] leading-4 text-kumo-subtle">The counsel reads these every turn on this matter. They outrank the playbook here and nowhere else.</p>
+        {directives.data === null ? (
+          directives.failed ? <p className="m-0 mt-2 text-[12.5px] italic text-kumo-subtle">The directives couldn&apos;t be read just now. Nothing has changed.</p> : <Skeleton className="mt-2 h-[40px]" />
+        ) : directives.data.length === 0 ? (
+          <p className="m-0 mt-2 text-[13px] text-kumo-subtle">None yet.</p>
+        ) : (
+          <ul className="m-0 mt-2 list-none space-y-1.5 p-0">
+            {directives.data.map((d) => (
+              <li key={d.id} className="flex items-start justify-between gap-3 rounded-lg border border-kumo-line px-3 py-2">
+                <div className="min-w-0">
+                  <p className="m-0 text-[13.5px] leading-5 text-kumo-default">{d.text}</p>
+                  <p className="m-0 mt-0.5 text-[11.5px] leading-4 text-kumo-inactive">{tidy(d.scope)} · {d.createdBy} · {relativeTime(d.createdAt)}</p>
+                </div>
+                <button type="button" disabled={busy !== null} onClick={() => void run(`d:${d.id}`, async () => { await desk.removeDirective(d.id); directives.reload() })} className="shrink-0 cursor-pointer text-[12px] text-kumo-subtle hover:text-kumo-default hover:underline disabled:opacity-40">
+                  {busy === `d:${d.id}` ? 'Withdrawing…' : 'Withdraw'}
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+        <div className="mt-3 flex flex-col gap-2">
+          <textarea value={directiveText} onChange={(e) => setDirectiveText(e.target.value)} rows={2} placeholder="e.g. Do not draft the awards section until the client sends the selection letter." className="w-full resize-y rounded-lg border border-kumo-line bg-kumo-base px-3 py-2 text-[13.5px] leading-5 text-kumo-default outline-none focus:border-kumo-ring" disabled={busy !== null} />
+          <div className="flex flex-wrap items-center gap-2">
+            <select value={scope} onChange={(e) => setScope(e.target.value as MatterDirective['scope'])} disabled={busy !== null} className="h-8 rounded-lg border border-kumo-line bg-kumo-base px-2 text-[13px] text-kumo-default">
+              <option value="matter">The whole matter</option>
+              <option value="drafting">Drafting</option>
+              <option value="client">The client</option>
+              <option value="evidence">Evidence</option>
+            </select>
+            <button type="button" disabled={busy !== null || !directiveText.trim()} onClick={() => void run('add-directive', async () => { await desk.addDirective(directiveText, scope); setDirectiveText(''); directives.reload() })} className="press inline-flex h-8 cursor-pointer items-center rounded-lg bg-kumo-brand px-3 text-[13px] font-medium text-white disabled:opacity-40">
+              {busy === 'add-directive' ? 'Saving…' : 'Give the directive'}
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section className="rounded-[14px] border border-kumo-line bg-kumo-base px-5 py-4">
+        <Eyebrow>Memory notes</Eyebrow>
+        <p className="m-0 mt-1 text-[12.5px] leading-4 text-kumo-subtle">What the firm keeps on this matter outside the record: judgments, preferences, things to remember. Never evidence.</p>
+        {notes.data === null ? (
+          notes.failed ? <p className="m-0 mt-2 text-[12.5px] italic text-kumo-subtle">The notes couldn&apos;t be read just now. Nothing has changed.</p> : <Skeleton className="mt-2 h-[40px]" />
+        ) : notes.data.length === 0 ? (
+          <p className="m-0 mt-2 text-[13px] text-kumo-subtle">Nothing noted yet.</p>
+        ) : (
+          <ul className="m-0 mt-2 list-none space-y-1.5 p-0">
+            {notes.data.map((n) => (
+              <li key={n.id} className="flex items-start justify-between gap-3 rounded-lg border border-kumo-line px-3 py-2">
+                <div className="min-w-0">
+                  <p className="m-0 whitespace-pre-wrap text-[13.5px] leading-5 text-kumo-default">{n.text}</p>
+                  <p className="m-0 mt-0.5 text-[11.5px] leading-4 text-kumo-inactive">{n.createdBy === 'agent' ? 'the counsel' : 'you'} · {relativeTime(n.createdAt)}</p>
+                </div>
+                <button type="button" disabled={busy !== null} onClick={() => void run(`n:${n.id}`, async () => { await desk.removeMemoryNote(n.id); notes.reload() })} className="shrink-0 cursor-pointer text-[12px] text-kumo-subtle hover:text-kumo-default hover:underline disabled:opacity-40">
+                  {busy === `n:${n.id}` ? 'Dropping…' : 'Drop'}
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+        <div className="mt-3 flex flex-col gap-2">
+          <textarea value={noteText} onChange={(e) => setNoteText(e.target.value)} rows={2} placeholder="e.g. The client prefers email over the portal; his co-author is unreachable until March." className="w-full resize-y rounded-lg border border-kumo-line bg-kumo-base px-3 py-2 text-[13.5px] leading-5 text-kumo-default outline-none focus:border-kumo-ring" disabled={busy !== null} />
+          <div>
+            <button type="button" disabled={busy !== null || !noteText.trim()} onClick={() => void run('add-note', async () => { await desk.addMemoryNote(noteText); setNoteText(''); notes.reload() })} className="press inline-flex h-8 cursor-pointer items-center rounded-lg border border-kumo-line bg-kumo-base px-3 text-[13px] font-medium text-kumo-default hover:bg-kumo-elevated disabled:opacity-40">
+              {busy === 'add-note' ? 'Saving…' : 'Keep the note'}
+            </button>
+          </div>
+        </div>
+      </section>
+      {failure && <p className="m-0 text-[12.5px] leading-4 text-kumo-danger lg:col-span-2">{failure}</p>}
+    </div>
   )
 }
 

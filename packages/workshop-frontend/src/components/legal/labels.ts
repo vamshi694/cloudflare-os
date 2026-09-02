@@ -132,3 +132,16 @@ export const CONVERSATION_SUGGESTIONS = [
   'What do you still need from the client?',
   'What are our weakest criteria, honestly?',
 ]
+
+/**
+ * The status row's lane line, from the record's counts: "Reading 12 of 40 documents", "Building
+ * case knowledge 3 of 8", "Drafting 5 of 15 sections". Null when no lane is in flight. Mirrors
+ * the matter worker's lanes.ts so both sides narrate the same way.
+ */
+export function narrateLane(lane: { kind: 'reading' | 'knowledge' | 'drafting'; done: number; total: number } | null): string | null {
+  if (!lane || lane.total <= 0) return null
+  const done = Math.min(lane.done, lane.total)
+  if (lane.kind === 'reading') return `Reading ${done} of ${lane.total} ${lane.total === 1 ? 'document' : 'documents'}`
+  if (lane.kind === 'knowledge') return `Building case knowledge ${done} of ${lane.total}`
+  return `Drafting ${done} of ${lane.total} ${lane.total === 1 ? 'section' : 'sections'}`
+}

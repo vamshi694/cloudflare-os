@@ -4,24 +4,19 @@ import type { GovernmentForm, MatterDesk, Petition } from '@gadgets/workshop-sha
 import { useKumoToastManager } from '@cloudflare/kumo'
 import { ArrowLeft, FileText } from '@phosphor-icons/react'
 import { logRpcFailure } from '../../../rpcErrors'
-import { WorkshopButton, WorkshopInput } from '../../WorkshopControls'
+import { WorkshopButton } from '../../WorkshopControls'
 import { Notice, Pill } from '../primitives'
 import { useDeskData } from '../useMatterDesk'
 import { DeskReader } from '../desk-tab'
 import { caseTypeLabel, petitionTitle, plural } from '../labels'
 import { LetterRoom } from './LetterRoom'
+import { RecommendersRoom } from './RecommendersRoom'
 import { draftedCount, totalPages } from './petition-utils'
+import { FormRoom } from './forms/FormRoom'
+import { FORM_CHIP } from './forms/form-chip'
 
-type Area = { kind: 'home' } | { kind: 'letter' } | { kind: 'form'; code: string } | { kind: 'file'; path: string }
+type Area = { kind: 'home' } | { kind: 'letter' } | { kind: 'form'; code: string } | { kind: 'file'; path: string } | { kind: 'recommenders' }
 
-const FORM_CHIP: Record<GovernmentForm['status'], { label: string; tone: 'ready' | 'warning' | 'neutral' | 'needsYou' }> = {
-  signed: { label: 'Signed by the client', tone: 'ready' },
-  awaiting_signature: { label: 'Awaiting client signature', tone: 'warning' },
-  approved: { label: 'Approved — in the packet', tone: 'ready' },
-  for_review: { label: 'For your review', tone: 'needsYou' },
-  opened: { label: 'Opened — not filled yet', tone: 'neutral' },
-  not_started: { label: 'Not started', tone: 'neutral' },
-}
 
 /**
  * THE WORKSPACE — the tab lands on the file room: the letter, the visa's government forms, and
@@ -55,8 +50,19 @@ export function WorkspaceTab({ desk, caseType }: { desk: RpcStub<MatterDesk>; ca
   if (area.kind === 'file') {
     return (
       <div className="space-y-4">
-        <Crumb onBack={() => setArea({ kind: 'home' })} label={area.path.replace(/^deliverables\//, '').replace(/\.md$/, '')} />
+        <div className="flex items-center justify-between gap-3">
+          <Crumb onBack={() => setArea({ kind: 'home' })} label={area.path.replace(/^deliverables\//, '').replace(/\.md$/, '')} />
+          <WordButton desk={desk} path={area.path} />
+        </div>
         <DeskReader desk={desk} path={area.path} />
+      </div>
+    )
+  }
+  if (area.kind === 'recommenders') {
+    return (
+      <div className="space-y-4">
+        <Crumb onBack={() => setArea({ kind: 'home' })} label="Letters of recommendation" />
+        <RecommendersRoom desk={desk} caseType={caseType} />
       </div>
     )
   }
@@ -85,9 +91,7 @@ export function WorkspaceTab({ desk, caseType }: { desk: RpcStub<MatterDesk>; ca
         <div className="text-right">
           <div className="flex items-center gap-2">
             <WorkshopButton className="!h-8" onClick={() => setArea({ kind: 'letter' })}>Open the letter</WorkshopButton>
-            <button type="button" disabled className="h-8 cursor-not-allowed rounded-lg bg-kumo-fill px-3 text-[13px] font-medium text-kumo-inactive" title="The packet binder (letter, approved forms, every cited exhibit as one PDF) is not wired on this deployment yet.">
-              Download the USCIS packet
-            </button>
+            <PacketButton desk={desk} disabled={drafted === 0} onBound={petition.reload} />
           </div>
           <p className="m-0 mt-1.5 text-[11.5px] leading-4 text-kumo-inactive">
             {approvedCodes.length > 0 ? `One PDF: ${approvedCodes.join(', ')} (approved) · the letter · every cited exhibit` : 'One PDF: the letter and every cited exhibit — forms join it once you approve them.'}
@@ -107,6 +111,10 @@ export function WorkspaceTab({ desk, caseType }: { desk: RpcStub<MatterDesk>; ca
             <span className="mt-2 block h-[3px] w-full rounded-full bg-kumo-fill"><span className="block h-full rounded-full bg-kumo-brand" style={{ width: `${total ? (drafted / total) * 100 : 0}%` }} /></span>
           </span>
           <span className="shrink-0 text-[13px] font-medium text-kumo-default">Open the letter →</span>
+        </button>
+        <button type="button" onClick={() => setArea({ kind: 'recommenders' })} className="press mt-2 flex w-full cursor-pointer items-center justify-between rounded-xl border border-kumo-line bg-kumo-base px-4 py-2.5 text-left hover:bg-kumo-tint">
+          <span className="text-[13.5px] text-kumo-default">Letters of recommendation <span className="text-kumo-subtle">· who writes for the beneficiary, drafted from the record</span></span>
+          <span className="text-[13px] font-medium text-kumo-default">Open →</span>
         </button>
       </section>
 
@@ -135,16 +143,63 @@ export function WorkspaceTab({ desk, caseType }: { desk: RpcStub<MatterDesk>; ca
         ) : (
           <div className="grid gap-2 sm:grid-cols-2">
             {deliverables.map((d) => (
-              <button key={d.path} type="button" onClick={() => setArea({ kind: 'file', path: d.path })} className="shadow-depth press cursor-pointer rounded-xl border border-kumo-line bg-kumo-base px-4 py-3 text-left hover:shadow-lift">
-                <span className="block truncate text-[13.5px] font-medium text-kumo-default">{d.path.replace(/^deliverables\//, '').replace(/\.md$/, '')}</span>
-                <span className="block text-[12px] text-kumo-subtle">Read</span>
-              </button>
+              <div key={d.path} className="shadow-depth flex items-center gap-2 rounded-xl border border-kumo-line bg-kumo-base px-4 py-3 hover:shadow-lift">
+                <button type="button" onClick={() => setArea({ kind: 'file', path: d.path })} className="press min-w-0 flex-1 cursor-pointer text-left">
+                  <span className="block truncate text-[13.5px] font-medium text-kumo-default">{d.path.replace(/^deliverables\//, '').replace(/\.md$/, '')}</span>
+                  <span className="block text-[12px] text-kumo-subtle">Read</span>
+                </button>
+                <WordButton desk={desk} path={d.path} />
+              </div>
             ))}
           </div>
         )}
       </section>
     </div>
   )
+}
+
+/** Binds the packet and opens it. Says what it is doing, since exhibits merge page by page. */
+function PacketButton({ desk, disabled, onBound }: { desk: RpcStub<MatterDesk>; disabled: boolean; onBound: () => void }) {
+  const toasts = useKumoToastManager()
+  const [busy, setBusy] = useState(false)
+  const bind = async () => {
+    setBusy(true)
+    try {
+      const filing = await desk.buildPacket()
+      window.open(filing.packetUrl, '_blank', 'noopener')
+      toasts.add({ title: `The packet is bound: ${filing.pages} pages, ${plural(filing.exhibits, 'exhibit', 'exhibits')}${filing.draft ? ', stamped DRAFT while quotes await verification' : ''}.`, variant: filing.draft ? 'warning' : 'success' })
+      onBound()
+    } catch (err) {
+      logRpcFailure('Failed to bind the packet:', err)
+      toasts.add({ title: err instanceof Error && err.message ? err.message : "The packet couldn't be bound. Nothing changed — try again.", variant: 'error' })
+    } finally {
+      setBusy(false)
+    }
+  }
+  return (
+    <WorkshopButton tone="primary" className="!h-8" onClick={() => void bind()} disabled={busy || disabled} title={disabled ? 'Nothing is drafted yet. The packet needs the letter.' : 'The filing-ready packet: cover, contents, the letter, every approved government form, and every numbered exhibit.'}>
+      {busy ? 'Assembling the packet…' : 'Download the USCIS packet'}
+    </WorkshopButton>
+  )
+}
+
+/** A desk document as Word, from its signed link. */
+function WordButton({ desk, path }: { desk: RpcStub<MatterDesk>; path: string }) {
+  const toasts = useKumoToastManager()
+  const [busy, setBusy] = useState(false)
+  const word = async () => {
+    setBusy(true)
+    try {
+      const { url } = await desk.deliverableWord(path)
+      window.location.assign(url)
+    } catch (err) {
+      logRpcFailure('Failed to export the document as Word:', err)
+      toasts.add({ title: err instanceof Error && err.message ? err.message : "The Word file couldn't be prepared. The document is unchanged — try again.", variant: 'error' })
+    } finally {
+      setBusy(false)
+    }
+  }
+  return <WorkshopButton className="!h-7 shrink-0" onClick={() => void word()} disabled={busy}>{busy ? 'Preparing…' : 'Word'}</WorkshopButton>
 }
 
 function Crumb({ onBack, label }: { onBack: () => void; label: string }) {
@@ -202,63 +257,3 @@ function FormCard({ desk, form, onOpen, reload }: { desk: RpcStub<MatterDesk>; f
   )
 }
 
-/** The form room: every field with its value and the fact it came from; the attorney accepts or corrects. */
-function FormRoom({ desk, form, reload }: { desk: RpcStub<MatterDesk>; form: GovernmentForm; reload: () => void }) {
-  const toasts = useKumoToastManager()
-  const [edits, setEdits] = useState<Record<string, string>>({})
-  const [busy, setBusy] = useState<string | null>(null)
-  const accept = async (name: string, value: string) => {
-    setBusy(name)
-    try {
-      await desk.acceptFormField(form.code, name, value)
-      setEdits((e) => { const n = { ...e }; delete n[name]; return n })
-      reload()
-    } catch (err) {
-      logRpcFailure('Failed to accept the field:', err)
-      toasts.add({ title: 'That value was not accepted — the form is unchanged. Try again.', variant: 'error' })
-    } finally {
-      setBusy(null)
-    }
-  }
-  const approve = async () => {
-    setBusy('__approve')
-    try {
-      await desk.approveForm(form.code)
-      reload()
-    } catch (err) {
-      logRpcFailure('Failed to approve the form:', err)
-      toasts.add({ title: 'The form was not approved — it stays for your review. Try again.', variant: 'error' })
-    } finally {
-      setBusy(null)
-    }
-  }
-  return (
-    <div className="max-w-[860px] space-y-3">
-      <div className="flex items-center justify-between gap-2">
-        <Pill tone={FORM_CHIP[form.status].tone}>{FORM_CHIP[form.status].label}</Pill>
-        <WorkshopButton tone="primary" className="!h-8" onClick={() => void approve()} disabled={busy !== null || form.status === 'approved' || form.status === 'signed'}>
-          {form.status === 'approved' || form.status === 'signed' ? 'Approved' : 'Approve — into the packet'}
-        </WorkshopButton>
-      </div>
-      <div className="overflow-hidden rounded-xl border border-kumo-line bg-kumo-base">
-        <ul className="m-0 list-none divide-y divide-kumo-line p-0">
-          {form.fields.map((f) => {
-            const value = edits[f.name] ?? f.value ?? ''
-            return (
-              <li key={f.name} className="grid gap-2 px-4 py-2.5 sm:grid-cols-[220px_minmax(0,1fr)_auto] sm:items-center">
-                <span className="text-[12.5px] text-kumo-subtle">{f.label}</span>
-                <div className="min-w-0">
-                  <WorkshopInput value={value} onChange={(e) => setEdits((x) => ({ ...x, [f.name]: e.target.value }))} className="w-full !h-8" placeholder="Not on the record — the attorney supplies this" />
-                  <p className="m-0 mt-0.5 text-[11px] text-kumo-inactive">{f.sourceFactId ? 'From the record' : f.value ? 'Entered by the attorney' : 'No source yet'}{f.acceptedBy ? ' · accepted by you' : ''}</p>
-                </div>
-                <WorkshopButton className="!h-7" onClick={() => void accept(f.name, value)} disabled={busy !== null || !value.trim() || (f.acceptedBy === 'attorney' && edits[f.name] === undefined)}>
-                  {busy === f.name ? '…' : f.acceptedBy && edits[f.name] === undefined ? 'Accepted' : 'Accept'}
-                </WorkshopButton>
-              </li>
-            )
-          })}
-        </ul>
-      </div>
-    </div>
-  )
-}

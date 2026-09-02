@@ -26,7 +26,7 @@
 import { RpcCompatible, RpcStub, RpcTarget } from "capnweb";
 import { AccountDescription, ActionKind, ActionDescription, AvatarImage, GatekeeperUiFrame, ObservationDescription, ResourceDescription, ResourceConfiguratorFrame, SupportedResource, VendorDescription, HookDescription } from "./gatekeeper.js";
 import type { CodeChange } from "./code-change.js";
-import type { LegalDesk, PlaybookDesk } from "./legal.js";
+import type { LaneModels, LegalDesk, PlaybookDesk } from "./legal.js";
 import type { UiFeatureFlags } from "./feature-flags.js";
 
 export const SERVICE_SALT = new Uint8Array([
@@ -916,6 +916,8 @@ export type MyUsage = {
 /** Legal OS: one matter as the firm's admins see it, read live from the matter's own store. */
 export type FirmMatterRow = {
   matterId: string;
+  /** Why the firm stopped work on it, when it did: the owner was removed. Reassign to resume. */
+  hold: "removed_owner" | null;
   /** The lawyer's username, or null for a matter opened before the registry learned its owner. */
   ownerUserId: string | null;
   title: string;
@@ -1082,6 +1084,21 @@ export interface AdminApi {
 
   /** Legal OS: every matter in the firm, whoever owns it, read live. Empty when the Matters gatekeeper is not bound. */
   listFirmMatters(): Promise<FirmMatterRow[]>;
+  /**
+   * Legal OS: hand a matter to another member. Its index rows move, the hold (if any) lifts, and
+   * the new attorney's playbook applies from the next run. Admin only, enforced server-side.
+   */
+  reassignMatter(matterId: string, toUserId: string): Promise<void>;
+  /**
+   * Legal OS: remove a member. Their access ends at once on every surface; matters they own are
+   * paused with a visible hold until reassigned. Nothing is deleted. The last admin cannot be removed.
+   */
+  removeMember(userId: string): Promise<void>;
+  /** Legal OS: members the firm removed, newest first. */
+  listRemovedMembers(): Promise<{ userId: string; removedAt: string; removedBy: string }[]>;
+  /** Legal OS: the models each lane runs on; null keeps the worker's configured default. */
+  getLaneModels(): Promise<LaneModels>;
+  setLaneModels(models: LaneModels): Promise<void>;
 
   /** Legal OS: what the firm did over the last `days` days, across every matter. */
   firmAnalytics(days: number): Promise<FirmAnalytics>;
@@ -4261,3 +4278,6 @@ export type ShareLinkInfo = {
    */
   role?: CollaboratorRole;
 };
+
+/** WP-8: re-exported so the admin screens and the workshop import one module. */
+export type { LaneModels } from "./legal.js";

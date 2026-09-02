@@ -12,13 +12,16 @@
 
 import { DurableObject } from "cloudflare:workers";
 import type {
-  CaseMap, CaseTypeSpec, ClientMessage, ClientRecord, Deadline, GovernmentForm, MatterStatusLine, NeedsYouItem,
-  Petition, PetitionSection, PortalView, Readiness,
+  BlastRadius, CaseMap, CaseTypeSpec, Chronology, ClientMessage, ClientRecord, Contradiction, CriteriaFinding, CriteriaFindings, Deadline,
+  EntityPath, GapAudit, GapItem, GovernmentForm, Grounding, IntelRun, MatterStatusLine, NeedsYouItem, OrganizeProposal, Petition,
+  PetitionSection, PortalView, Readiness, RecordInventory, ReviewPair, ReviewState,
 } from "@gadgets/workshop-shared/legal";
 import type { HookInitiator } from "@gadgets/workshop-shared/gatekeeper";
 import type { MatterWatcherTarget } from "./matter.js";
-import { CASE_TYPES, caseTypeSpec, normalizeCaseType } from "./case-types.js";
+import { CASE_TYPES, caseTypeSpec, normalizeCaseType, petitionTitleFor } from "./case-types.js";
 import { filenameFamily, foldText } from "./pure.js";
+import { holdLine, ownershipTransition, searchTerms } from "./process.js";
+import type { MatterDirective, MemoryNote } from "@gadgets/workshop-shared/legal";
 import { computeReadiness, derivePhase, firstNameOf, portalDocumentState, portalStatusLine } from "./rules.js";
 import { firmGuidance, firmRemember, firmSectionPlan, orderSections } from "./firm-library.js";
 import type { Db, Row } from "./store-db.js";
@@ -26,7 +29,19 @@ import * as K from "./store-knowledge.js";
 import * as P from "./store-petition.js";
 import * as C from "./store-client.js";
 import * as D from "./store-desk.js";
+import * as L from "./store-lanes.js";
+import { KNOWLEDGE_BATCH, clearedSections, draftingSummary, planBatches } from "./lanes.js";
+import type { LaneProgress } from "@gadgets/workshop-shared/legal";
+import * as I from "./store-intel.js";
+import { intelPass, type IntelStore } from "./intel-passes.js";
+import { blastRadiusOf, buildChronology, groundingOf, inventoryOf, pathBetween } from "./intelligence.js";
+import * as F from "./store-forms.js";
+import { prefillValues } from "./forms-pdf.js";
 import { letterMarkdown, simulateRfe, writeWithVerification } from "./petition.js";
+import * as FL from "./store-filing.js";
+import { buildPacket, markdownDocx, shouldStampDraft, type PacketExhibit } from "./packet.js";
+import { artifactKey, firmKeyPair, sha256Hex, signArtifactUrl, signManifest, type FilingManifest, type ManifestExhibit } from "./manifest.js";
+import type { Deliverable, Filing, RecommendationLetter, Recommender } from "@gadgets/workshop-shared/legal";
 import type {
   ActivityEntry, Decision, DeskFile, DocumentSummary, DocumentText, Fact, FactFilter, IngestStatus, MatterOverview,
   TextHit, Uploader,
@@ -42,10 +57,18 @@ export type MatterMeta = {
   workspaceId?: string | null;
   status: "open" | "paused" | "closed";
   createdAt: string;
+  /** WP-8: the lawyer's username once the registry learned it. */
+  ownerUserId?: string | null;
+  /** WP-8: why the firm stopped work: the owner was removed. Reassignment lifts it. */
+  hold?: "removed_owner" | null;
 };
 
 export { filenameFamily, foldText };
-export type IngestMessage = { matterId: string; documentId: string } | { type: "knowledge"; matterId: string };
+export type IngestMessage =
+  | { matterId: string; documentId: string }
+  | { type: "knowledge"; matterId: string }
+  | { type: "knowledge-batch"; matterId: string; buildId: string; offset: number }
+  | { type: "draft"; matterId: string; laneId: string; key: string };
 
 export type UnderstoodFact = {
   statement: string; quote: string; page: number | null; occurredOn: string | null;
@@ -75,7 +98,7 @@ CREATE TABLE IF NOT EXISTS facts (
 CREATE INDEX IF NOT EXISTS ix_facts_document ON facts(document_id);
 CREATE VIRTUAL TABLE IF NOT EXISTS facts_fts USING fts5(id UNINDEXED, statement, quote);
 CREATE TABLE IF NOT EXISTS activity (seq INTEGER PRIMARY KEY AUTOINCREMENT, at TEXT NOT NULL, actor TEXT NOT NULL, summary TEXT NOT NULL);
-` + D.DESK_SCHEMA + K.KNOWLEDGE_SCHEMA + P.PETITION_SCHEMA + C.CLIENT_SCHEMA;
+` + D.DESK_SCHEMA + D.PROCESS_SCHEMA + K.KNOWLEDGE_SCHEMA + P.PETITION_SCHEMA + C.CLIENT_SCHEMA + F.FORMS_SCHEMA + FL.FILING_SCHEMA + L.LANES_SCHEMA;
 
 export const EXTRACTION_VERSION = 1;
 const MAX_READ_ATTEMPTS = 4;
@@ -85,7 +108,7 @@ const NARRATIVE_WINDOW_MS = 10 * 60 * 1000;
 function now(): string { return new Date().toISOString(); }
 function newId(): string { return crypto.randomUUID().replace(/-/g, ""); }
 
-export class MatterStore extends DurableObject<Cloudflare.Env> {
+export class MatterStore extends DurableObject<Cloudflare.Env> implements IntelStore {
   readonly #db: Db;
 
   constructor(ctx: DurableObjectState, env: Cloudflare.Env) {
@@ -267,7 +290,10 @@ export class MatterStore extends DurableObject<Cloudflare.Env> {
         "SELECT note FROM documents WHERE note IS NOT NULL AND status IN ('queued','reading','failed') ORDER BY updated_at DESC LIMIT 1")[0]?.note ?? null,
       planHead: plan ? plan.content.split("\n").slice(0, 12).join("\n") : null,
       today,
-      statusLine: { phase, narrative, working: phase === "reading" || phase === "knowledge" || phase === "building", nextDeadline },
+      statusLine: {
+        phase, narrative, working: phase === "reading" || phase === "knowledge" || phase === "building", nextDeadline,
+        lane: this.#lane({ documents, reading }),
+      },
       needsYouItems: D.needsYouItems(this.#db),
       hasClientRecord: client.portal !== "not_invited" || clientMessages > 0 || client.documentsSent > 0,
       clientMessages,
@@ -586,6 +612,9 @@ export class MatterStore extends DurableObject<Cloudflare.Env> {
       if (declined) C.deleteMessage(this.#db, row.message_id as string);
       else C.markMessageSent(this.#db, row.message_id as string);
     }
+    // A contradiction card answered is the finding ruled on: the map stops listing it as open.
+    const contradictionId = I.contradictionForDecision(this.#db, id);
+    if (contradictionId) I.resolveContradiction(this.#db, contradictionId, declined ? "dismissed" : "resolved", answer, by);
     this.#wake("decision answered");
   }
 
@@ -607,7 +636,28 @@ export class MatterStore extends DurableObject<Cloudflare.Env> {
 
   // ---- case knowledge --------------------------------------------------------------------------
 
-  async caseMap(): Promise<CaseMap> { return K.listMap(this.#db); }
+  async caseMap(): Promise<CaseMap> { return { ...K.listMap(this.#db), progress: L.knowledgeProgress(this.#db) }; }
+
+  async knowledgeStatus(): Promise<{ building: boolean; done: number; total: number; builtAt: string | null; note: string | null }> {
+    const p = L.knowledgeProgress(this.#db);
+    return {
+      building: this.#db.metaGet("knowledge_building") === "1", done: p?.done ?? 0, total: p?.total ?? 0,
+      builtAt: this.#db.metaGet("knowledge_built_at"), note: this.#db.metaGet("knowledge_note"),
+    };
+  }
+
+  /**
+   * The lane in flight, counted from the record: documents still reading, knowledge batches done,
+   * sections drafted. Null when nothing is in flight, so the status row never fakes a pulse.
+   */
+  #lane(record: { documents: number; reading: number }): LaneProgress | null {
+    if (record.reading > 0) return { kind: "reading", done: record.documents - record.reading, total: record.documents };
+    const build = L.knowledgeProgress(this.#db);
+    if (build && this.#db.metaGet("knowledge_building") === "1") return { kind: "knowledge", done: build.done, total: build.total };
+    const lane = L.laneProgress(this.#db);
+    if (lane) return { kind: "drafting", done: lane.drafted + lane.failed, total: lane.total };
+    return null;
+  }
   async addClaim(input: Parameters<typeof K.addClaim>[1], source: "firm" | "attorney"): Promise<{ id: string } | null> {
     const r = K.addClaim(this.#db, input, source);
     if (r) K.recomputeSalience(this.#db);
@@ -625,7 +675,21 @@ export class MatterStore extends DurableObject<Cloudflare.Env> {
     const meta = await this.#requireMeta();
     const spec = this.#spec(meta);
     // The client ask says what the FIRM's playbook says proves each criterion (firm-library.ts).
-    return computeReadiness(spec, K.readinessInputs(this.#db), now(), await firmGuidance(this.env, spec));
+    const guidance = await firmGuidance(this.env, spec);
+    const readiness = computeReadiness(spec, K.readinessInputs(this.#db), now(), guidance);
+    // Where the playbook says nothing, the gap audit's ask (when one ran) beats the catalog's purpose.
+    const gaps = I.listGaps(this.#db);
+    if (gaps.length === 0) return readiness;
+    const sections = readiness.sections.map(s => {
+      if (s.evidence === "sufficient" || guidance.has(s.key)) return s;
+      const asks = gaps.filter(g => g.key === s.key).slice(0, 2).map(g => `${s.title}: ${g.ask}`);
+      return asks.length ? { ...s, stillNeeded: asks } : s;
+    });
+    const stillNeeded = [...new Set([
+      ...sections.filter(s => s.evidence === "none").flatMap(s => s.stillNeeded),
+      ...sections.filter(s => s.evidence === "thin").flatMap(s => s.stillNeeded),
+    ])];
+    return { ...readiness, sections, stillNeeded };
   }
 
   async caseTypes(): Promise<CaseTypeSpec[]> { return CASE_TYPES; }
@@ -641,8 +705,37 @@ export class MatterStore extends DurableObject<Cloudflare.Env> {
 
   /** The consumer's hooks around a build. */
   async knowledgeBuildBegin(): Promise<void> { this.#db.metaSet("knowledge_building", "1"); K.clearForRebuild(this.#db); }
+
+  /**
+   * Plan a fanned-out build: clear the firm's claims, count the facts, and return one offset per
+   * batch of KNOWLEDGE_BATCH facts. A build already in flight is superseded (its late batches are
+   * ignored by id). Null when the matter is gone.
+   */
+  async knowledgeBuildPlan(): Promise<{ buildId: string; offsets: number[] } | null> {
+    if (!(await this.meta())) return null;
+    await this.knowledgeBuildBegin();
+    const n = this.#sql<{ n: number }>(`SELECT COUNT(*) AS n FROM facts f JOIN documents d ON d.id = f.document_id
+      WHERE d.status != 'superseded' AND d.relevance != 'excluded' AND f.confidence >= 0.3`)[0]?.n ?? 0;
+    const offsets = planBatches(n, KNOWLEDGE_BATCH);
+    const build = L.beginKnowledgeBuild(this.#db, offsets.length);
+    return { buildId: build.buildId, offsets };
+  }
+
+  /** One batch of the fanned-out build landed. The caller runs the finish when this says allDone. */
+  async knowledgeBatchDone(buildId: string, documents: string[], failure: string | null): Promise<{ current: boolean; allDone: boolean }> {
+    const r = L.knowledgeBatchDone(this.#db, buildId, documents, failure);
+    return { current: r.current, allDone: r.allDone };
+  }
+
+  /** What the finish needs: the documents every batch touched and the failures to report. */
+  async knowledgeBuildState(): Promise<{ documents: number; failures: string[]; batches: number; failed: number } | null> {
+    const b = L.currentBuild(this.#db);
+    return b ? { documents: b.documents.length, failures: b.failures, batches: b.total, failed: b.failed } : null;
+  }
+
   async knowledgeBuildEnd(fromDocuments: number, note: string | null): Promise<void> {
     K.reapplyOverrides(this.#db);
+    L.endKnowledgeBuild(this.#db);
     this.#db.metaSet("knowledge_building", "0");
     this.#db.metaSet("knowledge_built_at", now());
     this.#db.metaSet("knowledge_from_documents", String(fromDocuments));
@@ -651,6 +744,172 @@ export class MatterStore extends DurableObject<Cloudflare.Env> {
     this.#db.metaSet("knowledge_note", summary);
     this.#log("system", summary);
     this.#wake("knowledge built");
+  }
+
+  // ---- case intelligence (WP-5) ----------------------------------------------------------------
+  // Reads are deterministic over the tables; passes run in the background through knowledge.ts and
+  // report through their read (running, note). See intelligence.ts for the rules.
+
+  async chronology(): Promise<Chronology> { return buildChronology(await this.facts({ limit: 1000 }), now()); }
+
+  async contradictions(): Promise<Contradiction[]> { return I.listContradictions(this.#db); }
+
+  async resolveContradiction(id: string, outcome: "resolved" | "dismissed", note: string, by: string): Promise<void> {
+    I.resolveContradiction(this.#db, id, outcome, note, by);
+  }
+
+  async blastRadius(documentId: string): Promise<BlastRadius> {
+    const meta = await this.#requireMeta();
+    const row = this.#docRow(documentId);
+    if (!row) throw new Error("That document is not on the record.");
+    const facts = this.#sql<{ id: string; document_id: string }>("SELECT id, document_id FROM facts").map(r => ({ id: r.id, documentId: r.document_id }));
+    const live = new Set(this.#sql<{ id: string }>("SELECT id FROM documents WHERE status != 'superseded' AND relevance != 'excluded'").map(r => r.id));
+    const spec = this.#spec(meta);
+    const petition = P.petitionView(this.#db, spec, await this.#docsLite(), this.#factDocs(), new Map()).sections
+      .map(s => ({ key: s.key, title: s.title, status: s.status }));
+    return blastRadiusOf({ id: row.id as string, title: (row.display_title as string | null) ?? (row.filename as string) }, facts, K.listMap(this.#db).claims, live,
+      spec?.sections ?? [], petition);
+  }
+
+  async entityPath(fromId: string, toId: string): Promise<EntityPath> {
+    const m = K.listMap(this.#db);
+    return pathBetween(m.entities, m.claims, fromId, toId);
+  }
+
+  async review(kind: ReviewPair["kind"]): Promise<ReviewState> { return I.reviewState(this.#db, kind); }
+
+  /** Apply a verdict on a pair: a merge or a set-aside is a ledgered override the attorney can undo from the map. */
+  async decideReview(pairId: string, verdict: ReviewPair["verdict"], by: "firm" | "attorney", reason: string | null = null): Promise<void> {
+    const pair = I.pairRow(this.#db, pairId);
+    if (!pair) throw new Error("That pair is not under review.");
+    if (verdict === "pending") throw new Error("A verdict is merge, set_aside or keep.");
+    let overrideId: string | null = null;
+    if (pair.kind === "duplicate" && verdict === "merge") {
+      K.mergeEntities(this.#db, pair.aId, pair.bId, reason ?? pair.reason, by);
+      K.recomputeSalience(this.#db);
+      overrideId = I.latestOverrideId(this.#db);
+    } else if (pair.kind === "conflict" && verdict === "set_aside") {
+      K.setClaimRemoved(this.#db, pair.bId, true, by);
+      K.recomputeSalience(this.#db);
+      overrideId = I.latestOverrideId(this.#db);
+    } else if (verdict !== "keep") {
+      throw new Error(pair.kind === "duplicate" ? "Duplicates are merged or kept." : "Conflicts are set aside or kept.");
+    }
+    I.recordVerdict(this.#db, pairId, verdict, reason, by, overrideId);
+    if (verdict === "keep") this.#log(by === "attorney" ? "lawyer" : "agent", `Kept both: ${pair.aName.slice(0, 60)} and ${pair.bName.slice(0, 60)}.`);
+  }
+
+  async criteriaFindings(): Promise<CriteriaFindings> {
+    const s = I.runState(this.#db, "findings");
+    return { sections: I.listFindings(this.#db), assessedAt: s.at, running: s.running, note: s.note };
+  }
+
+  async gapAudit(): Promise<GapAudit> {
+    const s = I.runState(this.#db, "gaps");
+    return { items: I.listGaps(this.#db), auditedAt: s.at, running: s.running, note: s.note };
+  }
+
+  async grounding(): Promise<Grounding> {
+    const facts = this.#sql<{ id: string; confidence: number; verified_by: string | null }>("SELECT id, confidence, verified_by FROM facts")
+      .map(r => ({ id: r.id, confidence: r.confidence, verifiedBy: r.verified_by }));
+    return groundingOf(K.listMap(this.#db).claims, facts);
+  }
+
+  async inventory(): Promise<RecordInventory> {
+    return inventoryOf(this.#sql<{ id: string; doc_type: string | null; status: string }>("SELECT id, doc_type, status FROM documents")
+      .map(r => ({ id: r.id, docType: r.doc_type, status: r.status })));
+  }
+
+  async organizeProposal(): Promise<OrganizeProposal | null> { return I.readProposal(this.#db); }
+
+  /** The attorney applies the proposal: titles and exhibit numbers land on the record in one pass. */
+  async applyOrganization(actor: string): Promise<void> {
+    const p = I.readProposal(this.#db);
+    if (!p) throw new Error("There is no proposal to apply. Ask the firm to organize the record first.");
+    for (const t of p.titles) this.#sql("UPDATE documents SET display_title = ?, updated_at = ? WHERE id = ?", t.proposed, now(), t.documentId);
+    this.#sql("UPDATE documents SET exhibit_no = NULL");
+    for (const e of p.exhibitOrder) this.#sql("UPDATE documents SET exhibit_no = ? WHERE id = ?", e.exhibitNo, e.documentId);
+    I.writeProposal(this.#db, null);
+    this.#log(actor, `Organized the record: ${p.titles.length} documents retitled, ${p.exhibitOrder.length} exhibits numbered.`);
+  }
+
+  /** Start a pass in the background. Returns at once; the pass reports through its read. */
+  async runIntel(kind: IntelRun, actor: string): Promise<void> {
+    if (!I.runBegin(this.#db, kind)) return;
+    this.#log(actor, {
+      contradictions: "Asked the firm to check the record for contradictions.",
+      duplicate: "Asked the firm to review duplicate entities on the case map.",
+      conflict: "Asked the firm to review how the evidence is filed.",
+      findings: "Asked the firm to assess the criteria.",
+      gaps: "Asked the firm to audit the record for gaps.",
+      strategy: "Asked the firm to write the strategy memo.",
+      organize: "Asked the firm to organize the record.",
+    }[kind]);
+    this.ctx.waitUntil(intelPass(kind)(this.env, this).catch(err => {
+      I.runEnd(this.#db, kind, `The pass stopped early: ${err instanceof Error ? err.message : String(err)}.`);
+    }));
+  }
+
+  async intelRunning(): Promise<Record<IntelRun, boolean>> { return I.runningMap(this.#db); }
+
+  // The passes' side of the store (IntelStore).
+
+  async intelFactEntities(): Promise<Record<string, string[]>> {
+    const out: Record<string, string[]> = {};
+    for (const r of this.#sql<{ fact_id: string; name: string }>(
+      `SELECT cf.fact_id, e.name FROM claim_facts cf JOIN claim_entities ce ON ce.claim_id = cf.claim_id JOIN entities e ON e.id = ce.entity_id
+       JOIN claims c ON c.id = cf.claim_id WHERE c.removed = 0`)) {
+      (out[r.fact_id] ??= []).push(r.name);
+    }
+    return out;
+  }
+
+  /** New contradictions go on file; the serious ones become a question for the attorney, with the firm's recommendation first. */
+  async intelRecordContradictions(found: Contradiction[]): Promise<Contradiction[]> {
+    const fresh = I.recordContradictions(this.#db, found);
+    for (const c of fresh) {
+      if (c.severity !== "high") continue;
+      const { id } = D.raiseDecision(this.#db, {
+        question: `The record contradicts itself about ${c.subject}. Which version does the petition rely on?`,
+        options: [
+          c.recommendation ? `${c.recommendation}` : `Rely on "${c.a.documentTitle}"`,
+          ...(c.recommendation ? [`Rely on "${c.a.documentTitle}"`] : []),
+          `Rely on "${c.b.documentTitle}"`,
+          "Both stand; the petition notes the discrepancy",
+        ],
+        kind: "decision",
+        detail: `**${c.a.documentTitle}**${c.a.page ? ` (p. ${c.a.page})` : ""}: ${c.a.statement}\n\n> ${c.a.quote}\n\n**${c.b.documentTitle}**${c.b.page ? ` (p. ${c.b.page})` : ""}: ${c.b.statement}\n\n> ${c.b.quote}\n\n${c.explanation}`,
+        recommendation: c.recommendation,
+      });
+      I.attachDecision(this.#db, c.id, id);
+    }
+    if (fresh.length > 0) {
+      this.#log("agent", `Found ${fresh.length} contradiction${fresh.length === 1 ? "" : "s"} in the record.`);
+      this.#wake("contradiction found");
+    }
+    return fresh;
+  }
+
+  async intelReplaceCandidates(kind: ReviewPair["kind"], pairs: { aId: string; aName: string; bId: string; bName: string; reason: string }[]): Promise<ReviewPair[]> {
+    return I.replaceCandidates(this.#db, kind, pairs);
+  }
+  async intelReplaceFindings(findings: CriteriaFinding[]): Promise<void> { I.replaceFindings(this.#db, findings); }
+  async intelListFindings(): Promise<CriteriaFinding[]> { return I.listFindings(this.#db); }
+  async intelReplaceGaps(items: GapItem[]): Promise<void> { I.replaceGaps(this.#db, items); }
+  async intelListGaps(): Promise<GapItem[]> { return I.listGaps(this.#db); }
+  async intelWriteProposal(proposal: OrganizeProposal): Promise<void> { I.writeProposal(this.#db, proposal); }
+  async intelRunEnd(kind: IntelRun, note: string | null): Promise<void> {
+    I.runEnd(this.#db, kind, note);
+    this.#log("system", note ?? {
+      contradictions: "Checked the record for contradictions.",
+      duplicate: "Reviewed duplicate entities on the case map.",
+      conflict: "Reviewed how the evidence is filed.",
+      findings: "Assessed the criteria against the claims on file.",
+      gaps: "Audited the record for gaps.",
+      strategy: "Wrote the strategy memo on the desk.",
+      organize: "Proposed how to organize the record.",
+    }[kind]);
+    if (kind === "strategy" || kind === "findings") this.#wake(kind === "strategy" ? "strategy written" : "criteria assessed");
   }
 
   // ---- the petition ----------------------------------------------------------------------------
@@ -674,7 +933,9 @@ export class MatterStore extends DurableObject<Cloudflare.Env> {
     // The style guide's order when it defines one; the strongest criteria first, as the guide says.
     const rank = (key: string) => ({ sufficient: 0, thin: 1, none: 2 })[evidence.get(key) ?? "none"];
     const ordered = spec ? orderSections(spec, await firmSectionPlan(this.env, spec), rank) : undefined;
-    return P.petitionView(this.#db, spec, await this.#docsLite(), this.#factDocs(), evidence, ordered);
+    const view = P.petitionView(this.#db, spec, await this.#docsLite(), this.#factDocs(), evidence, ordered);
+    const lane = L.laneProgress(this.#db);
+    return { ...view, lane, writing: view.writing || lane !== null };
   }
 
   async section(key: string): Promise<PetitionSection | null> { return (await this.petition()).sections.find(s => s.key === key) ?? null; }
@@ -724,6 +985,119 @@ export class MatterStore extends DurableObject<Cloudflare.Env> {
   async pendingInstructions(): Promise<ReturnType<typeof P.pendingInstructions>> { return P.pendingInstructions(this.#db); }
   async resolveInstruction(id: string): Promise<void> { P.resolveInstruction(this.#db, id); }
 
+  // ---- the drafting lane (jobs.ts runs the jobs; see lanes.ts for what drafts and what holds) ---
+
+  /**
+   * Start the drafting lane: number the exhibits, hold what the gate did not clear (with the client
+   * ask), mark the cleared sections as drafting, and queue one job per section. Idempotent while a
+   * lane is in flight. The lawyer's desk and the counsel both start it here.
+   */
+  async draftAll(actor: string): Promise<{ laneId: string | null; sections: string[]; held: { key: string; reasons: string[] }[]; alreadyRunning: boolean }> {
+    const meta = await this.#requireMeta();
+    const spec = this.#spec(meta);
+    if (!spec) throw new Error("Set the case type before drafting; the letter's sections come from it.");
+    const active = L.activeLane(this.#db);
+    if (active) {
+      const lane = L.laneProgress(this.#db);
+      return { laneId: active, sections: [], held: [], alreadyRunning: lane !== null };
+    }
+    const readiness = await this.readiness();
+    const plan = clearedSections(spec.sections, readiness);
+    // Exhibits are numbered once for the whole letter, in the record's order, so every section
+    // cites the same numbers and the packet reads in one sequence.
+    const docs = (await this.#docsLite()).filter(d => d.live);
+    P.assignExhibits(this.#db, docs.map(d => d.id));
+    for (const h of plan.hold) P.holdSection(this.#db, h.key, h.reasons, this.#sectionTitle(meta, h.key));
+    if (plan.draft.length === 0) {
+      this.#log(actor, readiness.gate === "undecided"
+        ? "Nothing to draft: the case type is not set."
+        : `Nothing cleared for drafting: the gate says ${readiness.gate === "gather" ? "gather more evidence first" : "the record is too thin"}; ${plan.hold.length} section${plan.hold.length === 1 ? "" : "s"} held with the client ask.`);
+      return { laneId: null, sections: [], held: plan.hold, alreadyRunning: false };
+    }
+    for (const key of plan.draft) P.beginSection(this.#db, key);
+    const laneId = L.startLane(this.#db, plan.draft);
+    this.#log(actor, `Started drafting ${plan.draft.length} section${plan.draft.length === 1 ? "" : "s"}${plan.hold.length ? `; ${plan.hold.length} held pending the client's evidence` : ""}.`);
+    this.#db.metaDelete("rfe_cache");
+    const messages: IngestMessage[] = plan.draft.map(key => ({ type: "draft", matterId: meta.id, laneId, key }));
+    for (let i = 0; i < messages.length; i += 100) {
+      const part = messages.slice(i, i + 100);
+      if (part.length === 1) await this.env.INGEST_QUEUE.send(part[0]);
+      else await this.env.INGEST_QUEUE.sendBatch(part.map(body => ({ body })));
+    }
+    return { laneId, sections: plan.draft, held: plan.hold, alreadyRunning: false };
+  }
+
+  async draftingLane(): Promise<ReturnType<typeof L.laneProgress>> { return L.laneProgress(this.#db); }
+
+  /** Claim a drafting job and hand back everything the model needs; null when the lane moved on. */
+  async draftJobStart(laneId: string, key: string): Promise<{
+    attempts: number; caseType: string | null; petitionTitle: string; clientName: string;
+    section: { key: string; title: string; criterion: string; purpose: string; evidentiary: boolean };
+    guidance: string | null; playbookGuidance: string | null; directive: Petition["directive"];
+    claims: string[]; facts: { id: string; exhibitNo: number | null; documentTitle: string; page: number | null; statement: string; quote: string }[];
+  } | null> {
+    const claimed = L.jobStart(this.#db, laneId, key);
+    if (!claimed) return null;
+    const meta = await this.#requireMeta();
+    const spec = this.#spec(meta);
+    const section = spec?.sections.find(s => s.key === key);
+    if (!spec || !section) { L.jobDone(this.#db, laneId, key, false, `No section "${key}" in this petition.`); return null; }
+    const exhibitOf = new Map(this.#sql<{ id: string; exhibit_no: number }>("SELECT id, exhibit_no FROM documents WHERE exhibit_no IS NOT NULL").map(r => [r.id, r.exhibit_no]));
+    // Evidentiary sections draw on the claims tagged for them; framing sections see the whole
+    // record's strongest facts and every claim, so the introduction can promise what the letter delivers.
+    const claimRows = section.evidentiary
+      ? this.#sql<{ id: string; statement: string }>("SELECT id, statement FROM claims WHERE removed = 0 AND criteria LIKE ? ORDER BY created_at", `%"${key}"%`)
+      : this.#sql<{ id: string; statement: string }>("SELECT id, statement FROM claims WHERE removed = 0 ORDER BY created_at LIMIT 80");
+    const factIds = new Set<string>();
+    for (const c of claimRows) for (const r of this.#sql<{ fact_id: string }>("SELECT fact_id FROM claim_facts WHERE claim_id = ?", c.id)) factIds.add(r.fact_id);
+    let facts = factIds.size ? await this.factsByIds([...factIds]) : [];
+    if (!section.evidentiary || facts.length === 0) {
+      const top = await this.facts({ limit: 60, minConfidence: 0.5 });
+      const seen = new Set(facts.map(f => f.id));
+      facts = [...facts, ...top.filter(f => !seen.has(f.id))];
+    }
+    const guidance = await firmGuidance(this.env, spec);
+    const row = this.#sql<{ guidance: string | null }>("SELECT guidance FROM sections WHERE key = ?", key)[0];
+    return {
+      attempts: claimed.attempts, caseType: meta.caseType, petitionTitle: petitionTitleFor(spec.key), clientName: meta.clientName,
+      section: { key: section.key, title: section.title, criterion: section.criterion, purpose: section.purpose, evidentiary: section.evidentiary },
+      guidance: row?.guidance ?? null, playbookGuidance: guidance.get(key)?.guidance ?? null,
+      directive: JSON.parse(this.#db.metaGet("petition_directive") ?? "null") as Petition["directive"],
+      claims: claimRows.map(c => c.statement),
+      facts: facts.map(f => ({ id: f.id, exhibitNo: exhibitOf.get(f.documentId) ?? null, documentTitle: f.documentTitle, page: f.page, statement: f.statement, quote: f.quote })),
+    };
+  }
+
+  async draftJobPhase(laneId: string, key: string, phase: "verifying" | "reviewing"): Promise<void> { L.jobPhase(this.#db, laneId, key, phase); }
+
+  /** A job finished. A failed section goes back to not drafted with its reason on the record. */
+  async draftJobDone(laneId: string, key: string, ok: boolean, note: string | null): Promise<{ current: boolean; allDone: boolean }> {
+    const r = L.jobDone(this.#db, laneId, key, ok, note);
+    if (!ok) {
+      this.#sql("UPDATE sections SET status = 'not_drafted', updated_at = ? WHERE key = ? AND status = 'drafting'", now(), key);
+      if (note) this.#log("system", note);
+    }
+    return { current: r.current, allDone: r.allDone };
+  }
+
+  async draftedSections(): Promise<{ key: string; title: string; body: string }[]> {
+    const meta = await this.#requireMeta();
+    const titles = new Map(this.#spec(meta)?.sections.map(s => [s.key, s.title]) ?? []);
+    return this.#sql<{ key: string; body: string }>("SELECT key, body FROM sections WHERE status = 'drafted' AND body != ''")
+      .map(r => ({ key: r.key, title: titles.get(r.key) ?? r.key, body: r.body }));
+  }
+
+  /** The lane's last job landed: record the coherence pass, save a version, close the lane, wake. */
+  async draftingFinish(laneId: string, findings: Parameters<typeof P.recordCoherence>[1], note: string | null): Promise<void> {
+    const counter = L.laneCounter(this.#db, laneId);
+    P.recordCoherence(this.#db, findings);
+    if (counter.done - counter.failed > 0) P.saveVersion(this.#db, "drafted");
+    L.finishLane(this.#db, laneId);
+    const summary = draftingSummary(counter, findings.length);
+    this.#log("system", note ? `${summary} ${note}` : summary);
+    this.#wake(counter.failed === counter.total && counter.total > 0 ? "drafting stopped early" : "letter drafted");
+  }
+
   async exportLetter(): Promise<{ markdown: string; versionId: string }> {
     const meta = await this.#requireMeta();
     const markdown = letterMarkdown(this.#db, this.#spec(meta), meta.clientName, now().slice(0, 10));
@@ -737,11 +1111,65 @@ export class MatterStore extends DurableObject<Cloudflare.Env> {
     return simulateRfe(this.#db, this.env, this.#spec(meta), letterMarkdown(this.#db, this.#spec(meta), meta.clientName, now().slice(0, 10)));
   }
 
-  async forms(): Promise<GovernmentForm[]> { const meta = await this.#requireMeta(); return P.listForms(this.#db, this.#spec(meta)); }
-  async prepareForm(code: string, actor: string): Promise<void> { P.prepareForm(this.#db, code); this.#log(actor, `Opened form ${code}.`); if (actor === "lawyer") this.#wake("form requested"); }
-  async fillForm(code: string, values: Parameters<typeof P.fillForm>[2]): Promise<void> { P.fillForm(this.#db, code, values); this.#log("agent", `Filled ${values.length} field${values.length === 1 ? "" : "s"} on form ${code} from the evidence.`); }
-  async acceptFormField(code: string, name: string, value: string): Promise<void> { P.acceptFormField(this.#db, code, name, value); }
-  async approveForm(code: string): Promise<void> { P.approveForm(this.#db, code); this.#log("lawyer", `Approved form ${code} for the packet.`); }
+  // ---- government forms (store-forms.ts; the PDF work happens on the desk, see desk.ts) ---------
+
+  async forms(): Promise<GovernmentForm[]> { const meta = await this.#requireMeta(); return F.listForms(this.#db, this.#spec(meta)); }
+  async prepareForm(code: string, actor: string): Promise<void> {
+    const meta = await this.#requireMeta();
+    if (!this.#spec(meta)?.forms.some(f => f.code === code)) throw new Error(`Form ${code} is not part of this filing.`);
+    F.prepareForm(this.#db, code, prefillValues(code, { clientName: meta.clientName, caseType: meta.caseType }));
+    this.#log(actor, `Opened form ${code}.`);
+    if (actor === "lawyer") this.#wake("form requested");
+  }
+  async fillForm(code: string, values: Parameters<typeof F.fillForm>[2]): Promise<void> {
+    F.fillForm(this.#db, code, values);
+    this.#log("agent", `Filled ${values.length} field${values.length === 1 ? "" : "s"} on form ${code} from the evidence.`);
+  }
+  async acceptFormField(code: string, name: string, value: string): Promise<void> { F.acceptField(this.#db, code, name, value); }
+  async editFormField(code: string, name: string, value: string): Promise<void> {
+    F.acceptField(this.#db, code, name, value);
+    this.#log("lawyer", `Corrected "${name.replace(/_/g, " ")}" on form ${code}.`);
+  }
+  async askAboutFormField(code: string, name: string, question: string): Promise<void> {
+    F.askField(this.#db, code, name);
+    const label = name.replace(/_/g, " ");
+    D.raiseDecision(this.#db, {
+      question: `Form ${code}, "${label}": ${question.trim() || "the attorney asks the firm to check this value against the record."}`,
+      options: ["Refill it from the record and cite the source", "Leave it for the attorney to enter"],
+      kind: "decision", recommendation: "Refill it from the record and cite the source",
+    });
+    this.#log("lawyer", `Asked the firm about "${label}" on form ${code}.`);
+    this.#wake("form field questioned");
+  }
+  async rejectFormField(code: string, name: string, reason: string): Promise<void> {
+    F.rejectField(this.#db, code, name);
+    this.#log("lawyer", `Rejected the firm's value for "${name.replace(/_/g, " ")}" on form ${code}${reason.trim() ? `: ${reason.trim()}` : "."}`);
+    this.#wake("form field rejected");
+  }
+  async approveForm(code: string): Promise<void> { F.approveForm(this.#db, code); this.#log("lawyer", `Approved form ${code} for the packet.`); }
+  async formTemplate(code: string): Promise<F.TemplateRecord> { return F.templateRecord(this.#db, code); }
+  async setFormTemplate(code: string, t: Parameters<typeof F.setTemplate>[2]): Promise<void> {
+    F.setTemplate(this.#db, code, t);
+    this.#log("system", t.state === "ready"
+      ? `The official ${code} is on file: ${t.fields.length} fillable fields, ${Object.values(t.mapping).filter(Boolean).length} matched to the firm's values.`
+      : `Could not put the official ${code} on file: ${t.note}`);
+  }
+  async formRender(code: string): Promise<ReturnType<typeof F.renderRecord>> { return F.renderRecord(this.#db, code); }
+  async setFormRender(code: string, r2Key: string, flattened: boolean): Promise<string> { return F.setRender(this.#db, code, r2Key, flattened); }
+  async renderableFormValues(code: string): Promise<{ pdfField: string; value: string }[]> { return F.renderableValues(this.#db, code); }
+  async requestFormSignature(code: string, renderKey: string): Promise<{ id: string }> {
+    const r = F.requestSignature(this.#db, code, renderKey);
+    this.#log("lawyer", `Asked the client to sign form ${code} through the portal.`);
+    return r;
+  }
+  async signatureRender(id: string): Promise<ReturnType<typeof F.signatureRender>> { return F.signatureRender(this.#db, id); }
+  async signForm(id: string, signedName: string): Promise<void> {
+    const name = signedName.trim().slice(0, 200);
+    if (name.length < 3) throw new Error("Type your full legal name to sign.");
+    const { code } = F.signForm(this.#db, id, name);
+    this.#log("client", `Signed form ${code} as "${name}".`);
+    this.#wake("form signed");
+  }
 
   // ---- the client, messages, the portal, the docket ---------------------------------------------
 
@@ -794,11 +1222,18 @@ export class MatterStore extends DurableObject<Cloudflare.Env> {
     const docs = this.#sql("SELECT id, filename, display_title, doc_type, status FROM documents WHERE uploaded_by = 'client' AND status != 'superseded' ORDER BY uploaded_at DESC");
     const stillNeeded = readiness.stillNeeded.map(s => s.split(":")[0].trim());
     const requests = C.sentOutbound(this.#db);
+    const token = C.portalToken(this.#db, meta.clientName);
+    const formTitle = (code: string) => spec?.forms.find(f => f.code === code)?.title ?? code;
+    const signatures = token ? F.pendingSignatures(this.#db).map(s => ({
+      id: s.id, title: formTitle(s.code), requestedAt: s.requestedAt,
+      documentUrl: `${this.#portalUrl(meta.id, token)}/forms/${s.id}.pdf`,
+    })) : [];
     return {
+      signatures,
       clientFirstName: firstNameOf(meta.clientName),
       caseTypeTitle: spec?.title ?? null,
       attorney: null,
-      status: { line: portalStatusLine(o.statusLine.phase, spec?.title ?? null), needsClient: stillNeeded.length > 0 || requests.length > 0 },
+      status: { line: portalStatusLine(o.statusLine.phase, spec?.title ?? null), needsClient: stillNeeded.length > 0 || requests.length > 0 || signatures.length > 0 },
       requests: requests.map(r => ({ id: r.id, body: r.body, at: r.at })),
       stillNeeded,
       received: docs.map(d => {
@@ -811,4 +1246,196 @@ export class MatterStore extends DurableObject<Cloudflare.Env> {
   async deadlines(): Promise<Deadline[]> { return C.listDeadlines(this.#db, now().slice(0, 10)); }
   async addDeadline(input: Parameters<typeof C.addDeadline>[1], source: string): Promise<Deadline> { return C.addDeadline(this.#db, input, source, now().slice(0, 10)); }
   async markDeadlineMet(id: string, actor: string): Promise<void> { C.markDeadlineMet(this.#db, id, actor); }
+
+  // ---- WP-8: the firm's process on one matter ---------------------------------------------------
+  // Standing directives the counsel reads every turn, memory notes outside the record, and the
+  // ownership moves the firm's admins make (a hold when an owner is removed, a transfer on reassignment).
+
+  async listDirectives(): Promise<MatterDirective[]> { return D.listDirectives(this.#db); }
+  async addDirective(text: string, scope: MatterDirective["scope"] | undefined, by: string): Promise<MatterDirective> { return D.addDirective(this.#db, text, scope, by); }
+  async removeDirective(id: string, by: string): Promise<void> { D.removeDirective(this.#db, id, by); }
+  async listMemoryNotes(): Promise<MemoryNote[]> { return D.listMemoryNotes(this.#db); }
+  async addMemoryNote(text: string, by: MemoryNote["createdBy"]): Promise<MemoryNote> { return D.addMemoryNote(this.#db, text, by); }
+  async removeMemoryNote(id: string): Promise<void> { D.removeMemoryNote(this.#db, id); }
+
+  /** A removed owner's matter pauses with a visible hold; nothing is deleted. */
+  async placeHold(removedUserId: string, by: string): Promise<void> {
+    const meta = await this.meta();
+    if (!meta) return;
+    const next = ownershipTransition({ ownerUserId: meta.ownerUserId ?? removedUserId, hold: meta.hold ?? null }, { type: "remove_owner" });
+    this.#db.metaSet("matter", JSON.stringify({ ...meta, ownerUserId: next.ownerUserId, hold: next.hold, status: "paused" }));
+    this.#log("system", `${by} removed ${removedUserId} from the firm. ${holdLine(next) ?? "The matter is paused until it is reassigned."}`);
+  }
+
+  /** Reassignment: the new owner's account and name, the hold lifted, work resumed if it was held. */
+  async transferOwnership(toAccountId: string, toUserId: string, fromUserId: string | null, by: string): Promise<void> {
+    const meta = await this.#requireMeta();
+    const next = ownershipTransition({ ownerUserId: meta.ownerUserId ?? fromUserId, hold: meta.hold ?? null }, { type: "reassign", toUserId });
+    const resumed = meta.hold === "removed_owner";
+    this.#db.metaSet("matter", JSON.stringify({ ...meta, ownerAccountId: toAccountId, ownerUserId: next.ownerUserId, hold: null, status: resumed ? "open" : meta.status }));
+    this.#log("system", `${by} reassigned the matter${fromUserId ? ` from ${fromUserId}` : ""} to ${toUserId}.${resumed ? " The hold is lifted and the firm resumes." : ""} ${toUserId}'s playbook applies from the next run.`);
+  }
+
+  async processState(): Promise<{ hold: "removed_owner" | null; holdLine: string | null; ownerUserId: string | null }> {
+    const meta = await this.meta();
+    const state = { ownerUserId: meta?.ownerUserId ?? null, hold: meta?.hold ?? null };
+    return { ...state, holdLine: holdLine(state) };
+  }
+
+  /** Facts and documents on this matter mentioning the query; the desk ranks across matters. */
+  async searchRecord(query: string, limit: number): Promise<{ facts: Fact[]; documents: DocumentSummary[] }> {
+    const hits = await this.searchExact(query, limit);
+    const facts = hits.length ? await this.factsByIds(hits.map(h => h.id)) : [];
+    const terms = searchTerms(query);
+    const documents = (await this.listDocuments(false)).filter(d => {
+      const hay = `${d.displayTitle ?? ""} ${d.filename} ${d.docType ?? ""}`.toLowerCase();
+      return terms.some(t => hay.includes(t));
+    }).slice(0, limit);
+    return { facts, documents };
+  }
+
+  // ---- the filing (WP-6): packet, manifest, Word, recommenders, letters, deliverables ---------------
+
+  async recommenders(): Promise<Recommender[]> { return FL.listRecommenders(this.#db); }
+
+  async suggestRecommenders(): Promise<Recommender[]> {
+    const map = K.listMap(this.#db);
+    return FL.suggestRecommenders(this.#db, this.env, map.entities, name => this.facts({ mentions: name, limit: 6 }));
+  }
+
+  async addRecommender(input: FL.RecommenderInput, actor: "lawyer" | "agent"): Promise<Recommender> {
+    const r = FL.upsertRecommender(this.#db, input, actor === "lawyer" ? "attorney" : "firm", "confirmed");
+    this.#log(actor, `Added ${r.name} as a recommender.`);
+    return r;
+  }
+  async updateRecommender(id: string, patch: Parameters<typeof FL.updateRecommender>[2]): Promise<Recommender> { return FL.updateRecommender(this.#db, id, patch); }
+  async removeRecommender(id: string, actor: string): Promise<void> {
+    const r = FL.listRecommenders(this.#db).find(x => x.id === id);
+    FL.removeRecommender(this.#db, id);
+    if (r) this.#log(actor, `Removed ${r.name} from the recommenders.`);
+  }
+  async reconcileRecommenders(names: string[], actor: string): Promise<{ confirmed: number; added: number; declined: number }> {
+    const r = FL.reconcileRecommenders(this.#db, names);
+    this.#log(actor, `Settled the recommender list: ${r.confirmed} confirmed, ${r.added} added, ${r.declined} set aside.`);
+    return r;
+  }
+
+  async letters(): Promise<RecommendationLetter[]> { return FL.listLetters(this.#db); }
+  async writeLetter(recommenderId: string, body: string, citedFactIds: string[]): Promise<RecommendationLetter> {
+    if (!body.trim()) throw new Error("A letter needs a body.");
+    return FL.writeLetter(this.#db, recommenderId, body, citedFactIds);
+  }
+  async approveLetter(id: string): Promise<void> { FL.approveLetter(this.#db, id); }
+
+  /** Facts a recommender's letter can rest on: those naming them, then the strongest on the record. */
+  async #factsForLetter(name: string): Promise<Fact[]> {
+    const byName = await this.facts({ mentions: name, limit: 20 });
+    const last = name.trim().split(/\s+/).pop() ?? name;
+    const byLast = byName.length < 5 && last.length > 3 ? await this.facts({ mentions: last, limit: 20 }) : [];
+    const strongest = await this.facts({ minConfidence: 0.7, limit: 25 });
+    const seen = new Set<string>();
+    return [...byName, ...byLast, ...strongest].filter(f => !seen.has(f.id) && seen.add(f.id)).slice(0, 40);
+  }
+
+  async generateLetters(recommenderIds?: string[]): Promise<{ written: RecommendationLetter[]; failed: { recommenderId: string; reason: string }[] }> {
+    const meta = await this.#requireMeta();
+    const title = (await this.petition()).petitionTitle;
+    const targets = FL.listRecommenders(this.#db).filter(r => recommenderIds ? recommenderIds.includes(r.id) : r.status === "confirmed");
+    if (targets.length === 0) throw new Error("Confirm at least one recommender first.");
+    const written: RecommendationLetter[] = []; const failed: { recommenderId: string; reason: string }[] = [];
+    for (const r of targets) {
+      try { written.push(await FL.generateLetter(this.#db, this.env, r, meta.clientName, title, await this.#factsForLetter(r.name))); }
+      catch (error) { failed.push({ recommenderId: r.id, reason: error instanceof Error ? error.message : String(error) }); }
+    }
+    return { written, failed };
+  }
+
+  async #filingView(row: FL.FilingRow): Promise<Filing> {
+    const meta = await this.#requireMeta();
+    const { packetKey: _p, manifestKey: _m, docxKey, ...rest } = row;
+    return {
+      ...rest,
+      packetUrl: rest.packetSha256 ? await signArtifactUrl(this.env, meta.id, `filings/${row.versionId}/packet.pdf`) : "",
+      manifestUrl: rest.packetSha256 ? await signArtifactUrl(this.env, meta.id, `filings/${row.versionId}/manifest.json`) : "",
+      letterDocxUrl: docxKey ? await signArtifactUrl(this.env, meta.id, `filings/${row.versionId}/letter.docx`) : null,
+    };
+  }
+
+  async filings(): Promise<Filing[]> { return Promise.all(FL.listFilings(this.#db).map(r => this.#filingView(r))); }
+
+  /**
+   * Bind the packet: the letter as it stands, every approved form as an attachment note, every
+   * numbered live exhibit behind its tab, one signed manifest. Saves a petition version so the
+   * filing history carries the binder.
+   */
+  async buildPacket(actor: "lawyer" | "agent"): Promise<Filing> {
+    const meta = await this.#requireMeta();
+    const spec = this.#spec(meta);
+    const petition = await this.petition();
+    if (!petition.sections.some(s => s.status === "drafted" && s.body.trim())) throw new Error("Nothing is drafted yet. The packet needs the letter.");
+    const today = now().slice(0, 10);
+    const letter = letterMarkdown(this.#db, spec, meta.clientName, today);
+    const draft = shouldStampDraft(petition.sections);
+    const exhibits: PacketExhibit[] = []; const manifestExhibits: ManifestExhibit[] = [];
+    for (const ex of petition.exhibits) {
+      const info = await this.fileInfo(ex.documentId);
+      let bytes: Uint8Array | null = null;
+      if (info) { const obj = await this.env.MATTER_FILES.get(info.r2Key); if (obj) bytes = new Uint8Array(await obj.arrayBuffer()); }
+      exhibits.push({ exhibitNo: ex.exhibitNo, title: ex.title, filename: info?.filename ?? ex.title, mime: info?.mime ?? "application/octet-stream", bytes });
+      manifestExhibits.push({ exhibitNo: ex.exhibitNo, documentId: ex.documentId, filename: info?.filename ?? ex.title, sha256: bytes ? await sha256Hex(bytes) : "", bytes: bytes?.byteLength ?? 0 });
+    }
+    const forms = (await this.forms()).filter(f => f.status === "approved" || f.status === "signed");
+    const attachments = forms.map(f => ({ title: `Form ${f.code} - ${f.title}`, note: "Approved by the attorney. The filled form is rendered in the Government forms room and accompanies this binder." }));
+    const { id: versionId } = P.saveVersion(this.#db, "packet");
+    const result = await buildPacket({ petitionTitle: petition.petitionTitle, beneficiary: meta.clientName, date: today, letterMarkdown: letter, exhibits, attachments, draft });
+    const keys = await firmKeyPair(this.env);
+    const manifest: FilingManifest = {
+      format: "legal-os-filing-manifest/1", matterId: meta.id, versionId, at: now(), petitionTitle: petition.petitionTitle, beneficiary: meta.clientName,
+      letterSha256: await sha256Hex(letter), packetSha256: await sha256Hex(result.bytes), pages: result.pages, draft,
+      exhibits: manifestExhibits, forms: forms.map(f => f.code), publicKeyJwk: keys.publicKeyJwk,
+    };
+    const signed = await signManifest(manifest, keys.privateKeyJwk);
+    const packetKey = artifactKey(meta.id, `filings/${versionId}/packet.pdf`);
+    const manifestKey = artifactKey(meta.id, `filings/${versionId}/manifest.json`);
+    await this.env.MATTER_FILES.put(packetKey, result.bytes, { httpMetadata: { contentType: "application/pdf" } });
+    await this.env.MATTER_FILES.put(manifestKey, JSON.stringify({ manifest: signed.manifest, canonical: signed.canonical, signature: signed.signature, algorithm: signed.algorithm }, null, 2),
+      { httpMetadata: { contentType: "application/json" } });
+    const row: FL.FilingRow = {
+      versionId, at: manifest.at, pages: result.pages, exhibits: exhibits.length, forms: manifest.forms, draft, packetSha256: manifest.packetSha256,
+      packetKey, manifestKey, docxKey: null,
+    };
+    FL.recordFiling(this.#db, row);
+    this.#log(actor, `Bound the USCIS packet: ${result.pages} pages, ${exhibits.length} exhibit${exhibits.length === 1 ? "" : "s"}${forms.length ? `, ${forms.length} approved form${forms.length === 1 ? "" : "s"}` : ""}${draft ? ", stamped DRAFT while quotes await verification" : ""}.`);
+    return this.#filingView(row);
+  }
+
+  /** The letter as Word. Lands on the newest packet's version when one exists, else on a fresh export version. */
+  async exportWord(): Promise<{ url: string; versionId: string }> {
+    const meta = await this.#requireMeta();
+    const letter = letterMarkdown(this.#db, this.#spec(meta), meta.clientName, now().slice(0, 10));
+    const bytes = await markdownDocx(letter, `${meta.title} - petition letter`);
+    if (!bytes) throw new Error("Word export is unavailable on this deployment.");
+    const latest = FL.listFilings(this.#db)[0];
+    const versionId = latest?.versionId ?? P.saveVersion(this.#db, "exported").id;
+    const path = `filings/${versionId}/letter.docx`;
+    await this.env.MATTER_FILES.put(artifactKey(meta.id, path), bytes, { httpMetadata: { contentType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" } });
+    if (latest) FL.setFilingDocx(this.#db, versionId, artifactKey(meta.id, path));
+    else FL.recordFiling(this.#db, { versionId, at: now(), pages: 0, exhibits: 0, forms: [], draft: shouldStampDraft((await this.petition()).sections), packetSha256: "", packetKey: "", manifestKey: "", docxKey: artifactKey(meta.id, path) });
+    this.#log("lawyer", "Exported the letter as Word.");
+    return { url: await signArtifactUrl(this.env, meta.id, path), versionId };
+  }
+
+  async deliverables(): Promise<Deliverable[]> { return FL.listDeliverables(this.#db); }
+
+  async deliverableWord(path: string): Promise<{ url: string }> {
+    const meta = await this.#requireMeta();
+    const file = D.deskRead(this.#db, path);
+    if (!file || !path.startsWith("deliverables/")) throw new Error("That document is not on the desk.");
+    const bytes = await markdownDocx(file.content, FL.deliverableTitle(path));
+    if (!bytes) throw new Error("Word export is unavailable on this deployment.");
+    const stem = FL.deliverableTitle(path).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60) || "document";
+    const artifact = `exports/${stem}-${(await sha256Hex(file.content)).slice(0, 8)}.docx`;
+    await this.env.MATTER_FILES.put(artifactKey(meta.id, artifact), bytes, { httpMetadata: { contentType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" } });
+    return { url: await signArtifactUrl(this.env, meta.id, artifact) };
+  }
 }

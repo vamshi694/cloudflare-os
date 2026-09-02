@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
 import type { RpcStub } from 'capnweb'
-import type { MatterDesk } from '@gadgets/workshop-shared/legal'
+import type { MatterDesk, NeedsYouItem } from '@gadgets/workshop-shared/legal'
 import { useAuthenticatedApi } from '../../AuthContext'
 import { logRpcFailure } from '../../rpcErrors'
 import { useWorkspaceOpen } from '../../useWorkspaceOpen'
@@ -8,6 +8,7 @@ import ChatInterface, { type LegalChatMode } from '../../ChatInterface'
 import ObserverConfigModal from '../../ObserverConfigModal'
 import { Notice, StatusDot } from './primitives'
 import { CaseGlance } from './case-glance'
+import { NeedsYou } from './needs-you'
 import { CONVERSATION_SUGGESTIONS } from './labels'
 
 /** After this long, "Opening…" must admit it is taking longer than usual. */
@@ -27,11 +28,18 @@ type OpenState = { kind: 'opening'; slow: boolean } | { kind: 'failed' } | { kin
 export function ConversationTab({
   matterId,
   desk,
+  needsYou = [],
+  onNeedsYouChanged,
   onOpenPetition,
+  onOpenDocuments,
 }: {
   matterId: string
   desk: RpcStub<MatterDesk>
+  /** What waits on the attorney; rendered in the thread, above the composer (the brief's approval cards). */
+  needsYou?: NeedsYouItem[]
+  onNeedsYouChanged?: () => void
   onOpenPetition: () => void
+  onOpenDocuments?: () => void
 }) {
   const { authenticatedApi } = useAuthenticatedApi()
   const [state, setState] = useState<OpenState>({ kind: 'opening', slow: false })
@@ -92,7 +100,15 @@ export function ConversationTab({
             </button>
           </div>
         )}
-        {state.kind === 'ready' && <EmbeddedChat workspaceId={state.workspaceId} desk={desk} />}
+        {state.kind === 'ready' && (
+          <EmbeddedChat
+            workspaceId={state.workspaceId}
+            desk={desk}
+            cards={needsYou.length > 0 ? (
+              <NeedsYou desk={desk} items={needsYou} onChanged={onNeedsYouChanged ?? (() => {})} onOpenDocuments={onOpenDocuments ?? (() => {})} />
+            ) : null}
+          />
+        )}
       </div>
       <aside className="hidden w-[360px] shrink-0 xl:block">
         <CaseGlance desk={desk} onOpenPetition={onOpenPetition} />
@@ -138,7 +154,7 @@ async function putOnRecord(desk: RpcStub<MatterDesk>, file: File): Promise<{ id:
   }
 }
 
-function EmbeddedChat({ workspaceId, desk }: { workspaceId: string; desk: RpcStub<MatterDesk> }) {
+function EmbeddedChat({ workspaceId, desk, cards }: { workspaceId: string; desk: RpcStub<MatterDesk>; cards?: ReactNode }) {
   const { authenticatedApi } = useAuthenticatedApi()
   const [selectedChatId, setSelectedChatId] = useState<number | null>(() => readChatFromUrl())
   const [chatCount, setChatCount] = useState<number | null>(null)
@@ -246,10 +262,13 @@ function EmbeddedChat({ workspaceId, desk }: { workspaceId: string; desk: RpcStu
           </div>
         </div>
       )}
+      {/* APPROVALS LIVE IN THE CONVERSATION: when the counsel needs the lawyer, the ask sits here,
+          above the composer, as the same cards the matter shows above its tabs elsewhere. */}
+      {cards && <div className="rise">{cards}</div>}
       <div
         data-matter-chat
         className="relative flex min-h-[520px] flex-col overflow-hidden rounded-[14px] border border-kumo-line bg-kumo-base"
-        style={{ height: 'calc(100vh - 380px)' }}
+        style={{ height: cards ? 'calc(100vh - 520px)' : 'calc(100vh - 380px)' }}
       >
         <ChatInterface
           key={workspaceId}

@@ -20,17 +20,21 @@ import type {
   ActivityEntry, CaseClaim, CaseEntity, Deadline, Decision, DeskFile, DocumentSummary, DocumentText, Fact, FactFilter,
   MatterClient, MatterDecisions, MatterDesk, MatterDocket, MatterEvidence, MatterFiles, MatterForms, MatterKnowledge,
   MatterOverview, MatterPetition, MatterSession, PetitionSectionState, Readiness, SearchHit, TextHit,
+  MatterDirective, MatterDirectives, MatterMemory, MemoryNote,
 } from "./types.js";
 import { CASE_TYPES } from "./case-types.js";
 import TYPES_CODE from "./types.txt";
 import { MatterStore, type MatterMeta } from "./store.js";
 import { normalizePath, parseMatterUrl } from "./pure.js";
 import { MatterConfiguratorUI } from "./configurator.js";
-import { LegalDeskImpl } from "./desk.js";
+import { LegalDeskImpl, fetchTemplateOnto } from "./desk.js";
 import type { LegalDesk } from "@gadgets/workshop-shared/legal";
 import MATTER_CONFIGURATOR_HTML from "./generated/matter-configurator-ui.txt";
 import type { FirmMattersSession } from "./types.js";
 import type { FirmAdminApi } from "./firm-index.js";
+import type { LetterState, MatterIntelligence, MatterRecommenders, RecommenderState } from "./types.js";
+import { IntelligenceImpl } from "./intel-session.js";
+import type { RecommendationLetter, Recommender } from "@gadgets/workshop-shared/legal";
 
 export const MATTER_ICON = {
   url: "data:image/svg+xml," + encodeURIComponent(
@@ -138,6 +142,18 @@ export class MatterAccount extends DurableObject<Cloudflare.Env> {
   async removeMatter(matterId: string): Promise<void> {
     this.ctx.storage.sql.exec("DELETE FROM matters WHERE id = ?", matterId);
     await this.ctx.exports.FirmIndex.getByName("").remove(matterId).catch(() => {});
+  }
+
+  // WP-8: reassignment moves a matter between two lawyers' indexes; the registry row is the
+  // admin's, so these two touch only this account's list.
+  async adoptMatter(entry: MatterIndexEntry): Promise<void> {
+    this.ctx.storage.sql.exec(
+      "INSERT INTO matters(id, title, case_type, client_name, created_at) VALUES(?, ?, ?, ?, ?) ON CONFLICT(id) DO NOTHING",
+      entry.id, entry.title, entry.caseType, entry.clientName, entry.createdAt);
+  }
+
+  async forgetMatter(matterId: string): Promise<void> {
+    this.ctx.storage.sql.exec("DELETE FROM matters WHERE id = ?", matterId);
   }
 
   /**
@@ -481,6 +497,10 @@ class KnowledgeImpl extends RpcTarget implements MatterKnowledge {
     await this.store.requestRebuild("agent");
     await observe(this.q, "Rebuild the case knowledge", "Queued a rebuild from every fact on the record.");
   }
+  // WP-9: where the fanned-out build stands, so the counsel reads progress instead of rebuilding.
+  async buildStatus(): Promise<{ building: boolean; done: number; total: number; builtAt: string | null; note: string | null }> {
+    return this.store.knowledgeStatus();
+  }
   async caseTypes(): Promise<Awaited<ReturnType<MatterKnowledge["caseTypes"]>>> {
     await observe(this.q, "Read the case type catalog", `${CASE_TYPES.length} case types.`);
     return CASE_TYPES.map(c => ({ key: c.key, title: c.title, required: c.required, sections: c.sections }));
@@ -535,10 +555,28 @@ class PetitionImpl extends RpcTarget implements MatterPetition {
     await this.store.recordCoherence(findings);
     await observe(this.q, "Record the cross-section review", `${findings.length} findings.`);
   }
+  async buildPacket(): Promise<{ versionId: string; pages: number; draft: boolean; exhibits: number }> {
+    const f = await this.store.buildPacket("agent");
+    await observe(this.q, "Bind the USCIS packet", `Bound version ${f.versionId}: ${f.pages} pages, ${f.exhibits} exhibits${f.draft ? ", stamped DRAFT" : ""}.`);
+    return { versionId: f.versionId, pages: f.pages, draft: f.draft, exhibits: f.exhibits };
+  }
+
   async saveVersion(reason: string): Promise<{ id: string }> {
     const r = await this.store.savePetitionVersion(reason);
     await observe(this.q, "Save a letter version", reason);
     return r;
+  }
+
+  // WP-9: the drafting lane. The whole letter as queue jobs; the counsel is woken when it lands.
+  async draftAll(): Promise<{ laneId: string | null; sections: string[]; held: { key: string; reasons: string[] }[]; alreadyRunning: boolean }> {
+    const r = await this.store.draftAll("agent");
+    await observe(this.q, "Draft the letter", r.alreadyRunning
+      ? "A drafting lane is already running; nothing new was started."
+      : r.sections.length ? `Started drafting ${r.sections.length} sections; ${r.held.length} held.` : "Nothing cleared for drafting.");
+    return r;
+  }
+  async lane(): Promise<{ id: string; total: number; drafted: number; failed: number; inFlight: number; startedAt: string } | null> {
+    return this.store.draftingLane();
   }
   async instructions(): Promise<{ id: string; key: string | null; instruction: string; at: string }[]> {
     const rows = await this.store.pendingInstructions();
@@ -553,7 +591,24 @@ class PetitionImpl extends RpcTarget implements MatterPetition {
 
 @validateRpc()
 class FormsImpl extends RpcTarget implements MatterForms {
-  constructor(private readonly q: ObservationQueue, private readonly store: DurableObjectStub<MatterStore>) { super(); }
+  constructor(private readonly q: ObservationQueue, private readonly store: DurableObjectStub<MatterStore>,
+              private readonly env?: Cloudflare.Env) { super(); }
+
+  // ── WP-7: the official PDF and the attorney's rulings ──
+  async fetchTemplate(code: string): Promise<{ state: "ready" | "failed"; note: string | null; fillable: number; unmapped: string[] }> {
+    if (!this.env) throw new Error("The official form cannot be fetched from this session.");
+    await fetchTemplateOnto(this.env, this.store, code);
+    const t = await this.store.formTemplate(code);
+    await observe(this.q, "Fetch the official form", `${code}: ${t.state === "ready" ? `${t.fields.length} fillable fields` : t.note}`);
+    return { state: t.state === "ready" ? "ready" : "failed", note: t.note, fillable: t.fields.filter(f => f.type === "text").length, unmapped: t.unmapped };
+  }
+  async rulings(code: string): Promise<{ name: string; label: string; review: "proposed" | "accepted" | "asked" | "rejected"; value: string | null }[]> {
+    const form = (await this.store.forms()).find(f => f.code === code);
+    if (!form) throw new Error(`Form ${code} is not part of this filing.`);
+    await observe(this.q, "Read the attorney's rulings on a form", `${code}: ${form.fields.filter(f => f.review !== "proposed").length} rulings.`);
+    return form.fields.map(f => ({ name: f.name, label: f.label, review: f.review, value: f.value }));
+  }
+  // ── end WP-7 ──
 
   async list(): Promise<Awaited<ReturnType<MatterForms["list"]>>> {
     const forms = await this.store.forms();
@@ -614,6 +669,54 @@ class ClientImpl extends RpcTarget implements MatterClient {
   }
 }
 
+function recommenderState(r: Recommender): RecommenderState {
+  return { id: r.id, name: r.name, title: r.title, organization: r.organization, relationship: r.relationship, basis: r.basis, status: r.status };
+}
+
+function letterState(l: RecommendationLetter): LetterState {
+  return {
+    id: l.id, recommenderId: l.recommenderId, recommenderName: l.recommenderName, body: l.body, version: l.version,
+    status: l.status, unverifiedQuotes: l.unverifiedQuotes.map(u => ({ quote: u.quote, reason: u.reason })),
+  };
+}
+
+/** Recommenders and their letters, for the agent (WP-6 wiring). */
+@validateRpc()
+class RecommendersImpl extends RpcTarget implements MatterRecommenders {
+  constructor(private readonly q: ObservationQueue, private readonly store: DurableObjectStub<MatterStore>) { super(); }
+
+  async list(): Promise<RecommenderState[]> {
+    const rows = await this.store.recommenders();
+    await observe(this.q, "Read the recommenders", `${rows.length} recommenders on file.`);
+    return rows.map(recommenderState);
+  }
+  async suggest(): Promise<RecommenderState[]> {
+    const rows = await this.store.suggestRecommenders();
+    await observe(this.q, "Suggest recommenders", `Proposed ${rows.length} recommenders from the record.`);
+    return rows.map(recommenderState);
+  }
+  async add(input: { name: string; title?: string; organization?: string; relationship?: string; basis?: string }): Promise<RecommenderState> {
+    if (!input.name?.trim()) throw new Error("A recommender needs a name.");
+    const r = await this.store.addRecommender({
+      name: input.name.trim(), title: input.title ?? null, organization: input.organization ?? null,
+      relationship: input.relationship ?? null, basis: input.basis ?? null,
+    }, "agent");
+    await observe(this.q, "Add a recommender", `Added ${r.name}.`);
+    return recommenderState(r);
+  }
+  async writeLetter(recommenderId: string, body: string, citedFactIds: string[]): Promise<LetterState> {
+    if (!body.trim()) throw new Error("A letter needs a body.");
+    const l = await this.store.writeLetter(recommenderId, body, citedFactIds);
+    await observe(this.q, "Write a recommendation letter", `Landed a letter for ${l.recommenderName} (${l.unverifiedQuotes.length} unverified quotes).`);
+    return letterState(l);
+  }
+  async letters(): Promise<LetterState[]> {
+    const rows = await this.store.letters();
+    await observe(this.q, "Read the letters", `${rows.length} letters on file.`);
+    return rows.map(letterState);
+  }
+}
+
 @validateRpc()
 export class MatterSessionImpl extends RpcTarget implements MatterSession {
   readonly #files: FilesImpl;
@@ -636,7 +739,7 @@ export class MatterSessionImpl extends RpcTarget implements MatterSession {
     this.#decisions = new DecisionsImpl(q, store);
     this.#knowledge = new KnowledgeImpl(q, store);
     this.#petition = new PetitionImpl(q, store);
-    this.#forms = new FormsImpl(q, store);
+    this.#forms = new FormsImpl(q, store, env);
     this.#docket = new DocketImpl(q, store);
     this.#client = new ClientImpl(q, store);
   }
@@ -660,6 +763,13 @@ export class MatterSessionImpl extends RpcTarget implements MatterSession {
   async forms(): Promise<MatterForms> { return this.#forms; }
   async docket(): Promise<MatterDocket> { return this.#docket; }
   async client(): Promise<MatterClient> { return this.#client; }
+
+  // WP-8: standing directives and memory, reached like files().
+  async directives(): Promise<MatterDirectives> { return new DirectivesImpl(this.q, this.store); }
+  async memory(): Promise<MatterMemory> { return new MemoryImpl(this.q, this.store); }
+  // WP-6 and WP-5: recommenders and the case intelligence.
+  async recommenders(): Promise<MatterRecommenders> { return new RecommendersImpl(this.q, this.store); }
+  async intelligence(): Promise<MatterIntelligence> { return new IntelligenceImpl(this.q, this.store); }
 
   async proposePlan(summary: string): Promise<{ id: string }> {
     const r = await this.store.proposePlan(summary.trim());
@@ -693,6 +803,39 @@ export class MatterSessionImpl extends RpcTarget implements MatterSession {
   }
 
   [Symbol.dispose](): void { this.q[Symbol.dispose]?.(); }
+}
+
+// ---- WP-8: directives and memory, the agent's side ---------------------------------------------
+
+@validateRpc()
+export class DirectivesImpl extends RpcTarget implements MatterDirectives {
+  constructor(private readonly q: ObservationQueue, private readonly store: DurableObjectStub<MatterStore>) { super(); }
+
+  async list(): Promise<MatterDirective[]> {
+    const rows = await this.store.listDirectives();
+    await observe(this.q, "Read the standing directives", `Read ${rows.length} directives.`);
+    return rows;
+  }
+}
+
+@validateRpc()
+export class MemoryImpl extends RpcTarget implements MatterMemory {
+  constructor(private readonly q: ObservationQueue, private readonly store: DurableObjectStub<MatterStore>) { super(); }
+
+  async list(): Promise<MemoryNote[]> {
+    const rows = await this.store.listMemoryNotes();
+    await observe(this.q, "Read the matter notes", `Read ${rows.length} notes.`);
+    return rows;
+  }
+  async add(text: string): Promise<{ id: string }> {
+    const note = await this.store.addMemoryNote(text, "agent");
+    await observe(this.q, "Keep a note", note.text.slice(0, 160));
+    return { id: note.id };
+  }
+  async remove(id: string): Promise<void> {
+    await this.store.removeMemoryNote(id);
+    await observe(this.q, "Drop a note", `Dropped note ${id}.`);
+  }
 }
 
 export type { MatterMeta };

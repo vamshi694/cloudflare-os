@@ -65,6 +65,8 @@ export type CaseMap = {
   fromDocuments: number;
   /** What the last build reported, in plain words: what it built, or why it stopped early. */
   note: string | null;
+  /** While building: batches of facts done against the total, so the map can say "3 of 8". */
+  progress: { total: number; done: number } | null;
 };
 
 // ── Case type, criteria, readiness ──────────────────────────────────────────────────────────────
@@ -180,6 +182,8 @@ export type Petition = {
   versions: PetitionVersion[];
   /** True while any section is being drafted or redrafted. */
   writing: boolean;
+  /** The drafting lane in flight, or null. Progress the workbench and the status row narrate. */
+  lane: DraftingLane | null;
 };
 
 export type FormFieldValue = {
@@ -189,6 +193,14 @@ export type FormFieldValue = {
   /** The fact the value came from, when the firm filled it. */
   sourceFactId: string | null;
   acceptedBy: "attorney" | null;
+  /**
+   * proposed: the firm filled it and the attorney has not ruled. accepted: the attorney accepted
+   * or entered it. asked: the attorney asked the firm about it (a decision is open). rejected:
+   * the attorney rejected the value; it is blank on the form until refilled.
+   */
+  review: "proposed" | "accepted" | "asked" | "rejected";
+  /** The official PDF field this value lands in, once the template is on file; null when unmapped. */
+  pdfField: string | null;
 };
 
 export type GovernmentForm = {
@@ -199,6 +211,26 @@ export type GovernmentForm = {
   fields: FormFieldValue[];
   filled: number;
   accepted: number;
+  /**
+   * The official USCIS PDF: none until fetched; ready with its fillable fields discovered;
+   * failed with the reason in words (the site did not answer, or the PDF is an XFA form pdf
+   * tooling cannot fill).
+   */
+  template: { state: "none" | "ready" | "failed"; note: string | null; fetchedAt: string | null; fillable: number; unmapped: string[] };
+  /** When a filled PDF was last rendered, so the preview can say whether it is current. */
+  renderedAt: string | null;
+  /** The client's signature on the filled form, requested through the portal. */
+  signature: { state: "none" | "requested" | "signed"; requestedAt: string | null; signedAt: string | null; signedName: string | null };
+};
+
+/** A form waiting for the client's signature in the portal. */
+export type PortalSignatureRequest = {
+  id: string;
+  /** The form's human title, never a code alone. */
+  title: string;
+  requestedAt: string;
+  /** The filled form to review before signing, as a PDF the portal can frame. */
+  documentUrl: string;
 };
 
 // ── The docket ──────────────────────────────────────────────────────────────────────────────────
@@ -250,6 +282,8 @@ export type PortalView = {
   requests: { id: string; body: string; at: string }[];
   stillNeeded: string[];
   received: { id: string; name: string; state: "reading" | "trouble" | "read"; label: string | null }[];
+  /** Forms the client is asked to sign; empty when none. */
+  signatures: PortalSignatureRequest[];
 };
 
 // ── Needs-you, phase, the brief ─────────────────────────────────────────────────────────────────
@@ -269,12 +303,28 @@ export type MatterPhase =
   | "reading" | "not_understood" | "knowledge" | "analysis" | "clearance"
   | "building" | "review" | "idle" | "paused";
 
+/** One of the heavy lanes in flight, counted from the record so the status row never fakes progress. */
+export type LaneProgress = { kind: "reading" | "knowledge" | "drafting"; done: number; total: number };
+
 export type MatterStatusLine = {
   phase: MatterPhase;
   /** What the firm is doing right now, in one sentence, or null when idle. */
   narrative: string | null;
   working: boolean;
   nextDeadline: Deadline | null;
+  /** The lane in flight (reading, building the case knowledge, drafting), or null when none is. */
+  lane: LaneProgress | null;
+};
+
+/** The drafting lane: one queue job per cleared section, then the coherence pass. */
+export type DraftingLane = {
+  id: string;
+  total: number;
+  drafted: number;
+  failed: number;
+  /** Sections still being drafted, verified or reviewed. */
+  inFlight: number;
+  startedAt: string;
 };
 
 export type BriefRow = {
@@ -314,4 +364,254 @@ export type PlaybookChange = {
   kind: "create" | "evolve" | "learn";
   summary: string;
   by: string;
+};
+
+// ── Case intelligence (WP-5): what the firm reasons out of the knowledge ─────────────────────────
+
+export type ChronologyEntry = {
+  factId: string;
+  documentId: string;
+  documentTitle: string;
+  page: number | null;
+  /** The date as the document states it. */
+  when: string;
+  year: number | null;
+  /** Sort key YYYY-MM-DD with unknown parts filled low, so entries order within a year. */
+  sortKey: string;
+  /** Inferred, vague, a season, or a range: the reader could not pin the date. */
+  ambiguous: boolean;
+  statement: string;
+  quote: string;
+  significance: string | null;
+};
+
+export type Chronology = {
+  years: { year: number | null; entries: ChronologyEntry[] }[];
+  dated: number;
+  undated: number;
+  computedAt: string;
+};
+
+export type ContradictionSide = { factId: string; statement: string; quote: string; documentId: string; documentTitle: string; page: number | null };
+
+export type Contradiction = {
+  id: string;
+  kind: "date" | "number" | "statement";
+  /** Who or what the two sides disagree about. */
+  subject: string;
+  a: ContradictionSide;
+  b: ContradictionSide;
+  explanation: string;
+  /** Which side the firm would rely on and why, in one sentence; null when it cannot say. */
+  recommendation: string | null;
+  severity: "high" | "medium" | "low";
+  status: "open" | "resolved" | "dismissed";
+  resolution: string | null;
+  foundAt: string;
+};
+
+export type BlastRadius = {
+  documentId: string;
+  documentTitle: string;
+  facts: number;
+  claims: { id: string; statement: string; criteria: string[]; /** true when no other live document also grounds it */ onlyHere: boolean }[];
+  sections: { key: string; title: string }[];
+  petitionSections: { key: string; title: string; status: "not_drafted" | "held" | "drafting" | "drafted" }[];
+};
+
+export type EntityPath = {
+  found: boolean;
+  /** From the first entity to the second: each hop is the claim that joins the previous entity to this one. */
+  hops: { entityId: string; entityName: string; claimId: string | null; claimStatement: string | null }[];
+};
+
+/** A pair the firm must rule on: two entities that may be one, or two claims that disagree. */
+export type ReviewPair = {
+  id: string;
+  kind: "duplicate" | "conflict";
+  aId: string;
+  aName: string;
+  bId: string;
+  bName: string;
+  reason: string;
+  /** merge (duplicates), set_aside (conflicts: b leaves the case), keep (both stand), pending. */
+  verdict: "merge" | "set_aside" | "keep" | "pending";
+  decidedBy: "firm" | "attorney" | null;
+  /** The ledger entry the verdict produced, so the attorney can undo it from the map. */
+  overrideId: string | null;
+};
+
+export type ReviewState = {
+  kind: "duplicate" | "conflict";
+  status: "never" | "running" | "done";
+  pairs: ReviewPair[];
+  finishedAt: string | null;
+  note: string | null;
+};
+
+export type CriteriaFinding = {
+  key: string;
+  title: string;
+  verdict: "strong" | "arguable" | "weak" | "absent";
+  strongest: { claimId: string; statement: string }[];
+  /** What an officer would seize on, each in one sentence. */
+  officerWouldSeize: string[];
+  note: string;
+};
+
+export type CriteriaFindings = {
+  sections: CriteriaFinding[];
+  assessedAt: string | null;
+  running: boolean;
+  note: string | null;
+};
+
+export type GapItem = {
+  id: string;
+  key: string;
+  title: string;
+  /** 1 = blocks the filing, 2 = weakens it, 3 = nice to have. */
+  priority: 1 | 2 | 3;
+  missing: string;
+  /** What to ask the client for, in the client's language. */
+  ask: string;
+};
+
+export type GapAudit = { items: GapItem[]; auditedAt: string | null; running: boolean; note: string | null };
+
+export type Grounding = {
+  /** 0 to 1: the share of live claims resting on a confident fact. */
+  score: number;
+  claims: number;
+  grounded: number;
+  /** Claims with at least one fact the attorney verified. */
+  verified: number;
+};
+
+export type RecordInventory = {
+  kinds: { docType: string | null; label: string; count: number; documentIds: string[] }[];
+  documents: number;
+  unread: number;
+};
+
+export type OrganizeProposal = {
+  titles: { documentId: string; current: string | null; proposed: string }[];
+  exhibitOrder: { documentId: string; title: string; exhibitNo: number; firstSection: string | null }[];
+  proposedAt: string;
+  note: string | null;
+};
+
+export type IntelRun = "contradictions" | "duplicate" | "conflict" | "findings" | "gaps" | "strategy" | "organize";
+
+// ── The firm's process (WP-8): the inbox, search, directives, memory, holds, lane models ────────
+
+/** One item waiting on the lawyer, from any matter on their desk. */
+export type InboxItem = NeedsYouItem & { matterId: string; matterTitle: string; caseType: string | null };
+
+/**
+ * The firm-wide inbox. `unreachable` names the matters whose queue could not be read, so an empty
+ * list never claims "nothing needs you" when a fetch failed.
+ */
+export type FirmInbox = {
+  items: InboxItem[];
+  unreachable: { matterId: string; matterTitle: string }[];
+  readAt: string;
+};
+
+/** A hit in a search across the lawyer's matters. */
+export type SearchResult = {
+  kind: "fact" | "document";
+  matterId: string;
+  matterTitle: string;
+  /** The document title for a document, the fact's statement for a fact. */
+  title: string;
+  /** The verbatim quote for a fact, the document's type and status for a document. */
+  snippet: string;
+  documentId: string;
+  page: number | null;
+  score: number;
+};
+
+/** A standing instruction the attorney gave for the whole matter; the counsel reads them every turn. */
+export type MatterDirective = {
+  id: string;
+  text: string;
+  /** What it governs: "matter" (everything), "drafting", "client", "evidence". */
+  scope: "matter" | "drafting" | "client" | "evidence";
+  createdAt: string;
+  createdBy: string;
+};
+
+/** A note the counsel or the attorney kept for this matter, outside the record. */
+export type MemoryNote = {
+  id: string;
+  text: string;
+  createdAt: string;
+  createdBy: "agent" | "lawyer";
+};
+
+/** The models each lane runs on; null means the worker's configured default. */
+export type LaneModels = {
+  reader: string | null;
+  knowledge: string | null;
+  drafting: string | null;
+  critic: string | null;
+};
+
+// ── The filing (WP-6): the packet, its manifest, recommenders, letters, deliverables ────────────
+
+export type Recommender = {
+  id: string;
+  name: string;
+  title: string | null;
+  organization: string | null;
+  /** How they know the beneficiary, in the firm's words. */
+  relationship: string | null;
+  /** Why the firm suggests them: the facts on the record that make them credible. */
+  basis: string | null;
+  status: "suggested" | "confirmed" | "declined";
+  /** "firm" when the firm suggested them from the record, "attorney" when the attorney added them. */
+  source: "firm" | "attorney";
+  /** The case-map entity they were drawn from, when any. */
+  entityId: string | null;
+  updatedAt: string;
+};
+
+export type RecommendationLetter = {
+  id: string;
+  recommenderId: string;
+  recommenderName: string;
+  /** Markdown body, written in the recommender's voice from the record. */
+  body: string;
+  words: number;
+  version: number;
+  status: "drafted" | "approved";
+  unverifiedQuotes: { quote: string; exhibitNo: number | null; reason: "absent" | "wrong_exhibit" | "unverifiable"; foundIn: number | null }[];
+  citedFacts: number;
+  updatedAt: string;
+};
+
+/** One assembled packet: the binder, its signed manifest, and (when made) the Word letter. */
+export type Filing = {
+  versionId: string;
+  at: string;
+  pages: number;
+  exhibits: number;
+  forms: string[];
+  /** Stamped DRAFT: at least one quote in the letter was unverified when it was bound. */
+  draft: boolean;
+  packetSha256: string;
+  /** Signed, time-limited links; re-read the filing to refresh them. */
+  packetUrl: string;
+  manifestUrl: string;
+  letterDocxUrl: string | null;
+};
+
+/** A document the firm wrote on the desk (memo, timeline, letter), with its Word export. */
+export type Deliverable = {
+  path: string;
+  title: string;
+  updatedAt: string;
+  updatedBy: string;
+  words: number;
 };

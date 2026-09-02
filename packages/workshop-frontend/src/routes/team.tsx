@@ -2,7 +2,7 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react'
 import type { RpcStub } from 'capnweb'
 import { ChartBar, ChartLineUp, Gear, Scales, UsersThree } from '@phosphor-icons/react'
-import type { AdminApi, AdminSettingsView, AmbientGatekeeperMode, AuthenticatedApi, FirmAnalytics, FirmMatterRow, FirmMember, Invite, UsageSummary } from '@gadgets/workshop-shared/api'
+import type { AdminApi, AdminSettingsView, AmbientGatekeeperMode, AuthenticatedApi, FirmAnalytics, FirmMatterRow, FirmMember, Invite, LaneModels, UsageSummary } from '@gadgets/workshop-shared/api'
 import { PHASE_LABEL } from '../components/legal/labels'
 import { useAuthenticatedApi } from '../AuthContext'
 import { useDocumentTitle } from '../useDocumentTitle'
@@ -175,8 +175,10 @@ function TeamDrawer({ api }: { api: RpcStub<AdminApi> | null }) {
                     self={currentUser?.id === m.userId}
                     limit={limits.data?.[m.userId] ?? 0}
                     matters={mattersByOwner ? (mattersByOwner.get(m.userId) ?? 0) : null}
+                    ownedMatters={(firmMatters.data ?? []).filter((fm) => fm.ownerUserId === m.userId)}
+                    members={items}
                     api={api}
-                    onChanged={() => { limits.refresh(); members.refresh() }}
+                    onChanged={() => { limits.refresh(); members.refresh(); firmMatters.refresh() }}
                   />
                 ))}
               </ul>
@@ -184,6 +186,8 @@ function TeamDrawer({ api }: { api: RpcStub<AdminApi> | null }) {
           </ThreeState>
         </div>
       </section>
+
+      <HeldMatters api={api} rows={firmMatters.data} members={members.data ?? []} onChanged={() => firmMatters.refresh()} />
 
       <section>
         <Eyebrow>Pending invitations</Eyebrow>
@@ -294,13 +298,52 @@ const NOT_TRACKED = 'Not tracked yet on this deployment.'
  * metric grid underneath — the admin reads columns, never a dot-run. A metric with no source
  * renders an honest dash, never a fake zero.
  */
-function MemberCard({ member, self, limit, matters, api, onChanged }: {
-  member: FirmMember; self: boolean; limit: number; matters: number | null; api: RpcStub<AdminApi> | null; onChanged: () => void
+function MemberCard({ member, self, limit, matters, ownedMatters, members, api, onChanged }: {
+  member: FirmMember; self: boolean; limit: number; matters: number | null; ownedMatters: FirmMatterRow[]; members: FirmMember[]
+  api: RpcStub<AdminApi> | null; onChanged: () => void
 }) {
   const [allowance, setAllowance] = useState(limit > 0 ? String(limit) : '')
   const [busy, setBusy] = useState(false)
   const [note, setNote] = useState<string | null>(null)
+  const [removing, setRemoving] = useState(false)
+  const [typed, setTyped] = useState('')
+  const [reassigning, setReassigning] = useState<string | null>(null)
+  const [reassignTo, setReassignTo] = useState('')
   useEffect(() => { setAllowance(limit > 0 ? String(limit) : '') }, [limit])
+
+  const remove = async () => {
+    if (!api || busy || typed !== member.userId) return
+    setBusy(true)
+    setNote(null)
+    try {
+      await api.removeMember(member.userId)
+      setRemoving(false)
+      setNote(`${member.userId} was removed. ${ownedMatters.length > 0 ? `${plural(ownedMatters.length, 'matter is', 'matters are')} paused with a hold until you reassign them below.` : 'They owned no matters.'}`)
+      onChanged()
+    } catch (err) {
+      logRpcFailure('Failed to remove the member:', err)
+      setNote(`That didn't go through: ${err instanceof Error ? err.message : 'try again'}. Their access is unchanged.`)
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  const reassign = async (matterId: string) => {
+    if (!api || busy || !reassignTo) return
+    setBusy(true)
+    setNote(null)
+    try {
+      await api.reassignMatter(matterId, reassignTo)
+      setReassigning(null)
+      setNote(`Reassigned to ${reassignTo}. Held matters resume, and the new attorney's playbook applies from the next run.`)
+      onChanged()
+    } catch (err) {
+      logRpcFailure('Failed to reassign the matter:', err)
+      setNote(`The matter was not reassigned: ${err instanceof Error ? err.message : 'try again'}.`)
+    } finally {
+      setBusy(false)
+    }
+  }
 
   const saveAllowance = async () => {
     if (!api || busy) return
@@ -349,6 +392,58 @@ function MemberCard({ member, self, limit, matters, api, onChanged }: {
         )}
       </div>
       {note && <p className="mt-2 mb-0 text-[12px] leading-4 text-kumo-subtle">{note}</p>}
+      {!self && (
+        <div className="mt-3 flex flex-wrap items-center gap-2">
+          {!removing ? (
+            <WorkshopButton className="!h-8" disabled={!api || busy} onClick={() => { setRemoving(true); setTyped('') }}>Remove…</WorkshopButton>
+          ) : (
+            <div className="w-full rounded-xl border border-kumo-danger/30 bg-kumo-danger-tint/40 px-4 py-3">
+              <p className="m-0 text-[13.5px] leading-5 text-kumo-default">
+                Their access ends immediately, on every surface. Matters they own are paused with a visible hold until you reassign them — nothing goes out under a removed attorney&apos;s name. Their personal playbook notes are kept.
+              </p>
+              <p className="m-0 mt-2 text-[12.5px] leading-4 text-kumo-subtle">
+                Type the member&apos;s sign-in name to confirm: <span className="select-all font-mono text-kumo-default">{member.userId}</span>
+              </p>
+              <div className="mt-2 flex flex-wrap items-center gap-2">
+                <WorkshopInput value={typed} onChange={(e) => setTyped(e.target.value)} className="w-56" placeholder={member.userId} disabled={busy} />
+                <WorkshopButton className="!h-8" tone="danger" disabled={!api || busy || typed !== member.userId} onClick={() => void remove()}>
+                  {busy ? 'Working…' : 'Remove from the firm'}
+                </WorkshopButton>
+                <WorkshopButton className="!h-8" disabled={busy} onClick={() => setRemoving(false)}>Cancel</WorkshopButton>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+      {ownedMatters.length > 0 && (
+        <details className="mt-3">
+          <summary className="cursor-pointer text-[13px] leading-[18px] text-kumo-subtle">Their matters ({ownedMatters.length})</summary>
+          <ul className="m-0 mt-2 list-none divide-y divide-kumo-line rounded-xl border border-kumo-line p-0">
+            {ownedMatters.map((fm) => (
+              <li key={fm.matterId} className="flex flex-wrap items-center justify-between gap-2 px-3 py-2">
+                <div className="min-w-0">
+                  <Link to="/matter/$id" params={{ id: fm.matterId }} className="text-[13.5px] leading-5 text-kumo-default hover:underline">{fm.title}</Link>
+                  <span className="ml-2 text-[12px] text-kumo-subtle">
+                    {fm.hold ? 'Paused with a hold' : fm.status === 'paused' ? 'Paused' : ((PHASE_LABEL as Record<string, string>)[fm.phase] ?? fm.phase)}{fm.needsYou > 0 ? ` · ${plural(fm.needsYou, 'needs them', 'need them')}` : ''}
+                  </span>
+                </div>
+                {reassigning === fm.matterId ? (
+                  <div className="flex flex-wrap items-center gap-2">
+                    <select value={reassignTo} onChange={(e) => setReassignTo(e.target.value)} disabled={busy} className="h-8 rounded-lg border border-kumo-line bg-kumo-base px-2 text-[13px] text-kumo-default">
+                      <option value="">Reassign to…</option>
+                      {members.filter((x) => x.userId !== member.userId).map((x) => <option key={x.userId} value={x.userId}>{x.userId}</option>)}
+                    </select>
+                    <WorkshopButton className="!h-8" tone="primary" disabled={!api || busy || !reassignTo} onClick={() => void reassign(fm.matterId)}>{busy ? 'Working…' : 'Reassign'}</WorkshopButton>
+                    <WorkshopButton className="!h-8" disabled={busy} onClick={() => setReassigning(null)}>Cancel</WorkshopButton>
+                  </div>
+                ) : (
+                  <WorkshopButton className="!h-8" disabled={!api || busy} onClick={() => { setReassigning(fm.matterId); setReassignTo('') }}>Reassign…</WorkshopButton>
+                )}
+              </li>
+            ))}
+          </ul>
+        </details>
+      )}
       <div className="mt-4 grid grid-cols-2 gap-x-4 gap-y-3 border-t border-kumo-line pt-3 sm:grid-cols-3 md:grid-cols-6">
         <Metric label="Matters" value={matters === null ? '—' : String(matters)} note={matters === null ? "The firm's registry couldn't be read." : 'Matters this member owns, from the firm registry.'} />
         <Metric label="Credits" value={limit > 0 ? `${dollars(member.month.cost)} / ${dollars(limit)}` : `${dollars(member.month.cost)} / no ceiling`} note="This calendar month, from the usage ledger." />
@@ -358,6 +453,63 @@ function MemberCard({ member, self, limit, matters, api, onChanged }: {
         <Metric label="Last activity" value={member.lastActiveAt ? relativeTime(member.lastActiveAt) : 'none yet'} />
       </div>
     </li>
+  )
+}
+
+/**
+ * The counterweight to removal: matters still owned by a removed member sit paused until an
+ * admin reassigns them. Shown only when there are any; nothing here is ever silent.
+ */
+function HeldMatters({ api, rows, members, onChanged }: { api: RpcStub<AdminApi> | null; rows: FirmMatterRow[] | null; members: FirmMember[]; onChanged: () => void }) {
+  const [to, setTo] = useState<Record<string, string>>({})
+  const [busy, setBusy] = useState<string | null>(null)
+  const [note, setNote] = useState<string | null>(null)
+  const held = (rows ?? []).filter((r) => r.hold)
+  if (held.length === 0) return null
+
+  const reassign = async (matterId: string) => {
+    const target = to[matterId]
+    if (!api || busy || !target) return
+    setBusy(matterId)
+    setNote(null)
+    try {
+      await api.reassignMatter(matterId, target)
+      setNote(`Reassigned to ${target}. The hold is lifted and the work resumes.`)
+      onChanged()
+    } catch (err) {
+      logRpcFailure('Failed to reassign a held matter:', err)
+      setNote(`The matter was not reassigned: ${err instanceof Error ? err.message : 'try again'}.`)
+    } finally {
+      setBusy(null)
+    }
+  }
+
+  return (
+    <section className="rounded-2xl border border-amber-500/30 bg-amber-500/[0.06] px-5 py-4">
+      <p className="m-0 text-[14px] leading-5 font-medium text-kumo-default">
+        {plural(held.length, 'matter is', 'matters are')} still owned by a removed member and paused. Reassign them to resume the work.
+      </p>
+      <ul className="m-0 mt-3 list-none space-y-2 p-0">
+        {held.map((r) => (
+          <li key={r.matterId} className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-kumo-line bg-kumo-base px-3 py-2">
+            <div className="min-w-0">
+              <Link to="/matter/$id" params={{ id: r.matterId }} className="text-[13.5px] leading-5 text-kumo-default hover:underline">{r.title}</Link>
+              <span className="ml-2 text-[12px] text-kumo-subtle">{r.ownerUserId ? `was ${r.ownerUserId}'s` : 'owner unknown'} · {r.clientName}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <select value={to[r.matterId] ?? ''} onChange={(e) => setTo((t) => ({ ...t, [r.matterId]: e.target.value }))} disabled={busy !== null} className="h-8 rounded-lg border border-kumo-line bg-kumo-base px-2 text-[13px] text-kumo-default">
+                <option value="">Reassign to…</option>
+                {members.filter((m) => m.userId !== r.ownerUserId).map((m) => <option key={m.userId} value={m.userId}>{m.userId}</option>)}
+              </select>
+              <WorkshopButton className="!h-8" tone="primary" disabled={!api || busy !== null || !to[r.matterId]} onClick={() => void reassign(r.matterId)}>
+                {busy === r.matterId ? 'Working…' : 'Reassign'}
+              </WorkshopButton>
+            </div>
+          </li>
+        ))}
+      </ul>
+      {note && <p className="m-0 mt-2 text-[12.5px] leading-4 text-kumo-subtle">{note}</p>}
+    </section>
   )
 }
 
@@ -767,9 +919,67 @@ function PlatformDrawer({ api }: { api: RpcStub<AdminApi> | null }) {
         </ul>
       </section>
 
+      <LaneModelsSection api={api} />
+
       <p className="m-0 text-[12.5px] leading-[18px] text-kumo-subtle">
         Output formats, the logo, banners and the rest of the platform live on the <Link to="/admin" className="text-kumo-default underline underline-offset-2">platform page</Link>.
       </p>
     </div>
+  )
+}
+
+// ── Platform: the model each lane runs on ────────────────────────────────────────────────────────
+
+const LANES: { key: keyof LaneModels; label: string; hint: string }[] = [
+  { key: 'reader', label: 'Reading', hint: 'Reads each document into facts with verbatim quotes.' },
+  { key: 'knowledge', label: 'Case knowledge', hint: 'Turns facts into claims and entities. A non-thinking model answers; a thinking one spends its budget reasoning.' },
+  { key: 'drafting', label: 'Drafting', hint: 'Reserved for the drafting lane; the counsel drafts on the conversation\'s model until it is wired.' },
+  { key: 'critic', label: 'Review', hint: 'Reserved for the adversarial review lane.' },
+]
+
+function LaneModelsSection({ api }: { api: RpcStub<AdminApi> | null }) {
+  const read = useCallback(() => (api ? api.getLaneModels() : Promise.reject(new Error('no api'))), [api])
+  const models = usePolled<LaneModels>(api ? read : null, 0)
+  const [draft, setDraft] = useState<LaneModels | null>(null)
+  const [busy, setBusy] = useState(false)
+  const [note, setNote] = useState<string | null>(null)
+  useEffect(() => { if (models.data && !draft) setDraft(models.data) }, [models.data, draft])
+
+  const save = async () => {
+    if (!api || !draft || busy) return
+    setBusy(true)
+    setNote(null)
+    try {
+      await api.setLaneModels(draft)
+      setNote('Saved. The next document read and the next knowledge build use these models.')
+      models.refresh()
+    } catch (err) {
+      logRpcFailure('Failed to save the lane models:', err)
+      setNote(`That didn't save: ${err instanceof Error ? err.message : 'try again'}.`)
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  return (
+    <section className="rounded-xl border border-kumo-line bg-kumo-base px-5 py-4">
+      <p className="m-0 text-[14px] leading-5 font-medium tracking-[-0.25px] text-kumo-default">The model each lane runs on</p>
+      <p className="m-0 mt-0.5 text-[12.5px] leading-4 text-kumo-subtle">A Workers AI model id per lane, for example <span className="font-mono">@cf/meta/llama-4-scout-17b-16e-instruct</span>. Blank keeps the deployment&apos;s default.</p>
+      {models.data === null && models.failed && <p className="m-0 mt-2 text-[12.5px] text-kumo-subtle">The lane settings couldn&apos;t be read just now. Nothing has changed.</p>}
+      {draft && (
+        <div className="mt-3 space-y-3">
+          {LANES.map((l) => (
+            <div key={String(l.key)}>
+              <FieldLabel hint={l.hint}>{l.label}</FieldLabel>
+              <WorkshopInput value={draft[l.key] ?? ''} onChange={(e) => setDraft({ ...draft, [l.key]: e.target.value })} className="mt-1 w-full font-mono" placeholder="default" disabled={busy} />
+            </div>
+          ))}
+          <div className="flex flex-wrap items-center gap-3">
+            <WorkshopButton className="!h-8" disabled={!api || busy} onClick={() => void save()}>{busy ? 'Working…' : 'Save the lane models'}</WorkshopButton>
+            {note && <span className="text-[12.5px] leading-4 text-kumo-subtle">{note}</span>}
+          </div>
+        </div>
+      )}
+    </section>
   )
 }

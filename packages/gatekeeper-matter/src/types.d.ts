@@ -492,3 +492,222 @@ export interface MatterSession {
    */
   watch(callback: RpcStub<MatterWatcher>): Promise<{ status: "bound" | "already_watching" }>;
 }
+
+// ── Government forms, the official PDFs (WP-7) ──────────────────────────────────────────────────
+
+export interface MatterForms {
+  /**
+   * Put the official USCIS PDF for a form on file and learn its fillable fields. Read the
+   * returned note when it fails (USCIS did not answer, or the form is an XFA document no software
+   * fills); the firm's values stay on the record either way for the attorney to enter by hand.
+   */
+  fetchTemplate(code: string): Promise<{ state: "ready" | "failed"; note: string | null; fillable: number; unmapped: string[] }>;
+  /**
+   * The attorney's rulings per field: accepted, asked (a decision is open; answer it by refilling
+   * the field with a sourced value), rejected (blank until refilled), or proposed (no ruling yet).
+   */
+  rulings(code: string): Promise<{ name: string; label: string; review: "proposed" | "accepted" | "asked" | "rejected"; value: string | null }[]>;
+}
+
+// ── WP-6 · The filing: the packet, recommenders, letters of recommendation ───────────────────────
+// Delimited block. `MatterSession.recommenders()` and the packet methods below are wired on the
+// session in matter.ts; until that lands they are declared optional so the types stay honest.
+
+export interface RecommenderState {
+  id: string;
+  name: string;
+  title: string | null;
+  organization: string | null;
+  /** How they know the beneficiary. */
+  relationship: string | null;
+  /** The facts on the record that make them credible. */
+  basis: string | null;
+  status: "suggested" | "confirmed" | "declined";
+}
+
+export interface LetterState {
+  id: string;
+  recommenderId: string;
+  recommenderName: string;
+  body: string;
+  version: number;
+  status: "drafted" | "approved";
+  /** Quoted spans the verifier could not find among the cited facts. Rewrite until this is empty. */
+  unverifiedQuotes: { quote: string; reason: "absent" | "wrong_exhibit" | "unverifiable" }[];
+}
+
+/** Recommenders (expert letter writers) and their letters, for the petition's support letters. */
+export interface MatterRecommenders {
+  /** Everyone proposed or confirmed, confirmed first. */
+  list(): Promise<RecommenderState[]>;
+  /** Propose recommenders from the case map and the facts that mention them. Suggestions; the attorney confirms. */
+  suggest(): Promise<RecommenderState[]>;
+  /** Add one the attorney named in conversation, confirmed. */
+  add(input: { name: string; title?: string; organization?: string; relationship?: string; basis?: string }): Promise<RecommenderState>;
+  /**
+   * Land a letter for a confirmed recommender, in their voice, from facts on the record.
+   * `citedFactIds` are the facts the letter relies on; quote only their verbatim words.
+   */
+  writeLetter(recommenderId: string, body: string, citedFactIds: string[]): Promise<LetterState>;
+  /** Every letter on file with its verification state. */
+  letters(): Promise<LetterState[]>;
+}
+
+export interface MatterPetition {
+  /**
+   * Bind the USCIS packet: cover, contents, the letter, approved forms, every numbered exhibit,
+   * with a signed manifest. Stamped DRAFT while any quote in the letter is unverified. Do this when
+   * the attorney asks for the packet or after a full draft they approved.
+   */
+  buildPacket(): Promise<{ versionId: string; pages: number; draft: boolean; exhibits: number }>;
+}
+
+export interface MatterSession {
+  /** Recommenders and letters of recommendation. */
+  recommenders(): Promise<MatterRecommenders>;
+  /** The case intelligence: chronology, contradictions, reviews, findings, gaps, the strategy memo. */
+  intelligence(): Promise<MatterIntelligence>;
+}
+
+// ── WP-8: standing directives and memory (the firm's process on a matter) ───────────────────────
+
+/** A standing instruction the attorney gave for this matter. Read them every turn; they outrank the playbook on this matter alone. */
+export interface MatterDirective {
+  id: string;
+  text: string;
+  /** What it governs: "matter" (everything), "drafting", "client" (outreach), "evidence" (what counts). */
+  scope: "matter" | "drafting" | "client" | "evidence";
+  createdAt: string;
+  createdBy: string;
+}
+
+/** A note kept on the matter outside the record: what you learned or decided, for your future turns. Never evidence. */
+export interface MemoryNote {
+  id: string;
+  text: string;
+  createdAt: string;
+  createdBy: "agent" | "lawyer";
+}
+
+export interface MatterDirectives {
+  /** The attorney's standing directives for this matter, oldest first. */
+  list(): Promise<MatterDirective[]>;
+}
+
+export interface MatterMemory {
+  /** Every note, newest first. */
+  list(): Promise<MemoryNote[]>;
+  /** Keep a note for your future turns: a judgment, a client preference, a thing to remember. One sentence or two. */
+  add(text: string): Promise<{ id: string }>;
+  /** Drop a note that no longer holds. */
+  remove(id: string): Promise<void>;
+}
+
+export interface MatterSession {
+  /** The attorney's standing directives for this matter. */
+  directives(): Promise<MatterDirectives>;
+  /** Your notes on this matter, outside the record. */
+  memory(): Promise<MatterMemory>;
+}
+
+// ── Case intelligence (WP-5) ────────────────────────────────────────────────────────────────────
+// Lead: add `intelligence(): Promise<MatterIntelligence>` to MatterSession and `new IntelligenceImpl(q, store)`
+// (src/intel-session.ts) to MatterSessionImpl in matter.ts, the same way knowledge() is wired.
+
+export type IntelRun = "contradictions" | "duplicate" | "conflict" | "findings" | "gaps" | "strategy" | "organize";
+
+export interface Contradiction {
+  id: string;
+  kind: "date" | "number" | "statement";
+  subject: string;
+  a: { factId: string; statement: string; quote: string; documentId: string; documentTitle: string; page: number | null };
+  b: { factId: string; statement: string; quote: string; documentId: string; documentTitle: string; page: number | null };
+  explanation: string;
+  /** Which side the firm would rely on and why; null when it cannot say. */
+  recommendation: string | null;
+  severity: "high" | "medium" | "low";
+  /** open: on the attorney's desk (high) or listed on the map. The attorney resolves or dismisses. */
+  status: "open" | "resolved" | "dismissed";
+  resolution: string | null;
+  foundAt: string;
+}
+
+export interface ReviewPair {
+  id: string;
+  kind: "duplicate" | "conflict";
+  aId: string; aName: string; bId: string; bName: string;
+  reason: string;
+  /** merge (duplicates), set_aside (conflicts: B leaves the case), keep (both stand), pending. */
+  verdict: "merge" | "set_aside" | "keep" | "pending";
+  decidedBy: "firm" | "attorney" | null;
+}
+
+export interface CriteriaFinding {
+  key: string;
+  title: string;
+  verdict: "strong" | "arguable" | "weak" | "absent";
+  strongest: { claimId: string; statement: string }[];
+  officerWouldSeize: string[];
+  note: string;
+}
+
+export interface GapItem { id: string; key: string; title: string; priority: 1 | 2 | 3; missing: string; ask: string }
+
+/**
+ * What the firm reasons out of the case knowledge. Reads are instant. Passes (`run`) return at
+ * once and report through their read: `running` while working, `note` when one stopped early.
+ * Run them in this order after the knowledge is built: contradictions, duplicate, conflict,
+ * findings, gaps, strategy. Never run a pass while the same one is running.
+ */
+export interface MatterIntelligence {
+  /** Dated facts in order, grouped by year, with ambiguity flags. Undated facts are counted, never placed. */
+  chronology(): Promise<{ years: { year: number | null; entries: { factId: string; documentId: string; documentTitle: string; page: number | null; when: string; year: number | null; ambiguous: boolean; statement: string; quote: string; significance: string | null }[] }[]; dated: number; undated: number }>;
+  /** Contradictions on file, open first. High-severity ones are already on the attorney's desk as decisions. */
+  contradictions(): Promise<Contradiction[]>;
+  /** What depends on one document: the claims (and whether it is their only ground), the sections, the petition sections. Read before excluding a document. */
+  blastRadius(documentId: string): Promise<{ documentId: string; documentTitle: string; facts: number; claims: { id: string; statement: string; criteria: string[]; onlyHere: boolean }[]; sections: { key: string; title: string }[]; petitionSections: { key: string; title: string; status: string }[] }>;
+  /** The shortest chain of claims joining two entities, or `found: false`. */
+  path(fromEntityId: string, toEntityId: string): Promise<{ found: boolean; hops: { entityId: string; entityName: string; claimId: string | null; claimStatement: string | null }[] }>;
+  /** The firm's chore: duplicate entities or conflicting claims, with the verdicts so far. */
+  review(kind: "duplicate" | "conflict"): Promise<{ kind: "duplicate" | "conflict"; status: "never" | "running" | "done"; pairs: ReviewPair[]; finishedAt: string | null; note: string | null }>;
+  /** Rule on a pending pair. merge/set_aside are ledgered overrides the attorney can undo. */
+  decideReview(pairId: string, verdict: "merge" | "set_aside" | "keep", reason: string): Promise<void>;
+  /** The adversarial reviewer's verdict per section on the claims on file. */
+  criteriaFindings(): Promise<{ sections: CriteriaFinding[]; assessedAt: string | null; running: boolean; note: string | null }>;
+  /** What is missing per section, prioritized, with the ask in the client's words. */
+  gapAudit(): Promise<{ items: GapItem[]; auditedAt: string | null; running: boolean; note: string | null }>;
+  /** The share of live claims resting on a confident fact. */
+  grounding(): Promise<{ score: number; claims: number; grounded: number; verified: number }>;
+  /** The record by kind of document. */
+  inventory(): Promise<{ kinds: { docType: string | null; label: string; count: number; documentIds: string[] }[]; documents: number; unread: number }>;
+  /** The organizing proposal (titles and exhibit order) after `run("organize")`; the attorney applies it from Documents. */
+  organizeProposal(): Promise<{ titles: { documentId: string; current: string | null; proposed: string }[]; exhibitOrder: { documentId: string; title: string; exhibitNo: number; firstSection: string | null }[]; proposedAt: string; note: string | null } | null>;
+  /** Start a pass. */
+  run(kind: IntelRun): Promise<void>;
+  running(): Promise<Record<IntelRun, boolean>>;
+}
+
+// ── The lanes (WP-9): the heavy work runs from the queue; the counsel starts it and is woken ─────
+
+export interface MatterKnowledge {
+  /**
+   * Where the case knowledge build stands. It runs by itself when the record settles, fanned out
+   * in batches of facts; `building` with `done` of `total` while it runs, `note` says what the last
+   * build reported. Read this instead of rebuilding when the map looks empty.
+   */
+  buildStatus(): Promise<{ building: boolean; done: number; total: number; builtAt: string | null; note: string | null }>;
+}
+
+export interface MatterPetition {
+  /**
+   * Draft the whole letter as a lane: the record's documents are numbered as exhibits, every
+   * section the sufficiency gate clears is drafted from the firm's style and its facts (quotes
+   * verified, then reviewed as the officer will), the rest are held with the client ask, then a
+   * coherence pass runs across sections. Returns at once; you are woken with "letter drafted" when
+   * it lands. Call this after the plan is approved instead of drafting sections one by one; use
+   * `write()` only for a single redraft the attorney asked for. Idempotent while a lane runs.
+   */
+  draftAll(): Promise<{ laneId: string | null; sections: string[]; held: { key: string; reasons: string[] }[]; alreadyRunning: boolean }>;
+  /** The drafting lane in flight (sections drafted of total, failures), or null when none runs. */
+  lane(): Promise<{ id: string; total: number; drafted: number; failed: number; inFlight: number; startedAt: string } | null>;
+}

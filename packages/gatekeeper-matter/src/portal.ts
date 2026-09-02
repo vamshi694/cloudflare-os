@@ -43,6 +43,23 @@ export async function verifyFileSig(env: Cloudflare.Env, matterId: string, docum
   return diff === 0;
 }
 
+/** A signed, time-limited URL for a rendered government form (see forms-pdf.ts handleFormRoutes). */
+export async function signFormUrl(env: Cloudflare.Env, matterId: string, code: string, nowMs = Date.now()): Promise<string> {
+  const exp = String(nowMs + FILE_TTL_MS);
+  const sig = await hmac(fileSecret(env, matterId), `${matterId}:form:${code}:${exp}`);
+  const base = (env.PUBLIC_BASE_URL ?? "").replace(/\/$/, "");
+  return `${base}/gatekeeper/matter/form/${matterId}/${encodeURIComponent(code)}.pdf?exp=${exp}&sig=${sig}`;
+}
+
+export async function verifyFormSig(env: Cloudflare.Env, matterId: string, code: string, exp: string, sig: string, nowMs = Date.now()): Promise<boolean> {
+  if (!/^\d+$/.test(exp) || Number(exp) < nowMs) return false;
+  const expected = await hmac(fileSecret(env, matterId), `${matterId}:form:${code}:${exp}`);
+  if (expected.length !== sig.length) return false;
+  let diff = 0;
+  for (let i = 0; i < expected.length; i++) diff |= expected.charCodeAt(i) ^ sig.charCodeAt(i);
+  return diff === 0;
+}
+
 const TOKEN = /^[0-9a-f]{32}$/;
 const ID = /^[0-9a-f]{32}$/;
 
@@ -79,8 +96,8 @@ export async function handlePublic(request: Request, env: Cloudflare.Env): Promi
     });
   }
 
-  // Portal routes: /portal/<64 hex: matter id + secret>[/upload|/words|/reply].
-  const portal = /^\/portal\/([0-9a-f]{32})([0-9a-f]{32})(\/upload|\/words|\/reply)?$/.exec(path);
+  // Portal routes: /portal/<64 hex: matter id + secret>[/upload|/words|/reply|/sign|/forms/<id>.pdf].
+  const portal = /^\/portal\/([0-9a-f]{32})([0-9a-f]{32})(\/upload|\/words|\/reply|\/sign|\/forms\/[0-9a-f]{32}\.pdf)?$/.exec(path);
   if (!portal) return null;
   const [, matterId, token, action] = portal;
   const store = await matterForToken(env, matterId, token);
@@ -90,7 +107,27 @@ export async function handlePublic(request: Request, env: Cloudflare.Env): Promi
     await store.touchPortal();
     return json(await store.portalView());
   }
+  // The filled form the client reviews before signing: the client never signs what they could not read.
+  if (action?.startsWith("/forms/") && request.method === "GET") {
+    const id = action.slice("/forms/".length, -".pdf".length);
+    const sig = await store.signatureRender(id);
+    if (!sig) return new Response("This form is no longer waiting for a signature.", { status: 404 });
+    const obj = await env.MATTER_FILES.get(sig.renderKey);
+    if (!obj) return new Response("The form could not be found. Your legal team has been told.", { status: 404 });
+    return new Response(obj.body, { headers: { "content-type": "application/pdf", "cache-control": "private, no-store", "content-disposition": `inline; filename="${sig.code}.pdf"` } });
+  }
   if (request.method !== "POST") return json({ error: "Method not allowed." }, 405);
+  if (action === "/sign") {
+    const body = await request.json().catch(() => ({})) as { id?: unknown; name?: unknown };
+    if (typeof body.id !== "string" || !/^[0-9a-f]{32}$/.test(body.id)) return json({ error: "Which form?" }, 400);
+    if (typeof body.name !== "string" || body.name.trim().length < 3) return json({ error: "Type your full legal name to sign." }, 400);
+    try {
+      await store.signForm(body.id, body.name);
+    } catch (err) {
+      return json({ error: err instanceof Error ? err.message : "That signature was not recorded." }, 409);
+    }
+    return json({ ok: true, signedAt: new Date().toISOString() });
+  }
 
   if (action === "/upload") {
     const form = await request.formData();

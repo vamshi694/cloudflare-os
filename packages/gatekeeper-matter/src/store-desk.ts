@@ -2,7 +2,7 @@
 // can answer, with their kinds: a plain decision, the plan approval, an outreach release, and the
 // synthesized "couldn't read" items for unreadable documents.
 
-import type { NeedsYouItem } from "@gadgets/workshop-shared/legal";
+import type { MatterDirective, MemoryNote, NeedsYouItem } from "@gadgets/workshop-shared/legal";
 import type { Decision, DeskFile } from "./types.js";
 import { ensureColumn, parseJson, type Db, type Row } from "./store-db.js";
 
@@ -117,4 +117,59 @@ export function planState(db: Db): { proposed: boolean; approved: boolean } {
   const open = db.sql<{ n: number }>("SELECT COUNT(*) AS n FROM decisions WHERE kind = 'plan' AND status = 'open'")[0]?.n ?? 0;
   const approved = db.metaGet("plan_approved") === "1";
   return { proposed: open > 0 || approved, approved };
+}
+
+// ---- WP-8: standing directives and memory notes ------------------------------------------------
+
+export const PROCESS_SCHEMA = `
+CREATE TABLE IF NOT EXISTS directives (
+  id TEXT PRIMARY KEY, text TEXT NOT NULL, scope TEXT NOT NULL DEFAULT 'matter', created_at TEXT NOT NULL, created_by TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS memory_notes (
+  id TEXT PRIMARY KEY, text TEXT NOT NULL, created_at TEXT NOT NULL, created_by TEXT NOT NULL);
+`;
+
+const DIRECTIVE_SCOPES = new Set<MatterDirective["scope"]>(["matter", "drafting", "client", "evidence"]);
+
+export function listDirectives(db: Db): MatterDirective[] {
+  return db.sql("SELECT * FROM directives ORDER BY created_at").map(r => ({
+    id: r.id as string, text: r.text as string, scope: r.scope as MatterDirective["scope"],
+    createdAt: r.created_at as string, createdBy: r.created_by as string,
+  }));
+}
+
+export function addDirective(db: Db, text: string, scope: MatterDirective["scope"] | undefined, by: string): MatterDirective {
+  const clean = text.trim();
+  if (!clean) throw new Error("A directive needs wording.");
+  if (clean.length > 2000) throw new Error("A directive is at most 2000 characters; put longer guidance in the playbook.");
+  const s = scope && DIRECTIVE_SCOPES.has(scope) ? scope : "matter";
+  const row: MatterDirective = { id: db.id(), text: clean, scope: s, createdAt: db.now(), createdBy: by };
+  db.sql("INSERT INTO directives(id, text, scope, created_at, created_by) VALUES(?, ?, ?, ?, ?)", row.id, row.text, row.scope, row.createdAt, row.createdBy);
+  db.log(by, `Standing directive (${s}): ${clean.slice(0, 160)}`);
+  return row;
+}
+
+export function removeDirective(db: Db, id: string, by: string): void {
+  const row = db.sql("SELECT text FROM directives WHERE id = ?", id)[0];
+  if (!row) return;
+  db.sql("DELETE FROM directives WHERE id = ?", id);
+  db.log(by, `Withdrew a standing directive: ${(row.text as string).slice(0, 120)}`);
+}
+
+export function listMemoryNotes(db: Db): MemoryNote[] {
+  return db.sql("SELECT * FROM memory_notes ORDER BY created_at DESC").map(r => ({
+    id: r.id as string, text: r.text as string, createdAt: r.created_at as string, createdBy: r.created_by as MemoryNote["createdBy"],
+  }));
+}
+
+export function addMemoryNote(db: Db, text: string, by: MemoryNote["createdBy"]): MemoryNote {
+  const clean = text.trim();
+  if (!clean) throw new Error("A note needs wording.");
+  if (clean.length > 4000) throw new Error("A note is at most 4000 characters; longer material belongs on the desk as a file.");
+  const row: MemoryNote = { id: db.id(), text: clean, createdAt: db.now(), createdBy: by };
+  db.sql("INSERT INTO memory_notes(id, text, created_at, created_by) VALUES(?, ?, ?, ?)", row.id, row.text, row.createdAt, row.createdBy);
+  return row;
+}
+
+export function removeMemoryNote(db: Db, id: string): void {
+  db.sql("DELETE FROM memory_notes WHERE id = ?", id);
 }

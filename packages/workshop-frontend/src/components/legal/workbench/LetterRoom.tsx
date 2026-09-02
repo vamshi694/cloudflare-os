@@ -35,6 +35,39 @@ export function LetterRoom({
   const [rfe, setRfe] = useState(false)
   const [directive, setDirective] = useState(false)
   const [exporting, setExporting] = useState(false)
+  const [binding, setBinding] = useState(false)
+  const [wording, setWording] = useState(false)
+
+  // The packet takes seconds to bind (exhibits merge page by page); the button says so instead of
+  // sitting dead, and the finished binder opens in a new tab from its signed link.
+  const bindPacket = async () => {
+    setBinding(true)
+    try {
+      const filing = await desk.buildPacket()
+      window.open(filing.packetUrl, '_blank', 'noopener')
+      toasts.add({ title: `The packet is bound: ${filing.pages} pages, ${filing.exhibits} exhibit${filing.exhibits === 1 ? '' : 's'}${filing.draft ? ', stamped DRAFT while quotes await verification' : ''}.`, variant: filing.draft ? 'warning' : 'success' })
+      reload()
+    } catch (err) {
+      logRpcFailure('Failed to bind the packet:', err)
+      toasts.add({ title: err instanceof Error && err.message ? err.message : "The packet couldn't be bound. Nothing changed — try again.", variant: 'error' })
+    } finally {
+      setBinding(false)
+    }
+  }
+
+  const exportWord = async () => {
+    setWording(true)
+    try {
+      const { url } = await desk.exportWord()
+      window.location.assign(url)
+      reload()
+    } catch (err) {
+      logRpcFailure('Failed to export the Word letter:', err)
+      toasts.add({ title: err instanceof Error && err.message ? err.message : "The Word letter couldn't be prepared. Nothing changed — try again.", variant: 'error' })
+    } finally {
+      setWording(false)
+    }
+  }
   const [viewer, setViewer] = useState<{ exhibitNo: number; title: string; url: string | null; failed: boolean } | null>(null)
 
   useEffect(() => {
@@ -104,6 +137,10 @@ export function LetterRoom({
           onOpenRfe={() => setRfe(true)}
           onExport={() => void exportLetter()}
           exporting={exporting}
+          onPacket={() => void bindPacket()}
+          binding={binding}
+          onWord={() => void exportWord()}
+          wording={wording}
           deliverables={deliverables}
           onOpenDeliverable={onOpenDeliverable}
         />
@@ -137,7 +174,7 @@ export function LetterRoom({
         {active && <IntelPanel key={active.key} section={active} caseType={petition.caseType} onRedraft={redraft} desk={desk} />}
       </aside>
 
-      <HistoryPanel open={history} onClose={() => setHistory(false)} versions={petition.versions} />
+      <HistoryPanel open={history} onClose={() => setHistory(false)} versions={petition.versions} desk={desk} />
       <RfePanel
         open={rfe}
         onClose={() => setRfe(false)}

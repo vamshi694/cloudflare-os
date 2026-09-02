@@ -4,7 +4,11 @@ import type { CaseEntity, CaseMap, MatterDesk, Readiness } from '@gadgets/worksh
 import { useKumoToastManager } from '@cloudflare/kumo'
 import { logRpcFailure } from '../../../rpcErrors'
 import { WorkshopButton, WorkshopInput } from '../../WorkshopControls'
-import { EmptyLine, Notice, StatusDot } from '../primitives'
+import { EmptyLine, Notice, SegmentedTabs, StatusDot } from '../primitives'
+import { Chronology } from './Chronology'
+import { Contradictions } from './Contradictions'
+import { Reviews } from './Reviews'
+import type { IntelRun } from '@gadgets/workshop-shared/legal'
 import { useDeskData } from '../useMatterDesk'
 import { tidy } from '../labels'
 import { Dossier } from './Dossier'
@@ -16,7 +20,7 @@ import { H, KIND_COLOR, NEIGHBOR_N, OTHER_COLOR, SHOW_N, W, clipLabel, colorOf, 
  * them; hover isolates a neighborhood, click opens the entity's dossier. Layout is computed ONCE and
  * rendered still: motion only where the lawyer causes it (pan, zoom, hover).
  */
-export function CaseMapTab({ desk }: { desk: RpcStub<MatterDesk> }) {
+function MapView({ desk }: { desk: RpcStub<MatterDesk> }) {
   const toasts = useKumoToastManager()
   const load = useCallback(() => desk.caseMap(), [desk])
   const { data: map, failed, reload } = useDeskData<CaseMap>(load, { pollMs: 15000 })
@@ -258,3 +262,67 @@ function MapCanvas({ map, selId, hoverId, onSelect, onHover }: { map: CaseMap; s
 }
 
 export { W as MAP_W, H as MAP_H }
+
+type MapSub = 'map' | 'chronology' | 'contradictions' | 'reviews'
+
+function readSub(): MapSub {
+  const v = new URLSearchParams(window.location.search).get('view')
+  return v === 'chronology' || v === 'contradictions' || v === 'reviews' ? v : 'map'
+}
+
+/**
+ * The case map's four faces: the map itself, the chronology, the contradictions, and the firm's
+ * reviews. One switcher, the URL remembers it (?view=), and the passes' running state is read from
+ * one place so every face agrees on what the firm is doing.
+ */
+export function CaseMapTab({ desk }: { desk: RpcStub<MatterDesk> }) {
+  const toasts = useKumoToastManager()
+  const [sub, setSub] = useState<MapSub>(() => readSub())
+  const loadRunning = useCallback(() => desk.intelRunning(), [desk])
+  const running = useDeskData<Record<IntelRun, boolean>>(loadRunning, { pollMs: 6000 })
+  const loadContradictions = useCallback(() => desk.contradictions(), [desk])
+  const contradictions = useDeskData(loadContradictions, { pollMs: 30000 })
+  const openCount = (contradictions.data ?? []).filter((c) => c.status === 'open').length
+
+  const choose = (next: MapSub) => {
+    setSub(next)
+    const url = new URL(window.location.href)
+    if (next === 'map') url.searchParams.delete('view')
+    else url.searchParams.set('view', next)
+    window.history.replaceState(window.history.state, '', url)
+  }
+
+  const start = async (kind: IntelRun) => {
+    try {
+      await desk.runIntel(kind)
+      running.reload()
+    } catch (err) {
+      logRpcFailure('Failed to start a pass:', err)
+      toasts.add({ title: "That didn't start. Nothing on the matter changed — try again.", variant: 'error' })
+    }
+  }
+
+  const is = (k: IntelRun) => running.data?.[k] === true
+
+  return (
+    <div className="space-y-4">
+      <SegmentedTabs<MapSub>
+        ariaLabel="Case knowledge views"
+        value={sub}
+        onChange={choose}
+        tabs={[
+          { key: 'map', label: 'Map' },
+          { key: 'chronology', label: 'Chronology' },
+          { key: 'contradictions', label: 'Contradictions', count: openCount || undefined },
+          { key: 'reviews', label: 'Reviews' },
+        ]}
+      />
+      {sub === 'map' && <MapView desk={desk} />}
+      {sub === 'chronology' && <Chronology desk={desk} />}
+      {sub === 'contradictions' && <Contradictions desk={desk} running={is('contradictions')} onRun={() => void start('contradictions')} />}
+      {sub === 'reviews' && (
+        <Reviews desk={desk} running={{ duplicate: is('duplicate'), conflict: is('conflict') }} onRun={(k) => void start(k)} onChanged={() => running.reload()} />
+      )}
+    </div>
+  )
+}

@@ -11,7 +11,8 @@ import { MatterStore, type IngestMessage, type Understanding, EXTRACTION_VERSION
 import { ReadError, evidenceVocabulary, hasTextLayer, pagesToText, parseUnderstanding } from "./pure.js";
 import { pdfPages } from "./pdf-text.js";
 import { caseTypeSpec } from "./case-types.js";
-import { buildKnowledge } from "./knowledge.js";
+import { laneModel } from "./process.js";
+import { runLaneMessage } from "./jobs.js";
 
 // Documents are read whole (owner rule: no truncation on any LLM path). Long documents are read in
 // windows of this many characters, each window carrying the page markers inside it.
@@ -120,7 +121,9 @@ async function callReader(env: Cloudflare.Env, caseType: string | null, filename
   // Workers AI is the default reading lane (owner decision 2026-09-02); OpenRouter only when the
   // deployment sets READER_PROVIDER=openrouter and a key is present.
   if (env.READER_PROVIDER !== "openrouter" || !key) {
-    const out = await env.AI.run((env.READER_MODEL || WORKERS_AI_READER) as Parameters<Ai["run"]>[0], {
+    // WP-8: an admin's lane choice (The firm → Platform) outranks the worker's default.
+    const readerModel = (await laneModel(env, "reader")) || env.READER_MODEL || WORKERS_AI_READER;
+    const out = await env.AI.run(readerModel as Parameters<Ai["run"]>[0], {
       messages: [{ role: "system", content: system }, { role: "user", content: user }],
       max_tokens: 8192,
       response_format: { type: "json_object" },
@@ -208,37 +211,57 @@ async function readDocument(env: Cloudflare.Env, msg: DocumentMessage): Promise<
   await store.supersedeOlderVersions(msg.documentId, text.length);
 }
 
+/** One document message: read it, record the outcome, settle the record when it was the last. */
+async function handleDocumentMessage(message: Message<IngestMessage>, doc: DocumentMessage, env: Cloudflare.Env): Promise<void> {
+  const store = storeFor(env, doc.matterId);
+  try {
+    await readDocument(env, doc);
+    console.log(`[ingest] read ok matter=${doc.matterId} doc=${doc.documentId}`);
+    message.ack();
+  } catch (error) {
+    const err = error instanceof ReadError ? error : new ReadError(error instanceof Error ? error.message : String(error), true);
+    // Loud, never silent: the failure note lands on the document AND in the worker logs.
+    console.error(`[ingest] read failed matter=${doc.matterId} doc=${doc.documentId} attempt=${message.attempts} retryable=${err.retryable}: ${err.message}`);
+    const outcome = await store.recordFailure(doc.documentId, err.message, err.retryable);
+    if (outcome === "requeued") {
+      message.retry({ delaySeconds: Math.min(600, 30 * (message.attempts + 1)) });
+      return;
+    }
+    message.ack();
+  }
+  await store.settleIfDrained();
+}
+
+/** A lane message (knowledge fan-out, drafting): run it; a crash retries once with backoff, then acks. */
+async function handleLaneMessage(message: Message<IngestMessage>, env: Cloudflare.Env): Promise<void> {
+  try {
+    await runLaneMessage(env, message.body);
+    message.ack();
+  } catch (error) {
+    const type = "type" in message.body ? message.body.type : "document";
+    console.error(`[lanes] ${type} failed matter=${message.body.matterId} attempt=${message.attempts}: ${error instanceof Error ? error.message : String(error)}`);
+    if (message.attempts < 2) message.retry({ delaySeconds: 20 });
+    else message.ack();
+  }
+}
+
+/**
+ * The queue consumer. Every message in a batch runs at once (the consumer is configured for one
+ * message per batch and twenty batches in flight, so a thousand-document drop reads twenty wide);
+ * one message's failure never touches another's ack.
+ */
 export async function handleIngestBatch(batch: MessageBatch<IngestMessage>, env: Cloudflare.Env): Promise<void> {
-  for (const message of batch.messages) {
+  const results = await Promise.allSettled(batch.messages.map(message => {
     const msg = message.body;
-    const store = storeFor(env, msg.matterId);
-    if ("type" in msg && msg.type === "knowledge") {
-      try {
-        await buildKnowledge(env, store);
-        console.log(`[knowledge] built matter=${msg.matterId}`);
-      } catch (error) {
-        console.error(`[knowledge] failed matter=${msg.matterId}: ${error instanceof Error ? error.message : String(error)}`);
-      }
-      message.ack();
-      continue;
+    if ("type" in msg) return handleLaneMessage(message, env);
+    return handleDocumentMessage(message, msg as DocumentMessage, env);
+  }));
+  for (const [i, r] of results.entries()) {
+    if (r.status === "rejected") {
+      // Handlers ack or retry themselves; a rejection here is a bug, not a document. Retry once, loudly.
+      console.error(`[ingest] handler crashed matter=${batch.messages[i].body.matterId}: ${r.reason instanceof Error ? r.reason.message : String(r.reason)}`);
+      if (batch.messages[i].attempts < 2) batch.messages[i].retry({ delaySeconds: 20 }); else batch.messages[i].ack();
     }
-    const doc = msg as DocumentMessage;
-    try {
-      await readDocument(env, doc);
-      console.log(`[ingest] read ok matter=${doc.matterId} doc=${doc.documentId}`);
-      message.ack();
-    } catch (error) {
-      const err = error instanceof ReadError ? error : new ReadError(error instanceof Error ? error.message : String(error), true);
-      // Loud, never silent: the failure note lands on the document AND in the worker logs.
-      console.error(`[ingest] read failed matter=${doc.matterId} doc=${doc.documentId} attempt=${message.attempts} retryable=${err.retryable}: ${err.message}`);
-      const outcome = await store.recordFailure(doc.documentId, err.message, err.retryable);
-      if (outcome === "requeued") {
-        message.retry({ delaySeconds: Math.min(600, 30 * (message.attempts + 1)) });
-        continue;
-      }
-      message.ack();
-    }
-    await store.settleIfDrained();
   }
 }
 

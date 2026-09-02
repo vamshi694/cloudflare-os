@@ -1,5 +1,5 @@
 import type { UsageLedger } from './usage-ledger.js';
-import { AdminApi, AdminFormat, AdminFormatPatch, AdminResourceVendor, AdminSettingsView, AmbientGatekeeperMode, BannerColor, BlueprintPublicInfo, Invite, UsageSummary, FirmMember, FirmAnalytics, FirmMatterRow, MAX_ANNOUNCEMENT_LENGTH, MAX_INSTANCE_INSTRUCTIONS_LENGTH, MAX_SITE_NAME_LENGTH, isAmbientGatekeeperMode, isBannerColor, isHexColor } from '@gadgets/workshop-shared/api';
+import { AdminApi, AdminFormat, AdminFormatPatch, AdminResourceVendor, AdminSettingsView, AmbientGatekeeperMode, BannerColor, BlueprintPublicInfo, Invite, UsageSummary, FirmMember, FirmAnalytics, FirmMatterRow, LaneModels, MAX_ANNOUNCEMENT_LENGTH, MAX_INSTANCE_INSTRUCTIONS_LENGTH, MAX_SITE_NAME_LENGTH, isAmbientGatekeeperMode, isBannerColor, isHexColor } from '@gadgets/workshop-shared/api';
 
 // Legal OS: an attorney joins this week or gets re-invited (Counsel OS used 30 days for attorneys).
 const INVITE_TTL_MS = 30 * 24 * 60 * 60 * 1000;
@@ -19,6 +19,12 @@ import { ambientGatekeeperMode, DEFAULT_AMBIENT_GATEKEEPER_MODE } from './provis
 type FirmAdminView = {
   listFirmMatters(): Promise<Omit<FirmMatterRow, "monthCost">[]>;
   firmAnalytics(days: number): Promise<Omit<FirmAnalytics, "wakeTurns">>;
+  // WP-8: the firm's process.
+  reassignMatter(matterId: string, toUserId: string, by: string): Promise<void>;
+  removeMember(userId: string, by: string): Promise<{ heldMatters: number }>;
+  removedMembers(): Promise<{ userId: string; removedAt: string; removedBy: string }[]>;
+  laneModels(): Promise<LaneModels>;
+  setLaneModels(models: LaneModels): Promise<void>;
 };
 type FirmMattersVendor = { getFirmAdminApi(): Promise<FirmAdminView> };
 import { buildGatekeeperVendorMap } from './auth/auth-vendors.js';
@@ -90,6 +96,9 @@ export class AdminSettings extends DurableObject<Cloudflare.Env> {
       token TEXT PRIMARY KEY, email TEXT NOT NULL, role TEXT NOT NULL, created_by TEXT NOT NULL,
       created_at TEXT NOT NULL, expires_at TEXT NOT NULL, used_by TEXT, used_at TEXT,
       revoked INTEGER NOT NULL DEFAULT 0)`);
+    // WP-8: members the firm removed. Login and session authentication refuse them at once.
+    ctx.storage.sql.exec(`CREATE TABLE IF NOT EXISTS removed_members (
+      user_id TEXT PRIMARY KEY, removed_at TEXT NOT NULL, removed_by TEXT NOT NULL)`);
   }
 
   /**
@@ -106,6 +115,22 @@ export class AdminSettings extends DurableObject<Cloudflare.Env> {
   // --- Invites (Legal OS) ---
   // An unknown, expired, used or revoked token answers identically (null), so a probe learns
   // nothing about whether a token ever existed. Re-inviting an email revokes its earlier tokens.
+
+  // ---- Removed members (WP-8) ---
+
+  async markRemoved(userId: string, by: string): Promise<void> {
+    this.ctx.storage.sql.exec("INSERT INTO removed_members(user_id, removed_at, removed_by) VALUES(?, ?, ?) ON CONFLICT(user_id) DO NOTHING",
+      userId, new Date().toISOString(), by);
+  }
+
+  async isRemoved(userId: string): Promise<boolean> {
+    return this.ctx.storage.sql.exec("SELECT 1 FROM removed_members WHERE user_id = ?", userId).toArray().length > 0;
+  }
+
+  async listRemoved(): Promise<{ userId: string; removedAt: string; removedBy: string }[]> {
+    return this.ctx.storage.sql.exec("SELECT user_id AS userId, removed_at AS removedAt, removed_by AS removedBy FROM removed_members ORDER BY removed_at DESC")
+      .toArray() as { userId: string; removedAt: string; removedBy: string }[];
+  }
 
   #inviteRow(token: string): Invite | null {
     let row = this.ctx.storage.sql.exec(
@@ -681,6 +706,49 @@ export class AdminApiImpl extends RpcTarget implements AdminApi {
       ...r,
       monthCost: r.workspaceId ? (byWorkspace.get(r.workspaceId) ?? 0) : null,
     }));
+  }
+
+  // ---- WP-8: the firm's process. Only admins hold this object (getAdminApi returns null otherwise). ---
+
+  async reassignMatter(matterId: string, toUserId: string): Promise<void> {
+    let view = await this.#firmAdmin();
+    if (!view) throw new Error("The Matters gatekeeper is not available on this deployment.");
+    let to = toUserId.trim();
+    if (!to) throw new Error("Choose the member to reassign to.");
+    if (await this.admin.isRemoved(to)) throw new Error(`${to} was removed from the firm; reassign to a current member.`);
+    await view.reassignMatter(matterId, to, this.adminUserId);
+  }
+
+  /**
+   * Removal never deletes: access ends at once (login and sessions refuse the user), matters they
+   * own pause with a visible hold until reassigned, their personal playbook notes are kept. The
+   * last admin cannot be removed, and no one removes themselves.
+   */
+  async removeMember(userId: string): Promise<void> {
+    let user = userId.trim();
+    if (!user) throw new Error("Name the member to remove.");
+    if (user === this.adminUserId) throw new Error("You cannot remove yourself. Ask another admin.");
+    let removed = new Set((await this.admin.listRemoved()).map(r => r.userId));
+    let remainingAdmins = this.admins.filter(a => a !== user && !removed.has(a));
+    if (this.admins.includes(user) && remainingAdmins.length === 0) throw new Error("This is the firm's last admin; invite another admin before removing them.");
+    await this.admin.markRemoved(user, this.adminUserId);
+    let view = await this.#firmAdmin();
+    if (view) await view.removeMember(user, this.adminUserId);
+  }
+
+  async listRemovedMembers(): Promise<{ userId: string; removedAt: string; removedBy: string }[]> {
+    return this.admin.listRemoved();
+  }
+
+  async getLaneModels(): Promise<LaneModels> {
+    let view = await this.#firmAdmin();
+    return view ? view.laneModels() : { reader: null, knowledge: null, drafting: null, critic: null };
+  }
+
+  async setLaneModels(models: LaneModels): Promise<void> {
+    let view = await this.#firmAdmin();
+    if (!view) throw new Error("The Matters gatekeeper is not available on this deployment.");
+    await view.setLaneModels(models);
   }
 
   async firmAnalytics(days: number): Promise<FirmAnalytics> {

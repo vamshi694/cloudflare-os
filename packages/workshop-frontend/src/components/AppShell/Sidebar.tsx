@@ -1,7 +1,13 @@
 import { Link } from '@tanstack/react-router'
+import { useCallback } from 'react'
+import type { RpcStub } from 'capnweb'
+import type { AuthenticatedApi } from '@gadgets/workshop-shared/api'
+import type { FirmInbox, LegalDesk } from '@gadgets/workshop-shared/legal'
+import { useDesk, usePolled } from '../firm/useDesk'
 import {
   BookOpen,
   ChatsCircle,
+  Tray,
   MagnifyingGlass,
   Scales,
   SidebarSimple,
@@ -44,6 +50,7 @@ export default function Sidebar({
   // and is connected / enabled for everyone). Disabled or not-yet-connected ones aren't returned, so
   // they simply don't appear. The set is fully dynamic — no gatekeeper is hardcoded.
   const gatekeeperApps = useGatekeeperApps()
+  const inboxCount = useInboxCount()
   // Platform management apps (the Context Library and its kind) are the admin's concern; a
   // practitioner's rail is Ask, Matters, Playbook and their matters.
   const { isAdmin } = useAuthenticatedApi()
@@ -128,6 +135,12 @@ export default function Sidebar({
               collapsed={collapsed}
             />
             <SidebarItem
+              to="/inbox"
+              label={inboxCount > 0 ? `Inbox · ${inboxCount}` : "Inbox"}
+              icon={<Tray size={14} weight="regular" />}
+              collapsed={collapsed}
+            />
+            <SidebarItem
               to="/matters"
               label="Matters"
               icon={<Scales size={14} weight="regular" />}
@@ -197,3 +210,16 @@ export default function Sidebar({
     </aside>
   )
 }
+
+/**
+ * The inbox count on the rail: every item waiting on the lawyer across their matters, polled
+ * quietly. Zero when the desk cannot be read, never a stale number pretending to be live.
+ */
+function useInboxCount(): number {
+  const desk = useDesk<LegalDesk>(mintLegalDeskForRail, 'the inbox count')
+  const api = desk.kind === 'ready' ? desk.stub : null
+  const read = useCallback(() => (api ? api.inbox() : Promise.reject(new Error('no desk'))), [api])
+  const inbox = usePolled<FirmInbox>(api ? read : null, 30_000)
+  return inbox.data && !inbox.failed ? inbox.data.items.length : 0
+}
+const mintLegalDeskForRail = (api: RpcStub<AuthenticatedApi>) => api.getLegalDesk()

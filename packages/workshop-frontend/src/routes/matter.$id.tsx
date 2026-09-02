@@ -123,7 +123,9 @@ function MatterPage() {
     <Shell wide={wide}>
       <MatterHeader desk={desk} overview={overview} stale={failed} loadedAt={loadedAt} onChanged={refresh} />
 
-      {overview.needsYouItems.length > 0 && (
+      {/* On the conversation tab the cards sit in the thread, above the composer (WP-9); elsewhere
+          they stay here, always visible above the tabs. */}
+      {overview.needsYouItems.length > 0 && tab !== 'conversation' && (
         <div className="mt-4">
           <NeedsYou desk={desk} items={overview.needsYouItems} onChanged={refresh} onOpenDocuments={() => changeTab('documents')} />
         </div>
@@ -134,7 +136,16 @@ function MatterPage() {
       </div>
 
       <div className="mt-5 pb-12">
-        {tab === 'conversation' && <ConversationTab matterId={id} desk={desk} onOpenPetition={() => changeTab('petition')} />}
+        {tab === 'conversation' && (
+          <ConversationTab
+            matterId={id}
+            desk={desk}
+            needsYou={overview.needsYouItems}
+            onNeedsYouChanged={refresh}
+            onOpenPetition={() => changeTab('petition')}
+            onOpenDocuments={() => changeTab('documents')}
+          />
+        )}
         {tab === 'documents' && <DocumentsTab desk={desk} onChanged={refresh} />}
         {tab === 'map' && <CaseMapTab desk={desk} />}
         {tab === 'petition' && <WorkspaceTab desk={desk} caseType={overview.caseType} />}

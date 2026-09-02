@@ -1,8 +1,10 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { useCallback, useMemo, useState } from 'react'
 import type { RpcStub } from 'capnweb'
 import type { AuthenticatedApi } from '@gadgets/workshop-shared/api'
-import type { PlaybookChange, PlaybookDesk, PlaybookEntry } from '@gadgets/workshop-shared/legal'
+import type { LearningRun, PlaybookChange, PlaybookDesk, PlaybookEntry } from '@gadgets/workshop-shared/legal'
+import { logRpcFailure } from '../rpcErrors'
+import { WorkshopButton } from '../components/WorkshopControls'
 import { useDocumentTitle } from '../useDocumentTitle'
 import { useDesk, usePolled } from '../components/firm/useDesk'
 import { EmptyLine, Eyebrow, Notice, Pill, SegmentedTabs, Skeleton, ThreeState, tidy, formatDate } from '../components/legal/primitives'
@@ -148,6 +150,8 @@ function PlaybooksPage() {
             )}
           </ThreeState>
         ) : (
+          <>
+          <LearningRuns api={api} references={(list.data ?? []).filter((e) => e.category === 'reference')} />
           <ThreeState
             items={changes.data}
             failed={changes.failed}
@@ -188,8 +192,109 @@ function PlaybooksPage() {
               </ul>
             )}
           </ThreeState>
+          </>
         )}
       </div>
     </div>
+  )
+}
+
+/**
+ * TEACH THE FIRM from a reference filing: the attorney picks an exemplar from the library and
+ * hands it to the counsel in the firm's conversation; the counsel proposes what the playbook
+ * should learn as a diff to approve; the run's row here follows that decision and can undo it.
+ */
+function LearningRuns({ api, references }: { api: RpcStub<PlaybookDesk> | null; references: PlaybookEntry[] }) {
+  const navigate = useNavigate()
+  const readRuns = useCallback(() => (api ? api.learningRuns() : Promise.reject(new Error('no desk'))), [api])
+  const runs = usePolled<LearningRun[]>(api ? readRuns : null, 20_000)
+  const [reference, setReference] = useState('')
+  const [busy, setBusy] = useState<string | null>(null)
+  const [note, setNote] = useState<string | null>(null)
+
+  const start = async () => {
+    if (!api || !reference || busy) return
+    setBusy('start')
+    setNote(null)
+    try {
+      const { seed } = await api.startLearningRun(reference)
+      runs.refresh()
+      void navigate({ to: '/', search: { prompt: seed } })
+    } catch (err) {
+      logRpcFailure('Failed to start a learning run:', err)
+      setNote(`The run didn't start: ${err instanceof Error ? err.message : 'try again'}. Nothing has changed.`)
+    } finally {
+      setBusy(null)
+    }
+  }
+
+  const revert = async (id: string) => {
+    if (!api || busy) return
+    setBusy(id)
+    setNote(null)
+    try {
+      await api.revertLearningRun(id)
+      setNote('Reverted. The document is back to the text it had before the run.')
+      runs.refresh()
+    } catch (err) {
+      logRpcFailure('Failed to revert a learning run:', err)
+      setNote(`That didn't revert: ${err instanceof Error ? err.message : 'try again'}. The playbook is unchanged.`)
+    } finally {
+      setBusy(null)
+    }
+  }
+
+  const STATUS: Record<LearningRun['status'], { label: string; tone: 'ready' | 'neutral' | 'warning' }> = {
+    queued: { label: 'Handed to the counsel', tone: 'warning' },
+    proposed: { label: 'Awaiting your approval', tone: 'warning' },
+    adopted: { label: 'Adopted', tone: 'ready' },
+    reverted: { label: 'Reverted', tone: 'neutral' },
+    declined: { label: 'Declined', tone: 'neutral' },
+  }
+
+  return (
+    <section className="mb-6 rounded-xl border border-kumo-line bg-kumo-base px-5 py-4">
+      <Eyebrow>Learning runs</Eyebrow>
+      <p className="m-0 mt-1 text-[12.5px] leading-4 text-kumo-subtle">
+        Pick a reference filing from the library. The counsel reads it, compares it with the playbook, and proposes what to learn; you approve the exact change.
+      </p>
+      <div className="mt-3 flex flex-wrap items-center gap-2">
+        <select value={reference} onChange={(e) => setReference(e.target.value)} disabled={!api || busy !== null} className="h-8 min-w-[240px] rounded-lg border border-kumo-line bg-kumo-base px-2 text-[13px] text-kumo-default">
+          <option value="">Choose a reference filing…</option>
+          {references.map((r) => <option key={r.slug} value={r.slug}>{r.title}</option>)}
+        </select>
+        <WorkshopButton className="!h-8" tone="primary" disabled={!api || !reference || busy !== null} onClick={() => void start()}>
+          {busy === 'start' ? 'Starting…' : 'Start a run'}
+        </WorkshopButton>
+        {references.length === 0 && <span className="text-[12.5px] text-kumo-subtle">No reference filings in the library yet; add one under the Playbook.</span>}
+      </div>
+      {note && <p className="m-0 mt-2 text-[12.5px] leading-4 text-kumo-subtle">{note}</p>}
+      <div className="mt-3">
+        {runs.data === null ? (
+          runs.failed ? <p className="m-0 text-[12.5px] italic text-kumo-subtle">The runs couldn&apos;t be read just now — this list may be out of date.</p> : <Skeleton className="h-[40px]" />
+        ) : runs.data.length === 0 ? (
+          <p className="m-0 text-[13px] text-kumo-subtle">No runs yet.</p>
+        ) : (
+          <ul className="m-0 list-none divide-y divide-kumo-line rounded-xl border border-kumo-line p-0">
+            {runs.data.map((r) => (
+              <li key={r.id} className="flex flex-wrap items-center justify-between gap-2 px-3 py-2">
+                <div className="min-w-0">
+                  <p className="m-0 text-[13.5px] leading-5 text-kumo-default">{r.referenceTitle}</p>
+                  <p className="m-0 mt-0.5 text-[12px] leading-4 text-kumo-subtle">
+                    {r.summary ?? 'Nothing proposed yet.'}{r.changedSlug ? <> · <Link to="/playbooks/$slug" params={{ slug: r.changedSlug }} className="hover:underline">{r.changedSlug}</Link></> : null} · {r.startedBy} · {formatDate(r.startedAt)}
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Pill tone={STATUS[r.status].tone}>{STATUS[r.status].label}</Pill>
+                  {r.status === 'adopted' && (
+                    <WorkshopButton className="!h-7" disabled={busy !== null} onClick={() => void revert(r.id)}>{busy === r.id ? 'Reverting…' : 'Revert'}</WorkshopButton>
+                  )}
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </section>
   )
 }

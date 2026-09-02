@@ -87,6 +87,7 @@ export function petitionView(db: Db, spec: CaseTypeSpec | null, docs: DocumentLi
     })),
     versions: listVersions(db),
     writing: sections.some(s => s.status === "drafting"),
+    lane: null,
   };
 }
 
@@ -194,18 +195,6 @@ function seedFields(code: string): StoredField[] {
   return (FORM_FIELDS[code] ?? []).map(f => ({ ...f, value: null, sourceFactId: null, acceptedBy: null }));
 }
 
-export function listForms(db: Db, spec: CaseTypeSpec | null): GovernmentForm[] {
-  const stored = new Map(db.sql("SELECT * FROM forms").map(r => [r.code as string, r]));
-  return (spec?.forms ?? []).map(f => {
-    const r = stored.get(f.code);
-    const fields = r ? parseJson<StoredField[]>(r.fields, []) : seedFields(f.code);
-    return {
-      code: f.code, title: f.title, filedOnline: f.filedOnline,
-      status: ((r?.status as GovernmentForm["status"]) ?? "not_started"),
-      fields, filled: fields.filter(x => x.value !== null && x.value !== "").length, accepted: fields.filter(x => x.acceptedBy).length,
-    };
-  });
-}
 
 function upsertForm(db: Db, code: string, status: GovernmentForm["status"], fields: StoredField[]): void {
   db.sql(`INSERT INTO forms(code, status, fields, updated_at) VALUES(?, ?, ?, ?)

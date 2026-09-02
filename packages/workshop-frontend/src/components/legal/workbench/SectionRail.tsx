@@ -20,6 +20,10 @@ export function SectionRail({
   onOpenRfe,
   onExport,
   exporting,
+  onPacket,
+  binding,
+  onWord,
+  wording,
   deliverables,
   onOpenDeliverable,
 }: {
@@ -31,6 +35,10 @@ export function SectionRail({
   onOpenRfe: () => void
   onExport: () => void
   exporting: boolean
+  onPacket: () => void
+  binding: boolean
+  onWord: () => void
+  wording: boolean
   deliverables: { path: string; updatedAt: string }[]
   onOpenDeliverable: (path: string) => void
 }) {
@@ -78,8 +86,13 @@ export function SectionRail({
       <div>
         <p className="docket m-0 mb-1.5">The filing</p>
         <div className="space-y-1">
-          <button type="button" disabled title="The filing-ready packet (cover, contents, letter, approved forms, every numbered exhibit) is assembled server-side; that binder is not wired on this deployment yet." className="w-full cursor-not-allowed rounded-lg border border-kumo-line px-3 py-1.5 text-left text-[12.5px] text-kumo-inactive">
-            Download the USCIS packet (PDF) · not yet
+          <button type="button" onClick={onPacket} disabled={binding || drafted === 0} title="The filing-ready packet: cover, contents, the letter, every approved government form, and every numbered exhibit." className="press w-full cursor-pointer rounded-lg border border-kumo-line px-3 py-1.5 text-left text-[12.5px] text-kumo-default hover:bg-kumo-tint disabled:cursor-not-allowed disabled:opacity-60">
+            {binding ? (
+              <span className="inline-flex items-center gap-1.5"><span className="h-3 w-3 animate-spin rounded-full border-[1.5px] border-kumo-inactive border-t-kumo-default" /> Assembling the packet — forms and exhibits binding…</span>
+            ) : 'Download the USCIS packet (PDF)'}
+          </button>
+          <button type="button" onClick={onWord} disabled={wording || drafted === 0} title="The letter alone, editable in Word." className="press w-full cursor-pointer rounded-lg border border-kumo-line px-3 py-1.5 text-left text-[12.5px] text-kumo-default hover:bg-kumo-tint disabled:cursor-not-allowed disabled:opacity-60">
+            {wording ? 'Preparing the Word letter…' : 'Word letter (.docx)'}
           </button>
           <button type="button" onClick={onExport} disabled={exporting} title="The letter alone, as Markdown." className="press w-full cursor-pointer rounded-lg border border-kumo-line px-3 py-1.5 text-left text-[12.5px] text-kumo-default hover:bg-kumo-tint disabled:opacity-60">
             {exporting ? 'Preparing the letter…' : 'Letter (Markdown)'}

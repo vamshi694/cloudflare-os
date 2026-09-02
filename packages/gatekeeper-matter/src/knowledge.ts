@@ -5,6 +5,7 @@
 import type { EntityKind } from "@gadgets/workshop-shared/legal";
 import { caseTypeSpec } from "./case-types.js";
 import { firmGuidance } from "./firm-library.js";
+import { laneModel } from "./process.js";
 import { askFromGuidance } from "./rules.js";
 import { entityKind } from "./store-knowledge.js";
 import type { Fact } from "./types.js";
@@ -43,7 +44,9 @@ async function askModel(env: Cloudflare.Env, system: string, user: string): Prom
   // The lane tries a non-thinking extraction model first (a thinking model spends its whole output
   // budget reasoning and answers with nothing), then the deep reader as a second chance. A model
   // that errors, times out, or answers without JSON hands over to the next.
-  const models = [...new Set([env.KNOWLEDGE_MODEL || WORKERS_AI_MODEL, env.READER_MODEL].filter((m): m is string => !!m))];
+  // WP-8: an admin's lane choice (The firm → Platform) goes first.
+  const chosen = await laneModel(env, "knowledge");
+  const models = [...new Set([chosen, env.KNOWLEDGE_MODEL || WORKERS_AI_MODEL, env.READER_MODEL].filter((m): m is string => !!m))];
   let lastProblem = "no model configured";
   for (const model of models) {
     try {
@@ -90,10 +93,9 @@ export function parseClaims(raw: string, batch: Fact[], allowedKeys: Set<string>
 
 const DESCRIBE_SYSTEM = `Write one plain-English sentence describing each entity from the claims it appears in, as a senior associate would brief a partner. Return ONLY {"descriptions":{"<entity id>":"<sentence>"}}.`;
 
-export async function buildKnowledge(env: Cloudflare.Env, store: DurableObjectStub<MatterStore>): Promise<void> {
-  const meta = await store.meta();
-  if (!meta) return;
-  const spec = caseTypeSpec(meta.caseType);
+/** The build's brief: the case type's sections with the firm's playbook guidance per criterion. */
+async function buildBrief(env: Cloudflare.Env, caseType: string | null): Promise<{ keys: Set<string>; header: string }> {
+  const spec = caseTypeSpec(caseType);
   const keys = new Set(spec?.sections.filter(s => s.evidentiary).map(s => s.key) ?? []);
   // The firm's playbook says what proves each criterion; the claims are tagged the way the firm
   // argues, not the way a generic reader guesses. Absent a playbook, the catalog's purpose stands.
@@ -104,26 +106,54 @@ export async function buildKnowledge(env: Cloudflare.Env, store: DurableObjectSt
         return `- ${s.key}: ${s.title} — ${s.purpose}${g ? `\n  The firm's playbook: ${askFromGuidance(g.guidance, 420)}` : ""}`;
       }).join("\n")
     : "(no case type yet: leave criteria empty)";
-  await store.knowledgeBuildBegin();
-  let failed: string | null = null;
-  const documents = new Set<string>();
+  return { keys, header: `Case type: ${spec?.title ?? "undecided"}.\nPetition sections (keys):\n${sectionList}` };
+}
+
+/**
+ * One batch of the fanned-out build (jobs.ts): the facts from `offset`, turned into claims. Never
+ * throws; a failure is returned in words so the finish can report it and the counter still moves.
+ */
+export async function buildKnowledgeBatch(env: Cloudflare.Env, store: DurableObjectStub<MatterStore>, offset: number): Promise<{ documents: string[]; failure: string | null }> {
+  const meta = await store.meta();
+  if (!meta) return { documents: [], failure: "the matter is gone" };
   try {
-    for (let offset = 0; ; offset += BATCH) {
-      const batch = await store.facts({ limit: BATCH, offset, minConfidence: 0.3 });
-      if (batch.length === 0) break;
-      for (const f of batch) documents.add(f.documentId);
-      const user = `Case type: ${spec?.title ?? "undecided"}.\nPetition sections (keys):\n${sectionList}\n\nFacts (index: statement — from "document" p. N — verbatim quote):\n` +
-        batch.map((f, i) => `${i}: ${f.statement} — from "${f.documentTitle}"${f.page ? ` p. ${f.page}` : ""} — "${f.quote}"`).join("\n");
-      const claims = parseClaims(await askModel(env, KNOWLEDGE_SYSTEM, user), batch, keys);
-      for (const c of claims) await store.addClaim(c, "firm");
-      if (batch.length < BATCH) break;
-    }
-    await describeEntities(env, store);
+    const batch = await store.facts({ limit: BATCH, offset, minConfidence: 0.3 });
+    if (batch.length === 0) return { documents: [], failure: null };
+    const { keys, header } = await buildBrief(env, meta.caseType);
+    const user = `${header}\n\nFacts (index: statement — from "document" p. N — verbatim quote):\n` +
+      batch.map((f, i) => `${i}: ${f.statement} — from "${f.documentTitle}"${f.page ? ` p. ${f.page}` : ""} — "${f.quote}"`).join("\n");
+    const claims = parseClaims(await askModel(env, KNOWLEDGE_SYSTEM, user), batch, keys);
+    for (const c of claims) await store.addClaim(c, "firm");
+    return { documents: [...new Set(batch.map(f => f.documentId))], failure: null };
   } catch (error) {
-    failed = error instanceof Error ? error.message : String(error);
-    console.error(`[knowledge] build failed matter=${meta.id}: ${failed}`);
+    const failure = error instanceof Error ? error.message : String(error);
+    console.error(`[knowledge] batch failed matter=${meta.id} offset=${offset}: ${failure}`);
+    return { documents: [], failure };
   }
-  await store.knowledgeBuildEnd(documents.size, failed ? `The case knowledge build stopped early: ${failed}. What was built so far stands; the firm retries on the next settle.` : null);
+}
+
+/** The last batch landed: describe the entities, then close the build with an honest note and the wake. */
+export async function finishKnowledge(env: Cloudflare.Env, store: DurableObjectStub<MatterStore>): Promise<void> {
+  const state = await store.knowledgeBuildState();
+  try { await describeEntities(env, store); } catch (error) {
+    console.error(`[knowledge] describe failed: ${error instanceof Error ? error.message : String(error)}`);
+  }
+  const failed = state?.failed ?? 0;
+  const note = failed > 0
+    ? `The case knowledge build stopped early on ${failed} of ${state?.batches ?? failed} batches (${state?.failures.slice(-1)[0] ?? "model error"}). What was built stands; the firm retries on the next settle.`
+    : null;
+  await store.knowledgeBuildEnd(state?.documents ?? 0, note);
+}
+
+/** The whole build in one call, batch after batch. jobs.ts fans it out instead; this serves tests and dev. */
+export async function buildKnowledge(env: Cloudflare.Env, store: DurableObjectStub<MatterStore>): Promise<void> {
+  const plan = await store.knowledgeBuildPlan();
+  if (!plan) return;
+  for (const offset of plan.offsets) {
+    const r = await buildKnowledgeBatch(env, store, offset);
+    await store.knowledgeBatchDone(plan.buildId, r.documents, r.failure);
+  }
+  await finishKnowledge(env, store);
 }
 
 async function describeEntities(env: Cloudflare.Env, store: DurableObjectStub<MatterStore>): Promise<void> {

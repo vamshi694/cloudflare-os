@@ -16,6 +16,8 @@ declare namespace Cloudflare {
     /** Workers AI model id for the reading lane. */
     READER_MODEL?: string;
     KNOWLEDGE_MODEL?: string;
+    /** Workers AI model id for the drafting lane; defaults to the reader, then the knowledge model. */
+    DRAFT_MODEL?: string;
     /** The firm gatekeeper's FirmLibraryApi over a service binding (deploy.ts wires it); absent in tests. */
     FIRM_LIBRARY?: import("./firm-library.js").FirmLibraryBinding;
     /** Firm-level OpenRouter key for the reading lane (a Worker secret, never in config). */
@@ -26,6 +28,8 @@ declare namespace Cloudflare {
     PORTAL_SECRET?: string;
     /** The per-matter case store. */
     MATTER_STORE: DurableObjectNamespace<import("./store.js").MatterStore>;
+    /** The firm's registry (ownership, holds, lane models). */
+    FIRM_INDEX: DurableObjectNamespace<import("./firm-index.js").FirmIndex>;
   }
 
   interface GlobalProps {

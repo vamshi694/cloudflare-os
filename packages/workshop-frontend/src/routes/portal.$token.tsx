@@ -8,7 +8,7 @@
 
 import { createFileRoute } from '@tanstack/react-router'
 import { useCallback, useEffect, useRef, useState, type ChangeEvent, type DragEvent } from 'react'
-import type { PortalView } from '@gadgets/workshop-shared/legal'
+import type { PortalSignatureRequest, PortalView } from '@gadgets/workshop-shared/legal'
 import BrandMark from '../components/BrandMark'
 
 export const Route = createFileRoute('/portal/$token')({ component: PortalPage })
@@ -126,6 +126,14 @@ function PortalPage() {
         </Section>
       )}
 
+      {view.signatures.length > 0 && (
+        <Section label="Your signature is needed">
+          <div className="space-y-4">
+            {view.signatures.map((s) => <SignCard key={s.id} token={token} request={s} onSigned={load} />)}
+          </div>
+        </Section>
+      )}
+
       <Section label="Upload">
         <Uploader token={token} onUploaded={load} />
       </Section>
@@ -165,6 +173,86 @@ function PortalPage() {
         )}
       </Section>
     </Frame>
+  )
+}
+
+/**
+ * The client never signs a document they could not read: the filled official form opens right
+ * here, before the name goes in. Typing the full legal name signs it; the record keeps the name
+ * and the moment.
+ */
+function SignCard({ token, request, onSigned }: { token: string; request: PortalSignatureRequest; onSigned: () => void }) {
+  const [open, setOpen] = useState(false)
+  const [name, setName] = useState('')
+  const [state, setState] = useState<'idle' | 'signing' | 'signed' | 'failed'>('idle')
+  const [failure, setFailure] = useState<string | null>(null)
+
+  const sign = async () => {
+    if (name.trim().length < 3 || state === 'signing') return
+    setState('signing')
+    setFailure(null)
+    try {
+      const res = await fetch(`${apiBase(token)}/sign`, {
+        method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ id: request.id, name: name.trim() }),
+      })
+      const body = (await res.json().catch(() => ({}))) as { error?: string }
+      if (!res.ok) throw new Error(body.error || 'That signature was not recorded.')
+      setState('signed')
+      onSigned()
+    } catch (err) {
+      setState('failed')
+      setFailure(err instanceof Error ? err.message : 'That signature was not recorded. Please try again.')
+    }
+  }
+
+  if (state === 'signed') {
+    return (
+      <div className="rounded-[14px] border border-kumo-line bg-kumo-elevated px-5 py-4">
+        <p className="m-0 text-[15px] font-medium text-kumo-default">{request.title}</p>
+        <p className="m-0 mt-1 text-[13.5px] text-emerald-700">Signed. Thank you — your legal team has it.</p>
+      </div>
+    )
+  }
+
+  return (
+    <div className="rounded-[14px] border border-kumo-line bg-kumo-elevated px-5 py-4">
+      <p className="m-0 text-[15px] font-medium text-kumo-default">{request.title}</p>
+      <p className="m-0 mt-1 text-[13.5px] leading-[1.55] text-kumo-subtle">
+        Your legal team prepared this form from what you sent. Read it in full, then sign it below.
+      </p>
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className="mt-3 rounded-full border border-kumo-line bg-kumo-base px-4 py-1.5 text-[13.5px] font-medium text-kumo-default"
+      >
+        {open ? 'Hide the form' : 'Review the form you are signing'}
+      </button>
+      {open && (
+        <iframe title={request.title} src={`${request.documentUrl}#view=FitH`} className="mt-3 block h-[70vh] min-h-[420px] w-full rounded-[10px] bg-[#525659]" />
+      )}
+      <label className="mt-4 block text-[13px] text-kumo-subtle">
+        Type your full legal name to sign
+        <input
+          value={name}
+          onChange={(e) => { setName(e.target.value); if (state === 'failed') setState('idle') }}
+          autoComplete="name"
+          className="mt-1 block w-full rounded-[10px] border border-kumo-line bg-kumo-base px-3 py-2 text-[15px] text-kumo-default outline-none focus:border-kumo-ring"
+        />
+      </label>
+      <div className="mt-2 flex items-center justify-between gap-3">
+        <span className="text-[12.5px] text-kumo-subtle">
+          {failure ?? 'Typing your name signs this electronically. The record keeps your name and the moment you signed.'}
+        </span>
+        <button
+          type="button"
+          onClick={sign}
+          disabled={name.trim().length < 3 || state === 'signing'}
+          className="rounded-full bg-kumo-brand px-4 py-1.5 text-[13.5px] font-medium text-white transition-opacity disabled:opacity-30"
+        >
+          {state === 'signing' ? 'Signing…' : 'Sign'}
+        </button>
+      </div>
+    </div>
   )
 }
 

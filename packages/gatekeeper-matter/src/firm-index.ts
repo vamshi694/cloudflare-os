@@ -12,6 +12,8 @@
 import { DurableObject, WorkerEntrypoint } from "cloudflare:workers";
 import { validateRpc } from "capnweb-validate";
 import type { MatterStore } from "./store.js";
+import type { MatterAccount } from "./matter.js";
+import { ownershipTransition } from "./process.js";
 
 export type FirmIndexEntry = {
   matterId: string;
@@ -39,6 +41,8 @@ export type FirmMatterRow = {
   createdAt: string;
   /** Null when the matter's store could not be read; the row still shows what the index knows. */
   unreachable: boolean;
+  /** Why the firm stopped work on it: its owner was removed. Reassign to resume. */
+  hold: "removed_owner" | null;
 };
 
 /** What the firm did over a window, counted from every matter's activity trail. */
@@ -55,6 +59,12 @@ export type FirmAnalytics = {
   byDay: { day: string; documentsRead: number; sectionsDrafted: number; decisionsAnswered: number }[];
 };
 
+/** The models each lane runs on; null keeps the worker's configured default. */
+export type LaneModels = { reader: string | null; knowledge: string | null; drafting: string | null; critic: string | null };
+export type Lane = keyof LaneModels;
+// (laneModel() lives in process.ts so the lanes never import this Durable Object module.)
+const LANES: Lane[] = ["reader", "knowledge", "drafting", "critic"];
+
 export class FirmIndex extends DurableObject<Cloudflare.Env> {
   constructor(ctx: DurableObjectState, env: Cloudflare.Env) {
     super(ctx, env);
@@ -62,6 +72,15 @@ export class FirmIndex extends DurableObject<Cloudflare.Env> {
       ctx.storage.sql.exec(`CREATE TABLE IF NOT EXISTS matters (
         matter_id TEXT PRIMARY KEY, owner_account_id TEXT NOT NULL, owner_user_id TEXT,
         title TEXT NOT NULL, client_name TEXT NOT NULL, created_at TEXT NOT NULL)`);
+      // WP-8: holds, the owner directory (username → account, so reassignment can target a member
+      // by name), and the firm's settings (lane models).
+      const cols = ctx.storage.sql.exec("PRAGMA table_info(matters)").toArray().map(r => r.name as string);
+      if (!cols.includes("hold")) ctx.storage.sql.exec("ALTER TABLE matters ADD COLUMN hold TEXT");
+      if (!cols.includes("held_at")) ctx.storage.sql.exec("ALTER TABLE matters ADD COLUMN held_at TEXT");
+      ctx.storage.sql.exec(`CREATE TABLE IF NOT EXISTS owners (
+        owner_user_id TEXT PRIMARY KEY, owner_account_id TEXT NOT NULL, seen_at TEXT NOT NULL,
+        removed_at TEXT, removed_by TEXT)`);
+      ctx.storage.sql.exec("CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, value TEXT NOT NULL)");
     });
   }
 
@@ -80,13 +99,77 @@ export class FirmIndex extends DurableObject<Cloudflare.Env> {
   /** Learn who a matter account belongs to; called whenever a lawyer's desk opens. */
   async claimOwner(ownerAccountId: string, ownerUserId: string): Promise<void> {
     this.ctx.storage.sql.exec("UPDATE matters SET owner_user_id = ? WHERE owner_account_id = ?", ownerUserId, ownerAccountId);
+    this.ctx.storage.sql.exec(
+      `INSERT INTO owners(owner_user_id, owner_account_id, seen_at) VALUES(?, ?, ?)
+       ON CONFLICT(owner_user_id) DO UPDATE SET owner_account_id = excluded.owner_account_id, seen_at = excluded.seen_at`,
+      ownerUserId, ownerAccountId, new Date().toISOString());
   }
 
-  async list(): Promise<FirmIndexEntry[]> {
+  async list(): Promise<(FirmIndexEntry & { hold: "removed_owner" | null })[]> {
     return this.ctx.storage.sql.exec(
       `SELECT matter_id AS matterId, owner_account_id AS ownerAccountId, owner_user_id AS ownerUserId,
-              title, client_name AS clientName, created_at AS createdAt FROM matters ORDER BY created_at DESC`)
-      .toArray() as FirmIndexEntry[];
+              title, client_name AS clientName, created_at AS createdAt, hold FROM matters ORDER BY created_at DESC`)
+      .toArray().map(r => ({ ...r, hold: (r.hold as "removed_owner" | null) ?? null })) as (FirmIndexEntry & { hold: "removed_owner" | null })[];
+  }
+
+  async entry(matterId: string): Promise<(FirmIndexEntry & { hold: "removed_owner" | null }) | null> {
+    const r = this.ctx.storage.sql.exec(
+      `SELECT matter_id AS matterId, owner_account_id AS ownerAccountId, owner_user_id AS ownerUserId,
+              title, client_name AS clientName, created_at AS createdAt, hold FROM matters WHERE matter_id = ?`, matterId).toArray()[0];
+    return r ? ({ ...r, hold: (r.hold as "removed_owner" | null) ?? null } as FirmIndexEntry & { hold: "removed_owner" | null }) : null;
+  }
+
+  /** The account behind a member's username, once their desk has opened; null when never seen. */
+  async ownerAccount(ownerUserId: string): Promise<string | null> {
+    const r = this.ctx.storage.sql.exec("SELECT owner_account_id FROM owners WHERE owner_user_id = ?", ownerUserId).toArray()[0];
+    return (r?.owner_account_id as string | undefined) ?? null;
+  }
+
+  /** Hold every matter a removed member owns. Returns the matter ids so their stores can pause. */
+  async holdOwner(ownerUserId: string, by: string): Promise<string[]> {
+    const at = new Date().toISOString();
+    const ids = this.ctx.storage.sql.exec("SELECT matter_id FROM matters WHERE owner_user_id = ?", ownerUserId).toArray().map(r => r.matter_id as string);
+    for (const id of ids) {
+      const row = this.ctx.storage.sql.exec("SELECT owner_user_id, hold FROM matters WHERE matter_id = ?", id).toArray()[0];
+      const next = ownershipTransition({ ownerUserId: (row?.owner_user_id as string | null) ?? null, hold: (row?.hold as "removed_owner" | null) ?? null }, { type: "remove_owner" });
+      this.ctx.storage.sql.exec("UPDATE matters SET hold = ?, held_at = ? WHERE matter_id = ?", next.hold, at, id);
+    }
+    this.ctx.storage.sql.exec("UPDATE owners SET removed_at = ?, removed_by = ? WHERE owner_user_id = ?", at, by, ownerUserId);
+    return ids;
+  }
+
+  /** Move a matter to another member and lift its hold. The caller moves the per-account rows. */
+  async reassign(matterId: string, toUserId: string): Promise<{ fromAccountId: string; toAccountId: string; fromUserId: string | null }> {
+    const row = this.ctx.storage.sql.exec("SELECT owner_account_id, owner_user_id, hold FROM matters WHERE matter_id = ?", matterId).toArray()[0];
+    if (!row) throw new Error("That matter is not in the firm's registry.");
+    const toAccountId = await this.ownerAccount(toUserId);
+    if (!toAccountId) throw new Error(`${toUserId} has not opened their desk yet, so the firm cannot hand them a matter. Ask them to sign in once.`);
+    const next = ownershipTransition({ ownerUserId: (row.owner_user_id as string | null) ?? null, hold: (row.hold as "removed_owner" | null) ?? null }, { type: "reassign", toUserId });
+    this.ctx.storage.sql.exec("UPDATE matters SET owner_account_id = ?, owner_user_id = ?, hold = ?, held_at = NULL WHERE matter_id = ?",
+      toAccountId, next.ownerUserId, next.hold, matterId);
+    return { fromAccountId: row.owner_account_id as string, toAccountId, fromUserId: (row.owner_user_id as string | null) ?? null };
+  }
+
+  async removedMembers(): Promise<{ userId: string; removedAt: string; removedBy: string }[]> {
+    return this.ctx.storage.sql.exec(
+      "SELECT owner_user_id AS userId, removed_at AS removedAt, removed_by AS removedBy FROM owners WHERE removed_at IS NOT NULL ORDER BY removed_at DESC")
+      .toArray() as { userId: string; removedAt: string; removedBy: string }[];
+  }
+
+  async laneModels(): Promise<LaneModels> {
+    const raw = this.ctx.storage.sql.exec("SELECT value FROM settings WHERE key = 'lane_models'").toArray()[0]?.value as string | undefined;
+    const parsed = raw ? JSON.parse(raw) as Partial<LaneModels> : {};
+    return { reader: parsed.reader ?? null, knowledge: parsed.knowledge ?? null, drafting: parsed.drafting ?? null, critic: parsed.critic ?? null };
+  }
+
+  async setLaneModels(models: LaneModels): Promise<void> {
+    const clean: LaneModels = { reader: null, knowledge: null, drafting: null, critic: null };
+    for (const lane of LANES) {
+      const v = (models[lane] ?? "").trim();
+      if (v && !/^[@a-zA-Z0-9._\/-]{3,120}$/.test(v)) throw new Error(`"${v}" is not a model id.`);
+      clean[lane] = v || null;
+    }
+    this.ctx.storage.sql.exec("INSERT INTO settings(key, value) VALUES('lane_models', ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value", JSON.stringify(clean));
   }
 }
 
@@ -114,6 +197,7 @@ export class FirmAdminApi extends WorkerEntrypoint<Cloudflare.Env> {
     return Promise.all(entries.map(async (e): Promise<FirmMatterRow> => {
       const base = {
         matterId: e.matterId, ownerUserId: e.ownerUserId, title: e.title, clientName: e.clientName, createdAt: e.createdAt,
+        hold: e.hold,
       };
       try {
         const o = await this.#store(e.matterId).overview();
@@ -127,6 +211,49 @@ export class FirmAdminApi extends WorkerEntrypoint<Cloudflare.Env> {
       }
     }));
   }
+
+  // ---- WP-8: the firm's process ----------------------------------------------------------------
+  // The workshop calls these only for admins (AuthenticatedApi.getAdminApi is null otherwise);
+  // `by` is the acting admin's username for the ledger.
+
+  #account(accountObjectId: string): DurableObjectStub<MatterAccount> {
+    const ns = this.ctx.exports.MatterAccount;
+    return ns.get(ns.idFromString(accountObjectId));
+  }
+
+  /**
+   * Hand a matter to another member: the registry row moves, the two accounts' indexes follow, the
+   * store's owner and hold change, and the matter resumes if it was held. Nothing is deleted.
+   */
+  async reassignMatter(matterId: string, toUserId: string, by: string): Promise<void> {
+    const to = toUserId.trim();
+    if (!to) throw new Error("Choose the member to reassign to.");
+    const moved = await this.#index().reassign(matterId, to);
+    const entry = await this.#index().entry(matterId);
+    if (moved.fromAccountId !== moved.toAccountId) {
+      await this.#account(moved.toAccountId).adoptMatter({
+        id: matterId, title: entry?.title ?? "", caseType: null, clientName: entry?.clientName ?? "", createdAt: entry?.createdAt ?? new Date().toISOString(),
+      });
+      await this.#account(moved.fromAccountId).forgetMatter(matterId);
+    }
+    await this.#store(matterId).transferOwnership(moved.toAccountId, to, moved.fromUserId, by);
+  }
+
+  /** Remove a member: their matters pause with a visible hold until an admin reassigns them. */
+  async removeMember(userId: string, by: string): Promise<{ heldMatters: number }> {
+    const user = userId.trim();
+    if (!user) throw new Error("Name the member to remove.");
+    const ids = await this.#index().holdOwner(user, by);
+    await Promise.all(ids.map(id => this.#store(id).placeHold(user, by).catch(() => {})));
+    return { heldMatters: ids.length };
+  }
+
+  async removedMembers(): Promise<{ userId: string; removedAt: string; removedBy: string }[]> {
+    return this.#index().removedMembers();
+  }
+
+  async laneModels(): Promise<LaneModels> { return this.#index().laneModels(); }
+  async setLaneModels(models: LaneModels): Promise<void> { await this.#index().setLaneModels(models); }
 
   /** The firm's work over the window, from every matter's activity trail and knowledge. */
   async firmAnalytics(days: number): Promise<FirmAnalytics> {

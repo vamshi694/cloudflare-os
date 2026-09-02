@@ -16,12 +16,16 @@
     { "tag": "v2", "new_sqlite_classes": ["FirmIndex"] }
   ],
   "durable_objects": {
-    "bindings": [{ "name": "MATTER_STORE", "class_name": "MatterStore" }]
+    "bindings": [
+      { "name": "MATTER_STORE", "class_name": "MatterStore" },
+      // The firm's registry: ownership, holds, lane models (see firm-index.ts).
+      { "name": "FIRM_INDEX", "class_name": "FirmIndex" }
+    ]
   },
   "r2_buckets": [{ "binding": "MATTER_FILES", "bucket_name": "legal-os-matters" }],
   "queues": {
     "producers": [{ "binding": "INGEST_QUEUE", "queue": "legal-os-ingest" }],
-    "consumers": [{ "queue": "legal-os-ingest", "max_batch_size": 5, "max_retries": 6, "max_concurrency": 4 }]
+    "consumers": [{ "queue": "legal-os-ingest", "max_batch_size": 1, "max_retries": 6, "max_concurrency": 20 }]
   },
   "ai": { "binding": "AI" },
   // The firm's method (playbooks, rules) for readiness, the knowledge build and the letter's order.

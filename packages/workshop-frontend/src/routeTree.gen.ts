@@ -15,11 +15,13 @@ import { Route as BlueprintsRouteImport } from './routes/blueprints'
 import { Route as ContextRouteImport } from './routes/context'
 import { Route as ExploreRouteImport } from './routes/explore'
 import { Route as GatekeepersRouteImport } from './routes/gatekeepers'
+import { Route as InboxRouteImport } from './routes/inbox'
 import { Route as MattersRouteImport } from './routes/matters'
 import { Route as OutputsRouteImport } from './routes/outputs'
 import { Route as PlaybooksRouteImport } from './routes/playbooks'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as ProvidersRouteImport } from './routes/providers'
+import { Route as SearchRouteImport } from './routes/search'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as TeamRouteImport } from './routes/team'
 import { Route as WorkspacesRouteImport } from './routes/workspaces'
@@ -61,6 +63,11 @@ const GatekeepersRoute = GatekeepersRouteImport.update({
   path: '/gatekeepers',
   getParentRoute: () => rootRouteImport,
 } as any)
+const InboxRoute = InboxRouteImport.update({
+  id: '/inbox',
+  path: '/inbox',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MattersRoute = MattersRouteImport.update({
   id: '/matters',
   path: '/matters',
@@ -84,6 +91,11 @@ const ProfileRoute = ProfileRouteImport.update({
 const ProvidersRoute = ProvidersRouteImport.update({
   id: '/providers',
   path: '/providers',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SearchRoute = SearchRouteImport.update({
+  id: '/search',
+  path: '/search',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SignupRoute = SignupRouteImport.update({
@@ -144,11 +156,13 @@ export interface FileRoutesByFullPath {
   '/context': typeof ContextRoute
   '/explore': typeof ExploreRoute
   '/gatekeepers': typeof GatekeepersRoute
+  '/inbox': typeof InboxRoute
   '/matters': typeof MattersRoute
   '/outputs': typeof OutputsRoute
   '/playbooks': typeof PlaybooksRouteWithChildren
   '/profile': typeof ProfileRoute
   '/providers': typeof ProvidersRoute
+  '/search': typeof SearchRoute
   '/signup': typeof SignupRoute
   '/team': typeof TeamRoute
   '/workspaces': typeof WorkspacesRoute
@@ -167,11 +181,13 @@ export interface FileRoutesByTo {
   '/context': typeof ContextRoute
   '/explore': typeof ExploreRoute
   '/gatekeepers': typeof GatekeepersRoute
+  '/inbox': typeof InboxRoute
   '/matters': typeof MattersRoute
   '/outputs': typeof OutputsRoute
   '/playbooks': typeof PlaybooksRouteWithChildren
   '/profile': typeof ProfileRoute
   '/providers': typeof ProvidersRoute
+  '/search': typeof SearchRoute
   '/signup': typeof SignupRoute
   '/team': typeof TeamRoute
   '/workspaces': typeof WorkspacesRoute
@@ -191,11 +207,13 @@ export interface FileRoutesById {
   '/context': typeof ContextRoute
   '/explore': typeof ExploreRoute
   '/gatekeepers': typeof GatekeepersRoute
+  '/inbox': typeof InboxRoute
   '/matters': typeof MattersRoute
   '/outputs': typeof OutputsRoute
   '/playbooks': typeof PlaybooksRouteWithChildren
   '/profile': typeof ProfileRoute
   '/providers': typeof ProvidersRoute
+  '/search': typeof SearchRoute
   '/signup': typeof SignupRoute
   '/team': typeof TeamRoute
   '/workspaces': typeof WorkspacesRoute
@@ -216,11 +234,13 @@ export interface FileRouteTypes {
     | '/context'
     | '/explore'
     | '/gatekeepers'
+    | '/inbox'
     | '/matters'
     | '/outputs'
     | '/playbooks'
     | '/profile'
     | '/providers'
+    | '/search'
     | '/signup'
     | '/team'
     | '/workspaces'
@@ -239,11 +259,13 @@ export interface FileRouteTypes {
     | '/context'
     | '/explore'
     | '/gatekeepers'
+    | '/inbox'
     | '/matters'
     | '/outputs'
     | '/playbooks'
     | '/profile'
     | '/providers'
+    | '/search'
     | '/signup'
     | '/team'
     | '/workspaces'
@@ -262,11 +284,13 @@ export interface FileRouteTypes {
     | '/context'
     | '/explore'
     | '/gatekeepers'
+    | '/inbox'
     | '/matters'
     | '/outputs'
     | '/playbooks'
     | '/profile'
     | '/providers'
+    | '/search'
     | '/signup'
     | '/team'
     | '/workspaces'
@@ -286,11 +310,13 @@ export interface RootRouteChildren {
   ContextRoute: typeof ContextRoute
   ExploreRoute: typeof ExploreRoute
   GatekeepersRoute: typeof GatekeepersRoute
+  InboxRoute: typeof InboxRoute
   MattersRoute: typeof MattersRoute
   OutputsRoute: typeof OutputsRoute
   PlaybooksRoute: typeof PlaybooksRouteWithChildren
   ProfileRoute: typeof ProfileRoute
   ProvidersRoute: typeof ProvidersRoute
+  SearchRoute: typeof SearchRoute
   SignupRoute: typeof SignupRoute
   TeamRoute: typeof TeamRoute
   WorkspacesRoute: typeof WorkspacesRoute
@@ -346,6 +372,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GatekeepersRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/inbox': {
+      id: '/inbox'
+      path: '/inbox'
+      fullPath: '/inbox'
+      preLoaderRoute: typeof InboxRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/matters': {
       id: '/matters'
       path: '/matters'
@@ -379,6 +412,13 @@ declare module '@tanstack/react-router' {
       path: '/providers'
       fullPath: '/providers'
       preLoaderRoute: typeof ProvidersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/search': {
+      id: '/search'
+      path: '/search'
+      fullPath: '/search'
+      preLoaderRoute: typeof SearchRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/signup': {
@@ -473,11 +513,13 @@ const rootRouteChildren: RootRouteChildren = {
   ContextRoute: ContextRoute,
   ExploreRoute: ExploreRoute,
   GatekeepersRoute: GatekeepersRoute,
+  InboxRoute: InboxRoute,
   MattersRoute: MattersRoute,
   OutputsRoute: OutputsRoute,
   PlaybooksRoute: PlaybooksRouteWithChildren,
   ProfileRoute: ProfileRoute,
   ProvidersRoute: ProvidersRoute,
+  SearchRoute: SearchRoute,
   SignupRoute: SignupRoute,
   TeamRoute: TeamRoute,
   WorkspacesRoute: WorkspacesRoute,

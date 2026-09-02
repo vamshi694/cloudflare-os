@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { RpcStub } from 'capnweb'
-import type { MatterDesk, Petition, PetitionVersion } from '@gadgets/workshop-shared/legal'
+import type { Filing, MatterDesk, Petition, PetitionVersion } from '@gadgets/workshop-shared/legal'
 import { ShieldCheck } from '@phosphor-icons/react'
 import { logRpcFailure } from '../../../rpcErrors'
 import { WorkshopButton, WorkshopInput, WorkshopInputArea } from '../../WorkshopControls'
@@ -13,27 +13,57 @@ import { SEV_TONE, fmtDateTime, plural } from '../labels'
  * work the attorney never asked for. A past version stays reachable; changing the live letter
  * belongs to drafting.
  */
-export function HistoryPanel({ open, onClose, versions }: { open: boolean; onClose: () => void; versions: PetitionVersion[] }) {
+export function HistoryPanel({ open, onClose, versions, desk }: { open: boolean; onClose: () => void; versions: PetitionVersion[]; desk?: RpcStub<MatterDesk> }) {
+  // Links are signed and short-lived, so they are read fresh each time the panel opens.
+  const [filings, setFilings] = useState<Filing[] | null>(null)
+  const [filingsFailed, setFilingsFailed] = useState(false)
+  useEffect(() => {
+    if (!open || !desk) return
+    let cancelled = false
+    desk.filings().then((f) => { if (!cancelled) { setFilings(f); setFilingsFailed(false) } }).catch((err) => {
+      logRpcFailure('Failed to read the filings:', err)
+      if (!cancelled) setFilingsFailed(true)
+    })
+    return () => { cancelled = true }
+  }, [open, desk])
+  const byVersion = new Map((filings ?? []).map((f) => [f.versionId, f]))
   return (
-    <SlideOver open={open} onClose={onClose} title="Filing history" subtitle="A version is saved when the letter is fully drafted, downloaded, or restored. Small edits do not pile up here." width={360}>
+    <SlideOver open={open} onClose={onClose} title="Filing history" subtitle="A version is saved when the letter is fully drafted, downloaded, or bound into a packet. Small edits do not pile up here." width={360}>
+      {filingsFailed && <p className="m-0 mb-2 text-[12px] italic text-kumo-subtle">The packet links couldn't be read just now — the versions below are unchanged.</p>}
       {versions.length === 0 ? (
         <p className="m-0 text-[13px] text-kumo-subtle">No versions yet. One is saved each time the petition is drafted or revised.</p>
       ) : (
         <ul className="m-0 list-none space-y-2 p-0">
-          {versions.map((v, i) => (
-            <li key={v.id} className="rounded-xl border border-kumo-line px-3 py-2.5">
-              <div className="flex items-center justify-between gap-2">
-                <p className="m-0 text-[13px] font-medium text-kumo-default">{fmtDateTime(v.at)}</p>
-                {i === 0 && <span className="rounded-full bg-kumo-contrast px-1.5 py-0.5 text-[10.5px] text-kumo-inverse">Current</span>}
-              </div>
-              <p className="tnum m-0 text-[12px] text-kumo-subtle">
-                {v.reason.startsWith('revised:') ? `Section revised: ${v.reason.slice(8)}` : v.reason === 'exported' ? 'Downloaded' : `${plural(v.sections, 'section', 'sections')}`} · ≈ {Math.max(1, Math.round(v.words / 450))} pages
-              </p>
-              <p className="m-0 mt-1 inline-flex items-center gap-1 text-[11.5px] text-kumo-inactive" title="The tamper-evidence record for this version's packet: per-exhibit fingerprints, signed by the firm's key.">
-                <ShieldCheck size={12} /> Signed manifest · lands with the packet binder
-              </p>
-            </li>
-          ))}
+          {versions.map((v, i) => {
+            const filing = byVersion.get(v.id) ?? null
+            return (
+              <li key={v.id} className="rounded-xl border border-kumo-line px-3 py-2.5">
+                <div className="flex items-center justify-between gap-2">
+                  <p className="m-0 text-[13px] font-medium text-kumo-default">{fmtDateTime(v.at)}</p>
+                  {i === 0 && <span className="rounded-full bg-kumo-contrast px-1.5 py-0.5 text-[10.5px] text-kumo-inverse">Current</span>}
+                </div>
+                <p className="tnum m-0 text-[12px] text-kumo-subtle">
+                  {v.reason.startsWith('revised:') ? `Section revised: ${v.reason.slice(8)}` : v.reason === 'exported' ? 'Downloaded' : v.reason === 'packet' ? 'Packet bound' : `${plural(v.sections, 'section', 'sections')}`} · ≈ {Math.max(1, Math.round(v.words / 450))} pages
+                  {filing?.draft ? <span className="text-kumo-warning"> · stamped DRAFT</span> : null}
+                </p>
+                {filing && filing.packetUrl ? (
+                  <p className="m-0 mt-1 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[11.5px]">
+                    <a href={filing.packetUrl} target="_blank" rel="noreferrer" className="text-kumo-default underline decoration-kumo-interact underline-offset-2 hover:decoration-kumo-default">PDF · {filing.pages} pages</a>
+                    {filing.letterDocxUrl && <a href={filing.letterDocxUrl} className="text-kumo-default underline decoration-kumo-interact underline-offset-2 hover:decoration-kumo-default">Word letter</a>}
+                    <a href={filing.manifestUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-kumo-subtle underline decoration-kumo-interact underline-offset-2 hover:text-kumo-default" title="The tamper-evidence record for this version's packet: per-exhibit fingerprints, signed by the firm's key.">
+                      <ShieldCheck size={12} /> Signed manifest
+                    </a>
+                  </p>
+                ) : filing?.letterDocxUrl ? (
+                  <p className="m-0 mt-1 text-[11.5px]"><a href={filing.letterDocxUrl} className="text-kumo-default underline decoration-kumo-interact underline-offset-2">Word letter</a></p>
+                ) : (
+                  <p className="m-0 mt-1 inline-flex items-center gap-1 text-[11.5px] text-kumo-inactive" title="The tamper-evidence record for this version's packet: per-exhibit fingerprints, signed by the firm's key.">
+                    <ShieldCheck size={12} /> No packet bound for this version
+                  </p>
+                )}
+              </li>
+            )
+          })}
         </ul>
       )}
     </SlideOver>

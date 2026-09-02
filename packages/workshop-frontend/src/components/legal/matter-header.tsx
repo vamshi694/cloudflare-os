@@ -9,7 +9,7 @@ import { WorkshopButton } from '../WorkshopControls'
 import { LegalDialog, Pill, StatusDot, type DotTone } from './primitives'
 import { TextShimmer } from './ui/motion'
 import { DeadlineChip } from './deadline-chip'
-import { PHASE_LABEL, caseTypeLabel, matterTitle, plural } from './labels'
+import { PHASE_LABEL, caseTypeLabel, matterTitle, narrateLane, plural } from './labels'
 
 export function BackLink() {
   return (
@@ -34,8 +34,12 @@ function statusOf(view: MatterOverviewView, stale: boolean): { tone: DotTone; te
   if (stale) return { tone: 'quiet', text: 'This view is paused — showing the last state that loaded', working: false }
   const line = view.statusLine
   if (line) {
-    const text = line.narrative?.trim() || PHASE_LABEL[line.phase] || 'Up to date'
-    return { tone: line.working ? 'working' : line.phase === 'review' || line.phase === 'clearance' ? 'needsYou' : 'quiet', text, working: line.working }
+    // A lane in flight narrates itself from the record's counts ("Reading 12 of 40 documents"),
+    // never from a timer; the activity line and the phase label follow when nothing is running.
+    const lane = narrateLane(line.lane ?? null)
+    const text = lane || line.narrative?.trim() || PHASE_LABEL[line.phase] || 'Up to date'
+    const working = line.working || lane !== null
+    return { tone: working ? 'working' : line.phase === 'review' || line.phase === 'clearance' ? 'needsYou' : 'quiet', text, working }
   }
   if (view.record.reading > 0 || view.record.stillArriving) {
     const n = view.record.reading
