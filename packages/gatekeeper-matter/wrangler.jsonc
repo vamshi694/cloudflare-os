@@ -30,7 +30,7 @@
     "READER_PROVIDER": "workers-ai",
     "READER_MODEL": "@cf/deepseek-ai/deepseek-v4-pro-0813",
     // The case knowledge lane: fast JSON over facts; the deep reader timed out here.
-    "KNOWLEDGE_MODEL": "@cf/zai-org/glm-5.3-flash",
+    "KNOWLEDGE_MODEL": "@cf/meta/llama-4-scout-17b-16e-instruct",
     "UNDERSTAND_MODEL": "deepseek/deepseek-v4-pro",
     // Public origin for portal and file links (deploy.ts sets it); empty means relative paths.
     "PUBLIC_BASE_URL": "",

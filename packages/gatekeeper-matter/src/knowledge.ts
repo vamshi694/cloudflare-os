@@ -9,7 +9,7 @@ import type { Fact } from "./types.js";
 import type { MatterStore } from "./store.js";
 
 const BATCH = 40;
-const WORKERS_AI_MODEL = "@cf/zai-org/glm-5.3-flash";
+const WORKERS_AI_MODEL = "@cf/meta/llama-4-scout-17b-16e-instruct";
 
 const KNOWLEDGE_SYSTEM = `You are the senior associate at an immigration law firm building the case knowledge for one petition from the facts the firm read out of the client's documents. Turn facts into LEGAL CLAIMS: each claim is one sentence a petition could assert, names the entities it binds, says which petition sections it argues in, and rests on one or more of the facts given (by index).
 
@@ -24,35 +24,41 @@ Rules:
 
 type RawClaim = { statement?: unknown; criteria?: unknown; entities?: unknown; fact_indexes?: unknown };
 
-// The knowledge lane runs on a fast model: the deep reader (READER_MODEL) timed out on Workers AI
-// (3046) even on a 14-fact record. One retry on a transient failure, then the build stops early
-// and says so.
-async function askModel(env: Cloudflare.Env, system: string, user: string): Promise<string> {
-  const model = (env.KNOWLEDGE_MODEL || WORKERS_AI_MODEL) as Parameters<Ai["run"]>[0];
-  type ModelOut = { response?: unknown; choices?: { message?: { content?: unknown } }[] };
-  let out: ModelOut | undefined;
-  for (let attempt = 1; ; attempt++) {
-    try {
-      out = await env.AI.run(model, {
-        messages: [{ role: "system", content: system }, { role: "user", content: user }],
-        max_tokens: 4096,
-        response_format: { type: "json_object" },
-      }) as ModelOut;
-      break;
-    } catch (error) {
-      if (attempt >= 2) throw error;
-      console.warn(`[knowledge] model call failed (attempt ${attempt}), retrying: ${error instanceof Error ? error.message : String(error)}`);
-    }
-  }
-  if (!out) throw new Error("The knowledge reader returned nothing.");
-  // Workers AI answers in one of three shapes: {response: string}, {response: object} (already
-  // parsed when json_object is honored), or OpenAI-style choices. Normalize all three to text.
+type ModelOut = { response?: unknown; choices?: { message?: { content?: unknown } }[] };
+
+// Workers AI answers in one of three shapes: {response: string}, {response: object} (already
+// parsed when json_object is honored), or OpenAI-style choices. Normalize all three to text.
+function textOf(out: ModelOut): string {
   if (typeof out.response === "string") return out.response;
   if (out.response && typeof out.response === "object") return JSON.stringify(out.response);
   const content = out.choices?.[0]?.message?.content;
   if (typeof content === "string") return content;
   if (content && typeof content === "object") return JSON.stringify(content);
-  return JSON.stringify(out);
+  return "";
+}
+
+async function askModel(env: Cloudflare.Env, system: string, user: string): Promise<string> {
+  // The lane tries a non-thinking extraction model first (a thinking model spends its whole output
+  // budget reasoning and answers with nothing), then the deep reader as a second chance. A model
+  // that errors, times out, or answers without JSON hands over to the next.
+  const models = [...new Set([env.KNOWLEDGE_MODEL || WORKERS_AI_MODEL, env.READER_MODEL].filter((m): m is string => !!m))];
+  let lastProblem = "no model configured";
+  for (const model of models) {
+    try {
+      const out = await env.AI.run(model as Parameters<Ai["run"]>[0], {
+        messages: [{ role: "system", content: system }, { role: "user", content: user }],
+        max_tokens: 6144,
+        response_format: { type: "json_object" },
+      }) as ModelOut;
+      const text = textOf(out);
+      if (text.includes("{")) return text;
+      lastProblem = `${model} answered without JSON (${text.replace(/\s+/g, " ").slice(0, 120) || "nothing"})`;
+    } catch (error) {
+      lastProblem = `${model}: ${error instanceof Error ? error.message : String(error)}`;
+    }
+    console.warn(`[knowledge] ${lastProblem}; trying the next model`);
+  }
+  throw new Error(`The knowledge reader returned no JSON (${lastProblem}).`);
 }
 
 export function parseClaims(raw: string, batch: Fact[], allowedKeys: Set<string>): { statement: string; criteria: string[]; entities: { name: string; kind: EntityKind }[]; factIds: string[] }[] {
