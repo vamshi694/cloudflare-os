@@ -475,6 +475,8 @@ export interface MatterEvent {
   /** One plain sentence about what happened, to act on. */
   summary: string;
   at: string;
+  /** What this event asks of you, in this turn. Follow it, then reply to the attorney. */
+  instruction: string;
 }
 
 /** The callback the counsel hands to `watch()`. Pass `self`: the matter then delivers `matterEvent` to this chat and activates you. */

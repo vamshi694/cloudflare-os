@@ -213,3 +213,25 @@ export function portalStatusLine(phase: MatterPhase, caseTypeTitle: string | nul
     default: return `Your legal team is preparing ${filing}.`;
   }
 }
+
+/**
+ * What a wake event asks of the counsel, in the event itself, so a wake turn never depends on the
+ * counsel remembering the protocol (caught live: silent wake turns).
+ */
+export function wakeInstruction(reason: string): string {
+  const base = "Act on this now, in this turn, and end with one sentence to the attorney about what you did.";
+  switch (reason) {
+    case "record settled": return `${base} The case knowledge is building itself; read overview() and wait to be woken with "knowledge built".`;
+    case "knowledge built": return `${base} Read (await MATTER.knowledge()).readiness() and the playbook method, write plan.md on the desk, then MATTER.proposePlan(summary). Raise any judgment call with (await MATTER.decisions()).raise.`;
+    case "decision raised": return `${base} A question is on the attorney's desk; keep every other track moving and read the answer on the next event.`;
+    case "decision answered": return `${base} Read (await MATTER.decisions()).list(). An approved plan starts the drafting lane itself; confirm with (await MATTER.petition()).lane() and start it with petition().draftAll() only if nothing is running and MATTER.planApproved() is true. Any other answer: carry it out now.`;
+    case "letter drafted": return `${base} Read (await MATTER.petition()).sections(), report the reviewer's weakest sections, and put the client asks for held sections through (await MATTER.client()).draft.`;
+    case "drafting stopped early": return `${base} Read the petition lane and the activity trail, say what stopped and why, and restart with petition().draftAll() when the cause is cleared.`;
+    case "directive given": return `${base} Read (await MATTER.directives()).list() and carry the newest directive out now.`;
+    case "instruction queued": return `${base} Read (await MATTER.petition()).instructions() and work each one, then resolveInstruction(id).`;
+    case "client submission":
+    case "client replied": return `${base} Read (await MATTER.client()).submissions() and messages(); decide whether the record needs a document and ask through client().draft if so.`;
+    case "knowledge built, decision raised": return `${base} Read readiness and the open decisions; propose the plan if none is proposed.`;
+    default: return base;
+  }
+}

@@ -3713,3 +3713,573 @@
     at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
     at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
     at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:15:32.883Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:15:40.868Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:15:48.864Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:15:56.859Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:16:04.869Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:16:12.859Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:16:20.860Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:16:28.866Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:16:36.863Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:16:39.479Z] [debug] Polled read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:16:39.528Z] [debug] Polled read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:16:43.856Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:16:44.902Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:16:48.866Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:16:48.902Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:16:48.904Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:16:52.856Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:16:53.795Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:16:58.742Z] [debug] Polled read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:16:58.822Z] [debug] Polled read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:16:58.861Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:17:00.919Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:17:03.801Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:17:08.823Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:17:08.851Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:17:08.852Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:17:08.853Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:17:13.794Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:17:16.853Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:17:18.794Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:17:23.799Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:17:24.854Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:17:28.747Z] [debug] Polled read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:17:28.788Z] [debug] Polled read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:17:28.793Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:17:28.851Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:17:28.851Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:20:30.408Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:20:30.455Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:20:40.117Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:21:10.118Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:21:10.527Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:21:40.062Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:22:10.080Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:22:40.053Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:23:10.058Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:23:10.125Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:23:40.089Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:24:10.069Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:24:40.061Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:25:10.135Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:25:40.077Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:28:30.685Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:28:30.723Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:28:50.638Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:29:20.262Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:29:50.277Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:30:20.279Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:30:50.347Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:31:20.283Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:31:50.268Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:32:20.264Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:32:50.262Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:33:20.340Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:33:50.283Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:34:20.263Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:34:50.235Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:35:20.230Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:35:50.244Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:36:20.227Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:36:50.231Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:37:20.225Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:37:50.299Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:38:20.243Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:38:50.224Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:39:20.221Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:39:50.223Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:40:20.252Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:40:50.236Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:41:20.222Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:41:50.219Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:42:20.277Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:42:50.259Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:43:20.217Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:43:50.216Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:44:20.242Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:44:50.262Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:45:20.224Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:45:50.243Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:46:20.235Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:46:50.284Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:47:20.258Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:47:50.220Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:48:20.236Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:48:50.224Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:49:20.266Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:49:50.225Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:50:20.227Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:50:50.217Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:51:20.217Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:51:50.218Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:51:50.270Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:52:20.226Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:52:50.217Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:53:20.224Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:53:50.329Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:54:20.284Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:54:50.282Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:55:20.296Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:55:50.280Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:56:20.286Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:56:20.329Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:56:50.281Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T15:57:20.289Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)

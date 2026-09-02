@@ -22,7 +22,7 @@ import { CASE_TYPES, caseTypeSpec, normalizeCaseType, petitionTitleFor } from ".
 import { filenameFamily, foldText } from "./pure.js";
 import { holdLine, ownershipTransition, searchTerms } from "./process.js";
 import type { MatterDirective, MemoryNote } from "@gadgets/workshop-shared/legal";
-import { computeReadiness, derivePhase, firstNameOf, portalDocumentState, portalStatusLine } from "./rules.js";
+import { computeReadiness, derivePhase, firstNameOf, portalDocumentState, portalStatusLine, wakeInstruction } from "./rules.js";
 import { firmGuidance, firmRemember, firmSectionPlan, orderSections } from "./firm-library.js";
 import type { Db, Row } from "./store-db.js";
 import * as K from "./store-knowledge.js";
@@ -189,7 +189,7 @@ export class MatterStore extends DurableObject<Cloudflare.Env> implements IntelS
     await approvalQueue.authorizeObservation({
       title: "Wake the counsel", description: summary,
     });
-    await callback.matterEvent({ reason, summary, at: new Date(at).toISOString() });
+    await callback.matterEvent({ reason, summary, at: new Date(at).toISOString(), instruction: wakeInstruction(reason) });
   }
 
   /** Keep the overseer's hook initiator; called when the attorney enables the watch. */
@@ -662,6 +662,13 @@ export class MatterStore extends DurableObject<Cloudflare.Env> implements IntelS
     if (row.kind === "outreach" && row.message_id) {
       if (declined) C.deleteMessage(this.#db, row.message_id as string);
       else C.markMessageSent(this.#db, row.message_id as string);
+    }
+    // "Exclude it from the record" on a document question is the ruling itself, not a note for the
+    // counsel to act on later: set the document aside now, by the filename the question names.
+    if (/^exclude/i.test(answer.trim())) {
+      const named = this.#sql<{ id: string; filename: string }>("SELECT id, filename FROM documents WHERE status != 'superseded'")
+        .filter(d => (row.question as string).includes(d.filename));
+      for (const d of named) await this.setRelevance(d.id, "excluded", `Excluded on the attorney's answer: ${answer.trim()}`, by);
     }
     // A contradiction card answered is the finding ruled on: the map stops listing it as open.
     const contradictionId = I.contradictionForDecision(this.#db, id);
