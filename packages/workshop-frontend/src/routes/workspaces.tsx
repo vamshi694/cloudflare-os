@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
+import PlatformOnly from '../components/AppShell/PlatformOnly'
 import { Plus } from '@phosphor-icons/react'
 import GadgetList from '../components/GadgetList'
 import { useDocumentTitle } from '../useDocumentTitle'
@@ -8,7 +9,7 @@ import { useDocumentTitle } from '../useDocumentTitle'
  * the "see them all" destination linked from the rail.
  */
 export const Route = createFileRoute('/workspaces')({
-  component: WorkspacesPage,
+  component: () => <PlatformOnly><WorkspacesPage /></PlatformOnly>,
 })
 
 function WorkspacesPage() {

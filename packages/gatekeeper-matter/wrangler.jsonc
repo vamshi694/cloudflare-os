@@ -12,7 +12,8 @@
   ],
   "migrations": [
     { "tag": "v0", "new_sqlite_classes": ["MatterAccount", "MatterGatekeeper", "MatterStore"] },
-    { "tag": "v1", "new_sqlite_classes": ["FirmMattersGatekeeper"] }
+    { "tag": "v1", "new_sqlite_classes": ["FirmMattersGatekeeper"] },
+    { "tag": "v2", "new_sqlite_classes": ["FirmIndex"] }
   ],
   "durable_objects": {
     "bindings": [{ "name": "MATTER_STORE", "class_name": "MatterStore" }]
@@ -23,6 +24,9 @@
     "consumers": [{ "queue": "legal-os-ingest", "max_batch_size": 5, "max_retries": 6, "max_concurrency": 4 }]
   },
   "ai": { "binding": "AI" },
+  // The firm's method (playbooks, rules) for readiness, the knowledge build and the letter's order.
+  // deploy.ts points this at the deployed firm worker; the dev name is the package's.
+  "services": [{ "binding": "FIRM_LIBRARY", "service": "custom-gatekeeper", "entrypoint": "FirmLibraryApi" }],
   "vectorize": [{ "binding": "FACT_VECTORS", "index_name": "legal-os-facts" }],
   "vars": {
     // The reading lane runs on Workers AI by default. Set READER_PROVIDER to "openrouter" (plus the

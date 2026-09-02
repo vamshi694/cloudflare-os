@@ -605,7 +605,7 @@ class AuthenticatedApiImpl extends RpcTarget implements AuthenticatedApi {
   async getLegalDesk(): Promise<RpcStub<LegalDesk> | null> {
     // @ts-expect-error Cap'n Web RPC stubs and native RPC targets are compatible but the type
     //     system doesn't know this.
-    return this.#user.startLegalDesk();
+    return this.#user.startLegalDesk(this.#userId.name ?? undefined);
   }
 
   /**
@@ -669,10 +669,13 @@ class AuthenticatedApiImpl extends RpcTarget implements AuthenticatedApi {
     // #isAdmin() guarantees a non-empty user id name. Forwarded to gatekeepers when listing the
     // resource catalog so RBAC-gated ones still surface for this admin.
     let adminUserId = this.#userId.name!;
+    // Legal OS: the Matters gatekeeper (when bound) hands the admin the firm-wide view.
+    let matters = (this.env as unknown as Record<string, unknown>).GATEKEEPER_MATTER as
+        { getFirmAdminApi(): Promise<never> } | undefined;
     // @ts-expect-error Cap'n Web RPC stubs and native RPC targets are compatible but the type
     //     system doesn't know this.
     return new AdminApiImpl(this.adminSettings.getByName(""), adminUserId,
-        this.ctx.exports.UsageLedger.getByName(""), this.#adminList());
+        this.ctx.exports.UsageLedger.getByName(""), this.#adminList(), matters ?? null);
   }
 }
 

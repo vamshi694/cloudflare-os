@@ -20,6 +20,7 @@ import type { MatterWatcherTarget } from "./matter.js";
 import { CASE_TYPES, caseTypeSpec, normalizeCaseType } from "./case-types.js";
 import { filenameFamily, foldText } from "./pure.js";
 import { computeReadiness, derivePhase, firstNameOf, portalDocumentState, portalStatusLine } from "./rules.js";
+import { firmGuidance, firmRemember, firmSectionPlan, orderSections } from "./firm-library.js";
 import type { Db, Row } from "./store-db.js";
 import * as K from "./store-knowledge.js";
 import * as P from "./store-petition.js";
@@ -622,7 +623,9 @@ export class MatterStore extends DurableObject<Cloudflare.Env> {
 
   async readiness(): Promise<Readiness> {
     const meta = await this.#requireMeta();
-    return computeReadiness(this.#spec(meta), K.readinessInputs(this.#db), now());
+    const spec = this.#spec(meta);
+    // The client ask says what the FIRM's playbook says proves each criterion (firm-library.ts).
+    return computeReadiness(spec, K.readinessInputs(this.#db), now(), await firmGuidance(this.env, spec));
   }
 
   async caseTypes(): Promise<CaseTypeSpec[]> { return CASE_TYPES; }
@@ -666,7 +669,12 @@ export class MatterStore extends DurableObject<Cloudflare.Env> {
   async petition(): Promise<Petition> {
     const meta = await this.#requireMeta();
     const readiness = await this.readiness();
-    return P.petitionView(this.#db, this.#spec(meta), await this.#docsLite(), this.#factDocs(), new Map(readiness.sections.map(s => [s.key, s.evidence])));
+    const spec = this.#spec(meta);
+    const evidence = new Map(readiness.sections.map(s => [s.key, s.evidence]));
+    // The style guide's order when it defines one; the strongest criteria first, as the guide says.
+    const rank = (key: string) => ({ sufficient: 0, thin: 1, none: 2 })[evidence.get(key) ?? "none"];
+    const ordered = spec ? orderSections(spec, await firmSectionPlan(this.env, spec), rank) : undefined;
+    return P.petitionView(this.#db, spec, await this.#docsLite(), this.#factDocs(), evidence, ordered);
   }
 
   async section(key: string): Promise<PetitionSection | null> { return (await this.petition()).sections.find(s => s.key === key) ?? null; }
@@ -700,6 +708,16 @@ export class MatterStore extends DurableObject<Cloudflare.Env> {
   async queueInstruction(sectionKey: string | null, instruction: string, remember: boolean, actor: string): Promise<{ id: string }> {
     const r = P.queueInstruction(this.#db, sectionKey, instruction, remember);
     this.#log(actor, sectionKey ? `Asked the firm to redraft a section: ${instruction.slice(0, 160)}` : `Asked the firm to reshape the letter: ${instruction.slice(0, 160)}`);
+    // "Remember for all EB-1A": the rule lands in the firm's method now, from the lawyer's own
+    // screen, and every later matter of the type reads it. The redraft still rides the instruction.
+    if (remember && actor === "lawyer") {
+      const meta = await this.#requireMeta();
+      const title = sectionKey ? this.#spec(meta)?.sections.find(s => s.key === sectionKey)?.title : null;
+      const scope = meta.caseType ?? "general";
+      const landed = await firmRemember(this.env, scope, instruction, title ? `Attorney guidance on the '${title}' section` : "Attorney guidance on the whole letter", "lawyer");
+      if (sectionKey) P.setGuidance(this.#db, sectionKey, instruction);
+      this.#log("system", landed ? `Recorded a standing rule for every ${scope} matter in ${landed.slug}.` : "Could not reach the firm's playbook to record the rule; it stays on this matter only.");
+    }
     this.#wake("instruction queued");
     return r;
   }

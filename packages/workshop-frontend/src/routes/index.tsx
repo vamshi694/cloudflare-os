@@ -26,7 +26,12 @@ import { homePromptFromSearch } from "../homePrompt";
 import { composerDraftStorageKey } from "../composerDraft";
 import InlineConversation from "../components/firm/InlineConversation";
 import { useDesk, usePolled } from "../components/firm/useDesk";
+import type { LegalChatMode } from "../ChatInterface";
 import { Notice, Pill, Skeleton, StatusDot, caseTypeLabel, plural, type DotTone } from "../components/legal/primitives";
+
+// The firm conversation spans every matter; there is no single record to attach files to, so the
+// composer keeps the platform's attachments but drops the resource chrome.
+const FIRM_CHAT_MODE: LegalChatMode = {};
 
 type HomeSearch = { prompt?: string };
 
@@ -127,6 +132,7 @@ function AskTheFirmPage() {
               <InlineConversation
                 workspaceId={chat.workspaceId}
                 intro={<ConversationIntro />}
+                legalMode={FIRM_CHAT_MODE}
               />
             </div>
           ) : chat.kind === "failed" ? (

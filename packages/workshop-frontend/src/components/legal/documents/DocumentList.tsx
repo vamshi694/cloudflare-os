@@ -146,9 +146,14 @@ export function DocumentGrid({
                   <span className="truncate text-[14px] leading-5 font-medium tracking-[-0.25px] text-kumo-default">{documentTitle(doc)}</span>
                   {doc.relevance === 'check' && <Pill tone="warning">Off-matter?</Pill>}
                 </div>
-                <div className="mt-0.5">
+                <div className="mt-0.5 flex min-w-0 items-center gap-2">
                   {read && doc.docType ? <Pill>{docLabel(doc.docType)}</Pill> : !read ? <Pill>Not read yet</Pill> : null}
+                  {doc.pageCount !== null && doc.pageCount > 0 && <span className="tnum text-[11.5px] text-kumo-inactive">{plural(doc.pageCount, 'page', 'pages')}</span>}
                 </div>
+                {/* The reason a document could not be read is the attorney's, in words, never a bare state. */}
+                {doc.status === 'failed' && doc.note && (
+                  <p className="m-0 mt-1 truncate text-[12.5px] leading-[18px] text-kumo-danger" title={doc.note}>{doc.note}</p>
+                )}
               </div>
               <div className="hidden min-w-0 md:block">
                 {ev === null ? (

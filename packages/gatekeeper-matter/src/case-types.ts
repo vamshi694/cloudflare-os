@@ -14,6 +14,10 @@ const INTRO = s("introduction", "Introduction", "Framing",
   "States who the beneficiary is, the classification sought, and the criteria the petition satisfies.", false);
 const CONCLUSION = s("conclusion", "Conclusion", "Closing",
   "Restates the criteria met and requests approval.", false);
+// The firm's style guides open the argument with the standard of review; the letter carries it when
+// the playbook's section plan names it (firm-library.ts orderSections), otherwise it stays unused.
+const STANDARD = s("standard_of_review", "Standard of review", "Framing",
+  "States the governing regulation, the two-step analysis and the preponderance standard the officer applies.", false);
 
 export const CASE_TYPES: CaseTypeSpec[] = [
   {
@@ -23,6 +27,7 @@ export const CASE_TYPES: CaseTypeSpec[] = [
     required: 3,
     sections: [
       INTRO,
+      STANDARD,
       s("background", "The beneficiary and the field", "Background",
         "Describes the beneficiary's field, career and standing so the criteria that follow read in context.", false),
       s("awards", "Nationally or internationally recognized prizes or awards", "8 CFR 204.5(h)(3)(i)",
@@ -62,6 +67,7 @@ export const CASE_TYPES: CaseTypeSpec[] = [
     required: 3,
     sections: [
       INTRO,
+      STANDARD,
       s("qualification", "Advanced degree or exceptional ability", "8 CFR 204.5(k)(2)",
         "Proves the beneficiary holds an advanced degree or has exceptional ability in the sciences, arts or business."),
       s("substantial_merit", "Substantial merit and national importance", "Matter of Dhanasar, prong one",
@@ -86,6 +92,7 @@ export const CASE_TYPES: CaseTypeSpec[] = [
     required: 3,
     sections: [
       INTRO,
+      STANDARD,
       s("awards", "Nationally or internationally recognized prizes or awards", "8 CFR 214.2(o)(3)(iii)(B)(1)",
         "Proves receipt of nationally or internationally recognized prizes or awards for excellence in the field."),
       s("membership", "Membership in associations requiring outstanding achievement", "8 CFR 214.2(o)(3)(iii)(B)(2)",

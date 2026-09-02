@@ -30,6 +30,7 @@ import { LegalDeskImpl } from "./desk.js";
 import type { LegalDesk } from "@gadgets/workshop-shared/legal";
 import MATTER_CONFIGURATOR_HTML from "./generated/matter-configurator-ui.txt";
 import type { FirmMattersSession } from "./types.js";
+import type { FirmAdminApi } from "./firm-index.js";
 
 export const MATTER_ICON = {
   url: "data:image/svg+xml," + encodeURIComponent(
@@ -81,6 +82,12 @@ export class GatekeeperVendor extends WorkerEntrypoint<Cloudflare.Env> {
 
   async getSupportedResources(): Promise<SupportedResource[]> { return [MATTER_RESOURCE]; }
   async getTypeScriptTypes(): Promise<string> { return TYPES_CODE; }
+
+  /** Legal OS: the firm-wide admin view (every matter, analytics), for the workshop's admin API. */
+  @skipRpcValidation()
+  async getFirmAdminApi(): Promise<Fetcher<FirmAdminApi>> {
+    return this.ctx.exports.FirmAdminApi({});
+  }
 }
 
 // ---- Account: the lawyer's matter index -----------------------------------------------------
@@ -100,7 +107,7 @@ export class MatterAccount extends DurableObject<Cloudflare.Env> {
     return this.env.MATTER_STORE.get(this.env.MATTER_STORE.idFromName(matterId));
   }
 
-  async createMatter(input: { title: string; caseType: string | null; clientName: string }): Promise<MatterIndexEntry> {
+  async createMatter(input: { title: string; caseType: string | null; clientName: string }, ownerUserId?: string | null): Promise<MatterIndexEntry> {
     const title = input.title.trim();
     const clientName = input.clientName.trim();
     if (!title) throw new Error("A matter needs a title.");
@@ -110,6 +117,11 @@ export class MatterAccount extends DurableObject<Cloudflare.Env> {
     await this.#store(id).init({ id, title, caseType: input.caseType, clientName, ownerAccountId: this.ctx.id.toString() });
     this.ctx.storage.sql.exec("INSERT INTO matters(id, title, case_type, client_name, created_at) VALUES(?, ?, ?, ?, ?)",
       id, title, input.caseType, clientName, createdAt);
+    // The firm's registry, for the admins' Matters view. Best effort: a registry hiccup must never
+    // cost the lawyer their new matter.
+    await this.ctx.exports.FirmIndex.getByName("")
+      .upsert({ matterId: id, ownerAccountId: this.ctx.id.toString(), ownerUserId: ownerUserId ?? null, title, clientName, createdAt })
+      .catch(() => {});
     return { id, title, caseType: input.caseType, clientName, createdAt };
   }
 
@@ -125,6 +137,12 @@ export class MatterAccount extends DurableObject<Cloudflare.Env> {
 
   async removeMatter(matterId: string): Promise<void> {
     this.ctx.storage.sql.exec("DELETE FROM matters WHERE id = ?", matterId);
+    await this.ctx.exports.FirmIndex.getByName("").remove(matterId).catch(() => {});
+  }
+
+  /** Tell the firm's registry whose matters these are; called whenever the lawyer's desk opens. */
+  async claimOwner(ownerUserId: string): Promise<void> {
+    await this.ctx.exports.FirmIndex.getByName("").claimOwner(this.ctx.id.toString(), ownerUserId).catch(() => {});
   }
 }
 
@@ -163,9 +181,14 @@ export class MatterUser extends WorkerEntrypoint<Cloudflare.Env, AccountProps> i
     return { iframeHtml: MATTER_CONFIGURATOR_HTML, ui: new RpcStub(new MatterConfiguratorUI(this.#account())) };
   }
 
-  /** Legal OS: the lawyer's own desk over their matters (see AuthenticatedApi.getLegalDesk). */
-  async startLegalDesk(): Promise<LegalDesk> {
-    return new LegalDeskImpl(this.#account(), this.env);
+  /**
+   * Legal OS: the lawyer's own desk over their matters (see AuthenticatedApi.getLegalDesk). The
+   * workshop passes the lawyer's username so the firm's registry can say whose matters these are.
+   */
+  async startLegalDesk(options?: { userId?: string }): Promise<LegalDesk> {
+    const userId = options?.userId?.trim() || null;
+    if (userId) await this.#account().claimOwner(userId);
+    return new LegalDeskImpl(this.#account(), this.env, userId);
   }
 
   async ensureResources(_patterns: string[]): Promise<{ url?: string }> { return {}; }
@@ -666,3 +689,4 @@ export type { MatterMeta };
 export { normalizePath, parseMatterUrl };
 
 export { FirmMattersGatekeeper } from "./firm-matters.js";
+export { FirmIndex, FirmAdminApi } from "./firm-index.js";

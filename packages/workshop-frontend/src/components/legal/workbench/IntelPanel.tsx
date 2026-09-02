@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
-import type { PetitionSection } from '@gadgets/workshop-shared/legal'
+import type { RpcStub } from 'capnweb'
+import type { MatterDesk, PetitionSection } from '@gadgets/workshop-shared/legal'
 import { WorkshopButton, WorkshopInputArea } from '../../WorkshopControls'
 import { SEV_TONE, plural, reviewVerdict } from '../labels'
+import { SectionMethod } from '../method-panel'
 import { statusLabel } from './petition-utils'
 
 /**
@@ -14,10 +16,13 @@ export function IntelPanel({
   section,
   caseType,
   onRedraft,
+  desk,
 }: {
   section: PetitionSection
   caseType: string | null
   onRedraft: (key: string, instruction: string, remember: boolean) => Promise<void>
+  /** When given, the panel shows the playbook passage the firm follows for this section. */
+  desk?: RpcStub<MatterDesk>
 }) {
   const [text, setText] = useState('')
   const [remember, setRemember] = useState(false)
@@ -123,6 +128,8 @@ export function IntelPanel({
         {failure && <p className="m-0 mt-1 text-[12px] text-kumo-danger">{failure}</p>}
         <WorkshopButton tone="primary" className="!h-8 mt-2" onClick={() => void send(text.trim())} disabled={busy || !text.trim()}>{busy ? 'Working…' : 'Redraft'}</WorkshopButton>
       </div>
+
+      {desk && <SectionMethod desk={desk} sectionKey={section.key} />}
 
       {section.builtFrom.length > 0 && (
         <div>

@@ -4,6 +4,8 @@
 
 import type { EntityKind } from "@gadgets/workshop-shared/legal";
 import { caseTypeSpec } from "./case-types.js";
+import { firmGuidance } from "./firm-library.js";
+import { askFromGuidance } from "./rules.js";
 import { entityKind } from "./store-knowledge.js";
 import type { Fact } from "./types.js";
 import type { MatterStore } from "./store.js";
@@ -93,7 +95,15 @@ export async function buildKnowledge(env: Cloudflare.Env, store: DurableObjectSt
   if (!meta) return;
   const spec = caseTypeSpec(meta.caseType);
   const keys = new Set(spec?.sections.filter(s => s.evidentiary).map(s => s.key) ?? []);
-  const sectionList = spec ? spec.sections.filter(s => s.evidentiary).map(s => `- ${s.key}: ${s.title} — ${s.purpose}`).join("\n") : "(no case type yet: leave criteria empty)";
+  // The firm's playbook says what proves each criterion; the claims are tagged the way the firm
+  // argues, not the way a generic reader guesses. Absent a playbook, the catalog's purpose stands.
+  const guidance = await firmGuidance(env, spec);
+  const sectionList = spec
+    ? spec.sections.filter(s => s.evidentiary).map(s => {
+        const g = guidance.get(s.key);
+        return `- ${s.key}: ${s.title} — ${s.purpose}${g ? `\n  The firm's playbook: ${askFromGuidance(g.guidance, 420)}` : ""}`;
+      }).join("\n")
+    : "(no case type yet: leave criteria empty)";
   await store.knowledgeBuildBegin();
   let failed: string | null = null;
   const documents = new Set<string>();

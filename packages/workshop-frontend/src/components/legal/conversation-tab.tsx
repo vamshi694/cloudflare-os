@@ -1,13 +1,11 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { RpcStub } from 'capnweb'
 import type { MatterDesk } from '@gadgets/workshop-shared/legal'
-import type { AiChatAuthorInfo } from '@gadgets/workshop-shared/api'
 import { useAuthenticatedApi } from '../../AuthContext'
 import { logRpcFailure } from '../../rpcErrors'
 import { useWorkspaceOpen } from '../../useWorkspaceOpen'
-import ChatInterface from '../../ChatInterface'
+import ChatInterface, { type LegalChatMode } from '../../ChatInterface'
 import ObserverConfigModal from '../../ObserverConfigModal'
-import { getStoredSelectedModel } from '../../modelSelection'
 import { Notice, StatusDot } from './primitives'
 import { CaseGlance } from './case-glance'
 import { CONVERSATION_SUGGESTIONS } from './labels'
@@ -94,7 +92,7 @@ export function ConversationTab({
             </button>
           </div>
         )}
-        {state.kind === 'ready' && <EmbeddedChat workspaceId={state.workspaceId} />}
+        {state.kind === 'ready' && <EmbeddedChat workspaceId={state.workspaceId} desk={desk} />}
       </div>
       <aside className="hidden w-[360px] shrink-0 xl:block">
         <CaseGlance desk={desk} onOpenPetition={onOpenPetition} />
@@ -116,11 +114,49 @@ function writeChatToUrl(chat: number | null) {
   window.history.replaceState(window.history.state, '', url)
 }
 
-function EmbeddedChat({ workspaceId }: { workspaceId: string }) {
+/** R2 multipart: every part except the last must be at least 5 MiB. Mirrors uploads.tsx. */
+const PART_BYTES = 5 * 1024 * 1024
+
+/**
+ * A file handed to the counsel in conversation goes on the record: beginUpload → parts → finish,
+ * the same path the Documents tab takes. The chat then names the file so the counsel reads it.
+ */
+async function putOnRecord(desk: RpcStub<MatterDesk>, file: File): Promise<{ id: string }> {
+  const { uploadId } = await desk.beginUpload(file.name, file.type || 'application/octet-stream')
+  try {
+    let partNumber = 1
+    for (let offset = 0; offset < file.size || partNumber === 1; offset += PART_BYTES) {
+      const slice = file.slice(offset, Math.min(offset + PART_BYTES, file.size))
+      await desk.uploadPart(uploadId, partNumber, new Uint8Array(await slice.arrayBuffer()))
+      partNumber += 1
+      if (file.size === 0) break
+    }
+    return await desk.finishUpload(uploadId)
+  } catch (err) {
+    await desk.abortUpload(uploadId).catch(() => {})
+    throw err
+  }
+}
+
+function EmbeddedChat({ workspaceId, desk }: { workspaceId: string; desk: RpcStub<MatterDesk> }) {
   const { authenticatedApi } = useAuthenticatedApi()
   const [selectedChatId, setSelectedChatId] = useState<number | null>(() => readChatFromUrl())
   const [chatCount, setChatCount] = useState<number | null>(null)
-  const [models, setModels] = useState<AiChatAuthorInfo[]>([])
+  // A suggestion pill seeds the composer; the lawyer sends it, or edits it first.
+  const [seed, setSeed] = useState<{ text: string; nonce: number } | null>(null)
+  const legalMode = useMemo<LegalChatMode>(() => ({ attachToRecord: (file) => putOnRecord(desk, file) }), [desk])
+
+  // Another screen (the Documents tab's Drive intake) can hand this conversation a prepared
+  // message through ?seed=. It lands in the composer for the lawyer to send, and leaves the URL
+  // at once so a reload never re-seeds. Read raw: the route's validateSearch drops unknown params.
+  useEffect(() => {
+    const url = new URL(window.location.href)
+    const text = url.searchParams.get('seed')
+    if (!text) return
+    url.searchParams.delete('seed')
+    window.history.replaceState(window.history.state, '', url)
+    setSeed((prev) => ({ text, nonce: (prev?.nonce ?? 0) + 1 }))
+  }, [])
 
   const { overseer, error, observerConfig, retry, cancelObserverConfig } = useWorkspaceOpen({
     id: workspaceId,
@@ -129,19 +165,6 @@ function EmbeddedChat({ workspaceId }: { workspaceId: string }) {
     onShareKeyConsumed: () => {},
     onInvalidShareKey: () => {},
   })
-
-  useEffect(() => {
-    let cancelled = false
-    authenticatedApi
-      .listModels()
-      .then((list) => {
-        if (!cancelled) setModels(list)
-      })
-      .catch((err) => logRpcFailure('Failed to list models:', err))
-    return () => {
-      cancelled = true
-    }
-  }, [authenticatedApi])
 
   // The matter's own wake hook ("wake the counsel when the matter changes") is the attorney's
   // standing wish, not a permission to negotiate per matter: the platform binds it disabled until
@@ -175,16 +198,7 @@ function EmbeddedChat({ workspaceId }: { workspaceId: string }) {
     writeChatToUrl(chatId)
   }, [])
 
-  const startWith = async (text: string) => {
-    if (!overseer) return
-    try {
-      const modelId = getStoredSelectedModel(models)
-      const chat = await overseer.stub.newChat(text, modelId)
-      navigateToChat(chat)
-    } catch (err) {
-      logRpcFailure('Failed to start the conversation:', err)
-    }
-  }
+  const seedWith = (text: string) => setSeed((prev) => ({ text, nonce: (prev?.nonce ?? 0) + 1 }))
 
   if (error) {
     return (
@@ -223,7 +237,7 @@ function EmbeddedChat({ workspaceId }: { workspaceId: string }) {
               <button
                 key={s}
                 type="button"
-                onClick={() => void startWith(s)}
+                onClick={() => seedWith(s)}
                 className="press cursor-pointer rounded-full border border-kumo-line bg-kumo-base px-4 py-2 text-[13.5px] text-kumo-default transition-colors hover:bg-kumo-tint active:scale-[0.98]"
               >
                 {s}
@@ -250,6 +264,9 @@ function EmbeddedChat({ workspaceId }: { workspaceId: string }) {
           onDiscardConsoleLogs={() => {}}
           onChatCountChange={(count) => setChatCount(count)}
           constrainChatWidth
+          legalMode={legalMode}
+          composerSeedText={seed?.text}
+          composerSeedNonce={seed?.nonce}
           onOpenGadget={(gadgetId) => window.open(`/workspace/${workspaceId}?gadget=${gadgetId}`, '_blank', 'noopener')}
           outputOfWorkpiece={() => undefined}
         />

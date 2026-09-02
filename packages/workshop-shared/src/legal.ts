@@ -97,9 +97,24 @@ export type MatterOverviewView = {
   clientMessages: number;
 };
 
+/** The firm's method as it applies to one matter: the governing playbook documents and the standing rules. */
+export type MatterMethod = {
+  caseType: string | null;
+  /** Case-type documents for this visa plus the firm-wide ones; reference filings excluded. */
+  documents: PlaybookEntry[];
+  /** Standing rules for this case type and the whole firm, each with the document it lives in. */
+  rules: { slug: string; rule: string; why: string | null }[];
+  /** Per petition section, the playbook passage the firm follows (empty when the playbook has none). */
+  guidance: { key: string; title: string; heading: string; guidance: string }[];
+  /** False when the firm's playbook could not be reached; the screen says so instead of showing nothing. */
+  available: boolean;
+};
+
 /** One matter, from the lawyer's side. */
 export interface MatterDesk extends RpcTarget {
   overview(): Promise<MatterOverviewView>;
+  /** The playbook documents and standing rules that govern this matter. */
+  method(): Promise<MatterMethod>;
   documents(options?: { includeSuperseded?: boolean }): Promise<LegalDocument[]>;
   /** The extracted text of a document that has been read. */
   documentText(documentId: string): Promise<{ text: string; pageCount: number | null }>;

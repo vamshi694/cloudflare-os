@@ -1387,10 +1387,12 @@ export class UserDurableObject extends DurableObject<Cloudflare.Env> {
     return null;
   }
 
-  async startLegalDesk(): Promise<RpcStub<LegalDesk> | null> {
+  async startLegalDesk(userId?: string): Promise<RpcStub<LegalDesk> | null> {
     const record = await this.#matterAccount();
     if (!record) return null;
-    return (record.account as unknown as { startLegalDesk(): Promise<RpcStub<LegalDesk>> }).startLegalDesk();
+    // The username rides along so the firm's registry can say whose matters these are (admins' view).
+    return (record.account as unknown as { startLegalDesk(o?: { userId?: string }): Promise<RpcStub<LegalDesk>> })
+      .startLegalDesk(userId ? { userId } : undefined);
   }
 
   /** The connected-account id of the user's Matters account (provisioned on first use), or null. */

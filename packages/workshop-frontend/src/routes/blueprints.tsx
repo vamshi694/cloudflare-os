@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
+import PlatformOnly from '../components/AppShell/PlatformOnly'
 import BlueprintList from '../components/BlueprintList'
 import { useDocumentTitle } from '../useDocumentTitle'
 
@@ -8,7 +9,7 @@ import { useDocumentTitle } from '../useDocumentTitle'
  * Upload, so the two actions line up) and from the rail's bottom nav.
  */
 export const Route = createFileRoute('/blueprints')({
-  component: BlueprintsRoutePage,
+  component: () => <PlatformOnly><BlueprintsRoutePage /></PlatformOnly>,
 })
 
 function BlueprintsRoutePage() {

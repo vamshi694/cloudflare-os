@@ -66,10 +66,12 @@ function buildSection(spec: CaseTypeSpec["sections"][number], r: Row | undefined
 }
 
 export function petitionView(db: Db, spec: CaseTypeSpec | null, docs: DocumentLite[], factDocs: Map<string, string>,
-                             evidenceByKey: Map<string, SectionEvidence>): Petition {
+                             evidenceByKey: Map<string, SectionEvidence>, orderedSections?: CaseTypeSpec["sections"]): Petition {
   ensureSections(db, spec);
   const rows = sectionRows(db);
-  const sections = (spec?.sections ?? []).map(s => buildSection(s, rows.get(s.key), evidenceByKey.get(s.key) ?? "none", docs, factDocs, new Map()));
+  // The letter's order comes from the firm's style guide when it defines one (firm-library.ts
+  // orderSections); the catalog order is the fallback.
+  const sections = (orderedSections ?? spec?.sections ?? []).map(s => buildSection(s, rows.get(s.key), evidenceByKey.get(s.key) ?? "none", docs, factDocs, new Map()));
   const liveExhibits = new Set(docs.filter(d => d.live && d.exhibitNo !== null).map(d => d.exhibitNo as number));
   const directive = parseJson<Petition["directive"]>(db.metaGet("petition_directive"), null);
   return {

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState, type ChangeEvent } from 'rea
 import type { RpcStub } from 'capnweb'
 import type { LegalDocument, MatterDesk, Readiness } from '@gadgets/workshop-shared/legal'
 import { useKumoToastManager } from '@cloudflare/kumo'
-import { ArrowsClockwise, MagnifyingGlass } from '@phosphor-icons/react'
+import { ArrowsClockwise, GoogleDriveLogo, MagnifyingGlass } from '@phosphor-icons/react'
 import { logRpcFailure } from '../../../rpcErrors'
 import { WorkshopButton, WorkshopInput, WorkshopInputArea } from '../../WorkshopControls'
 import { EmptyLine, FieldLabel, LegalDialog, Notice, Skeleton } from '../primitives'
@@ -15,6 +15,9 @@ import { ByEvidence } from './ByEvidence'
 import { DocumentDetail } from './DocumentDetail'
 import { FirmRead, documentTitle } from './FirmRead'
 import { useDossiers } from './useDossiers'
+import { DrivePanel } from './DrivePanel'
+import { readingReceipt } from './receipt'
+import { StatusDot } from '../primitives'
 
 const isBusy = (doc: LegalDocument) => doc.status === 'queued' || doc.status === 'reading'
 
@@ -41,6 +44,7 @@ export function DocumentsTab({ desk, onChanged }: { desk: RpcStub<MatterDesk>; o
   const [removing, setRemoving] = useState<LegalDocument | null>(null)
   const [ruling, setRuling] = useState<{ doc: LegalDocument; next: 'included' | 'excluded' } | null>(null)
   const [busyIds, setBusyIds] = useState<Set<string>>(new Set())
+  const [driveOpen, setDriveOpen] = useState(false)
 
   const uploads = useUploads(desk, () => {
     reload()
@@ -49,6 +53,8 @@ export function DocumentsTab({ desk, onChanged }: { desk: RpcStub<MatterDesk>; o
 
   const anyBusy = (docs?.some(isBusy) ?? false) || uploads.rows.some((r) => r.phase === 'uploading')
   useEffect(() => setPollMs(anyBusy ? 5000 : 15000), [anyBusy])
+  // The receipt reads the record on every poll; the clock in it advances with the 5s refresh.
+  const receipt = useMemo(() => (docs ? readingReceipt(docs) : null), [docs])
 
   // The evidence column reads the dossier of every document the firm has read.
   useEffect(() => {
@@ -187,9 +193,20 @@ export function DocumentsTab({ desk, onChanged }: { desk: RpcStub<MatterDesk>; o
           <WorkshopButton className="!h-8 gap-1.5" onClick={() => void rereadAll()} disabled={!docs}>
             <ArrowsClockwise size={13} /> Read
           </WorkshopButton>
+          <WorkshopButton className="!h-8 gap-1.5" onClick={() => setDriveOpen((o) => !o)} aria-expanded={driveOpen}>
+            <GoogleDriveLogo size={13} /> Google Drive
+          </WorkshopButton>
           <UploadButton onFiles={uploads.add} />
         </div>
       </div>
+
+      {driveOpen && <DrivePanel onClose={() => setDriveOpen(false)} />}
+
+      {receipt && (
+        <p className="tnum m-0 flex items-center gap-2 text-[12.5px] text-kumo-subtle" aria-live="polite">
+          <StatusDot tone="working" className="breathe" /> {receipt.line}
+        </p>
+      )}
 
       <UploadRows rows={pendingRows} onDismiss={uploads.dismiss} />
 

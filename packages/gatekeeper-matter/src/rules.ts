@@ -20,16 +20,31 @@ export function sectionEvidence(claims: ClaimForReadiness[]): { evidence: Sectio
   return { evidence: "sufficient", claims: live.length, documents: docs.size };
 }
 
-export function computeReadiness(spec: CaseTypeSpec | null, claims: ClaimForReadiness[], computedAt: string): Readiness {
+/** The first sentence or so of a playbook passage, for the client ask. */
+export function askFromGuidance(guidance: string, maxChars = 320): string {
+  const flat = guidance.replace(/^\*\*[^*]+:\*\*\s*/m, "").replace(/[*_`#|]/g, "").replace(/\s+/g, " ").trim();
+  const cut = flat.search(/[.;]\s/);
+  const first = cut > 40 ? flat.slice(0, cut + 1) : flat;
+  return first.length > maxChars ? first.slice(0, maxChars).trimEnd() + "…" : first;
+}
+
+/**
+ * Readiness per section. `guidance` (from the firm's playbook, keyed by section) makes the client
+ * ask say what the FIRM says proves the criterion; without it the catalog's purpose stands in.
+ */
+export function computeReadiness(spec: CaseTypeSpec | null, claims: ClaimForReadiness[], computedAt: string,
+                                 guidance: Map<string, { guidance: string }> = new Map()): Readiness {
   if (!spec) {
     return { caseType: null, sections: [], sufficient: 0, required: 0, gate: "undecided", stillNeeded: [], computedAt };
   }
   const sections: SectionReadiness[] = spec.sections.filter(s => s.evidentiary).map(s => {
     const own = claims.filter(c => c.criteria.includes(s.key));
     const { evidence, claims: n, documents } = sectionEvidence(own);
+    const g = guidance.get(s.key);
+    const proves = g ? askFromGuidance(g.guidance) : s.purpose;
     const stillNeeded = evidence === "sufficient" ? []
-      : evidence === "none" ? [`${s.title}: ${s.purpose}`]
-      : [`More independent evidence for ${s.title.toLowerCase()} (currently ${documents} document${documents === 1 ? "" : "s"}): ${s.purpose}`];
+      : evidence === "none" ? [`${s.title}: ${proves}`]
+      : [`More independent evidence for ${s.title.toLowerCase()} (currently ${documents} document${documents === 1 ? "" : "s"}): ${proves}`];
     return { key: s.key, title: s.title, evidence, supportingClaims: n, supportingDocuments: documents, stillNeeded };
   });
   const sufficient = sections.filter(s => s.evidence === "sufficient").length;

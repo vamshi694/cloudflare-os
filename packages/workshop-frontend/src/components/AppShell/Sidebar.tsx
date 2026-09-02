@@ -13,20 +13,21 @@ import { useGatekeeperApps } from '../../useGatekeeperApps'
 import { openCommandPalette } from './commandPaletteBus'
 import SidebarItem from './SidebarItem'
 import {
-  SidebarWorkspacesProvider,
-  SidebarWorkspacesTools,
-  SidebarWorkspacesLists,
-} from './SidebarWorkspaces'
+  SidebarMattersProvider,
+  SidebarMattersTools,
+  SidebarMattersLists,
+} from './SidebarMatters'
+import { useAuthenticatedApi } from '../../AuthContext'
 import CornerCard from './CornerCard'
 
 /**
  * The persistent left rail. Three pinned regions sandwich a single scrolling region of lists, so
- * the user can always reach Search, primary nav, and the bottom utility strip no matter how many
- * workspaces they have.
+ * the lawyer can always reach Search, primary nav, and their own corner card no matter how many
+ * matters they have.
  *
  * Layout (top → bottom):
  *   • brand row                            pinned
- *   • primary nav (Home, Workspaces, …)    pinned
+ *   • primary nav (Ask, Matters, Playbook)    pinned
  *   • workspace tools (⌘K search)          pinned
  *   • Favorites / Recent workspaces        SCROLLS
  *   • utility strip (plug, avatar)         pinned
@@ -43,6 +44,9 @@ export default function Sidebar({
   // and is connected / enabled for everyone). Disabled or not-yet-connected ones aren't returned, so
   // they simply don't appear. The set is fully dynamic — no gatekeeper is hardcoded.
   const gatekeeperApps = useGatekeeperApps()
+  // Platform management apps (the Context Library and its kind) are the admin's concern; a
+  // practitioner's rail is Ask, Matters, Playbook and their matters.
+  const { isAdmin } = useAuthenticatedApi()
 
   return (
     <aside
@@ -109,7 +113,7 @@ export default function Sidebar({
         </button>
       )}
 
-      <SidebarWorkspacesProvider>
+      <SidebarMattersProvider>
         {/* Pinned top stack. shrink-0 keeps it from squishing when the lists below grow. */}
         <div className="flex shrink-0 flex-col gap-3 pt-3">
           {/* Primary nav */}
@@ -138,7 +142,7 @@ export default function Sidebar({
               matchPrefix
             />
             {/* Gatekeeper management apps (e.g. the Context Library), listed dynamically. */}
-            {gatekeeperApps.map((app) => {
+            {(isAdmin ? gatekeeperApps : []).map((app) => {
               // Escape the icon URL for safe interpolation into a CSS url("…") string.
               const maskUrl = app.icon
                 ? `url("${app.icon.url.replace(/[\\"]/g, '\\$&')}")`
@@ -179,15 +183,15 @@ export default function Sidebar({
           </nav>
 
           {/* Workspace tools: search. Pinned so it's always reachable. */}
-          <SidebarWorkspacesTools collapsed={collapsed} />
+          <SidebarMattersTools collapsed={collapsed} />
         </div>
 
-        {/* Scrolling middle: only the Favorites / Recent workspaces / Recent blueprints lists.
+        {/* Scrolling middle: only the Favorites / Recent matters lists.
             min-h-0 lets flex children compute scroll height correctly. */}
         <div className="sidebar-scroll mt-1 min-h-0 flex-1 overflow-y-auto">
-          <SidebarWorkspacesLists collapsed={collapsed} />
+          <SidebarMattersLists collapsed={collapsed} />
         </div>
-      </SidebarWorkspacesProvider>
+      </SidebarMattersProvider>
 
       <CornerCard collapsed={collapsed} />
     </aside>

@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { useNavigate } from '@tanstack/react-router'
-import ChatInterface from '../../ChatInterface'
+import ChatInterface, { type LegalChatMode } from '../../ChatInterface'
 import { useWorkspaceOpen } from '../../useWorkspaceOpen'
 import { useAuthenticatedApi } from '../../AuthContext'
 
@@ -14,11 +14,14 @@ export default function InlineConversation({
   workspaceId,
   intro,
   emptyHint,
+  legalMode,
 }: {
   workspaceId: string
   /** Shown above the thread while nothing has been said yet. */
   intro?: ReactNode
   emptyHint?: string
+  /** Legal OS chrome for the composer (no resource chrome; files to the record when given). */
+  legalMode?: LegalChatMode
 }) {
   const { authenticatedApi } = useAuthenticatedApi()
   const navigate = useNavigate()
@@ -93,6 +96,7 @@ export default function InlineConversation({
           onDiscardConsoleLogs={() => {}}
           onChatCountChange={(count) => setChatCount(count)}
           constrainChatWidth
+          legalMode={legalMode}
           outputOfWorkpiece={() => undefined}
           onOpenGadget={() => {
             // Gadget panes belong to the full workspace editor, never to a Legal OS screen.

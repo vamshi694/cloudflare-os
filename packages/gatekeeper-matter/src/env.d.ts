@@ -16,6 +16,8 @@ declare namespace Cloudflare {
     /** Workers AI model id for the reading lane. */
     READER_MODEL?: string;
     KNOWLEDGE_MODEL?: string;
+    /** The firm gatekeeper's FirmLibraryApi over a service binding (deploy.ts wires it); absent in tests. */
+    FIRM_LIBRARY?: import("./firm-library.js").FirmLibraryBinding;
     /** Firm-level OpenRouter key for the reading lane (a Worker secret, never in config). */
     OPENROUTER_API_KEY?: string;
     /** Public origin of the deployment (e.g. https://ocios.app); empty means relative links. Set by deploy.ts. */
@@ -28,6 +30,6 @@ declare namespace Cloudflare {
 
   interface GlobalProps {
     mainModule: typeof import("./index.js");
-    durableNamespaces: "MatterAccount" | "MatterGatekeeper" | "MatterStore" | "FirmMattersGatekeeper";
+    durableNamespaces: "MatterAccount" | "MatterGatekeeper" | "MatterStore" | "FirmMattersGatekeeper" | "FirmIndex";
   }
 }

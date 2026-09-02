@@ -1,9 +1,0 @@
-{
-  "pid": 90620,
-  "port": 43605,
-  "token": "bc6b3fb6-46c8-4672-bce4-a9f64404e57b",
-  "startedAt": "2026-09-02T03:57:33.213Z",
-  "serverPath": "/Users/vamshimugala/.claude/skills/gstack/browse/src/server.ts",
-  "mode": "launched",
-  "configHash": "303a7eeccc03078b"
-}

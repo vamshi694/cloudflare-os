@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
+import PlatformOnly from '../components/AppShell/PlatformOnly'
 import GatekeeperAppPage from '../GatekeeperAppPage'
 import { useDocumentTitle } from '../useDocumentTitle'
 import { useGatekeeperApps } from '../useGatekeeperApps'
@@ -12,7 +13,7 @@ import { useGatekeeperApps } from '../useGatekeeperApps'
  * nesting inside the /gatekeepers connectors page's component.
  */
 export const Route = createFileRoute('/gatekeepers_/$appId')({
-  component: GatekeeperApp,
+  component: () => <PlatformOnly><GatekeeperApp /></PlatformOnly>,
 })
 
 function GatekeeperApp() {

@@ -913,6 +913,44 @@ export type MyUsage = {
   limit: number | null;
 };
 
+/** Legal OS: one matter as the firm's admins see it, read live from the matter's own store. */
+export type FirmMatterRow = {
+  matterId: string;
+  /** The lawyer's username, or null for a matter opened before the registry learned its owner. */
+  ownerUserId: string | null;
+  title: string;
+  clientName: string;
+  caseType: string | null;
+  status: "open" | "paused" | "closed";
+  /** The matter's phase key (reading, knowledge, analysis, clearance, building, review, idle, paused). */
+  phase: string;
+  needsYou: number;
+  documents: number;
+  facts: number;
+  workspaceId: string | null;
+  createdAt: string;
+  /** This calendar month's model spend on the matter's conversation, in dollars; null when unknown. */
+  monthCost: number | null;
+  /** True when the matter's store could not be read; the row shows what the registry knows. */
+  unreachable: boolean;
+};
+
+/** Legal OS: what the firm did over a window, counted from every matter's activity trail. */
+export type FirmAnalytics = {
+  days: number;
+  since: string;
+  matters: number;
+  documentsRead: number;
+  factsOnFile: number;
+  claimsOnFile: number;
+  sectionsDrafted: number;
+  decisionsAnswered: number;
+  clientMessages: number;
+  /** Turns the counsel took on its own (hooks, schedules), from the usage ledger. */
+  wakeTurns: number;
+  byDay: { day: string; documentsRead: number; sectionsDrafted: number; decisionsAnswered: number }[];
+};
+
 /** Legal OS: a member of the firm as the admin's Team screen shows them. */
 export type FirmMember = {
   userId: string;
@@ -1041,6 +1079,12 @@ export interface AdminApi {
    * directory, so this is the honest union, with each member's month of spend alongside.
    */
   listMembers(): Promise<FirmMember[]>;
+
+  /** Legal OS: every matter in the firm, whoever owns it, read live. Empty when the Matters gatekeeper is not bound. */
+  listFirmMatters(): Promise<FirmMatterRow[]>;
+
+  /** Legal OS: what the firm did over the last `days` days, across every matter. */
+  firmAnalytics(days: number): Promise<FirmAnalytics>;
 
   /**
    * Set the site name shown next to the top-bar logo. Pass "" to reset to DEFAULT_SITE_NAME.

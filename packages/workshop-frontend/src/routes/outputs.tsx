@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import PlatformOnly from '../components/AppShell/PlatformOnly'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Dialog, DropdownMenu, useKumoToastManager } from '@cloudflare/kumo'
 import {
@@ -33,7 +34,7 @@ import { WorkshopButton, WorkshopIconButton } from '../components/WorkshopContro
 // account that each workspace pushes to (AuthenticatedApi.listOutputs()).
 
 export const Route = createFileRoute('/outputs')({
-  component: OutputsPage,
+  component: () => <PlatformOnly><OutputsPage /></PlatformOnly>,
 })
 
 function formatRelativeTime(date: Date): string {

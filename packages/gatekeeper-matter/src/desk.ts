@@ -6,9 +6,10 @@ import { RpcTarget } from "cloudflare:workers";
 import { validateRpc } from "capnweb-validate";
 import type {
   CaseMap, CaseTypeSpec, ClientMessage, ClientRecord, Deadline, FirmBrief, GovernmentForm, LegalActivity, LegalDecision,
-  LegalDesk, LegalDocument, LegalFact, MatterDesk, MatterListEntry, MatterOverviewView, Petition, PetitionSection, Readiness,
+  LegalDesk, LegalDocument, LegalFact, MatterDesk, MatterListEntry, MatterMethod, MatterOverviewView, Petition, PetitionSection, Readiness,
 } from "@gadgets/workshop-shared/legal";
-import { CASE_TYPES, normalizeCaseType } from "./case-types.js";
+import { CASE_TYPES, caseTypeSpec, normalizeCaseType } from "./case-types.js";
+import { firmGuidance, firmMethod } from "./firm-library.js";
 import type { MatterAccount } from "./matter.js";
 import type { MatterStore } from "./store.js";
 import { matterUrl } from "./matter.js";
@@ -128,6 +129,21 @@ export class MatterDeskImpl extends RpcTarget implements MatterDesk {
   // ---- readiness, the petition -----------------------------------------------------------------
 
   async caseTypes(): Promise<CaseTypeSpec[]> { return CASE_TYPES; }
+
+  /** The playbook documents and standing rules that govern this matter, from the firm library binding. */
+  async method(): Promise<MatterMethod> {
+    const meta = await this.store.meta();
+    const caseType = meta?.caseType ?? null;
+    const spec = caseTypeSpec(caseType);
+    const [method, guidance] = await Promise.all([firmMethod(this.env, caseType), firmGuidance(this.env, spec)]);
+    return {
+      caseType,
+      documents: method?.documents ?? [],
+      rules: method?.rules ?? [],
+      guidance: [...guidance.values()],
+      available: method !== null,
+    };
+  }
   readiness(): Promise<Readiness> { return this.store.readiness(); }
   petition(): Promise<Petition> { return this.store.petition(); }
   section(key: string): Promise<PetitionSection | null> { return this.store.section(key); }
@@ -180,7 +196,8 @@ export class MatterDeskImpl extends RpcTarget implements MatterDesk {
 
 @validateRpc()
 export class LegalDeskImpl extends RpcTarget implements LegalDesk {
-  constructor(private readonly account: DurableObjectStub<MatterAccount>, private readonly env: Cloudflare.Env) { super(); }
+  constructor(private readonly account: DurableObjectStub<MatterAccount>, private readonly env: Cloudflare.Env,
+              private readonly ownerUserId: string | null = null) { super(); }
 
   #store(matterId: string): DurableObjectStub<MatterStore> {
     return this.env.MATTER_STORE.get(this.env.MATTER_STORE.idFromName(matterId));
@@ -204,7 +221,8 @@ export class LegalDeskImpl extends RpcTarget implements LegalDesk {
   }
 
   async createMatter(input: { title: string; clientName: string; caseType: string | null; clientEmail?: string | null }): Promise<MatterListEntry> {
-    const created = await this.account.createMatter({ title: input.title, clientName: input.clientName, caseType: normalizeCaseType(input.caseType) });
+    const created = await this.account.createMatter(
+      { title: input.title, clientName: input.clientName, caseType: normalizeCaseType(input.caseType) }, this.ownerUserId);
     if (input.clientEmail?.trim()) await this.#store(created.id).setClient({ email: input.clientEmail });
     return this.#entry(created);
   }

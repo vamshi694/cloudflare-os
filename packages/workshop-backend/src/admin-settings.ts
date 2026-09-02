@@ -1,5 +1,5 @@
 import type { UsageLedger } from './usage-ledger.js';
-import { AdminApi, AdminFormat, AdminFormatPatch, AdminResourceVendor, AdminSettingsView, AmbientGatekeeperMode, BannerColor, BlueprintPublicInfo, Invite, UsageSummary, FirmMember, MAX_ANNOUNCEMENT_LENGTH, MAX_INSTANCE_INSTRUCTIONS_LENGTH, MAX_SITE_NAME_LENGTH, isAmbientGatekeeperMode, isBannerColor, isHexColor } from '@gadgets/workshop-shared/api';
+import { AdminApi, AdminFormat, AdminFormatPatch, AdminResourceVendor, AdminSettingsView, AmbientGatekeeperMode, BannerColor, BlueprintPublicInfo, Invite, UsageSummary, FirmMember, FirmAnalytics, FirmMatterRow, MAX_ANNOUNCEMENT_LENGTH, MAX_INSTANCE_INSTRUCTIONS_LENGTH, MAX_SITE_NAME_LENGTH, isAmbientGatekeeperMode, isBannerColor, isHexColor } from '@gadgets/workshop-shared/api';
 
 // Legal OS: an attorney joins this week or gets re-invited (Counsel OS used 30 days for attorneys).
 const INVITE_TTL_MS = 30 * 24 * 60 * 60 * 1000;
@@ -13,6 +13,14 @@ import { ADMIN_CONFIG_KEY, FEATURED_BLUEPRINTS_KEY, isReservedBlueprintKey, pars
 import { AdminConfig, DEFAULT_ADMIN_CONFIG, FormatCuration, MAX_AGENT_HINT, defaultOutputFormatId, listPromotedFormats, reorderFormats, sanitizeOutputOverrides, serializeAdminConfig } from './admin-config.js';
 import { SITE_LOGO_R2_KEY, siteLogoImage, validateSiteLogo } from './site-logo.js';
 import { ambientGatekeeperMode, DEFAULT_AMBIENT_GATEKEEPER_MODE } from './provisioning-policy.js';
+
+// Legal OS: the Matters gatekeeper's vendor entrypoint hands over a firm-wide admin view. Typed
+// structurally: the matter worker is a sibling package, not a dependency of the workshop.
+type FirmAdminView = {
+  listFirmMatters(): Promise<Omit<FirmMatterRow, "monthCost">[]>;
+  firmAnalytics(days: number): Promise<Omit<FirmAnalytics, "wakeTurns">>;
+};
+type FirmMattersVendor = { getFirmAdminApi(): Promise<FirmAdminView> };
 import { buildGatekeeperVendorMap } from './auth/auth-vendors.js';
 import { UserDurableObject } from './user.js';
 import { formatBlueprintsManifestVersion, installFormatBlueprints } from './format-blueprints.js';
@@ -643,8 +651,51 @@ export class AdminApiImpl extends RpcTarget implements AdminApi {
    * resource catalog (some are RBAC-gated per user). It's plain data — not a user-DO dependency.
    */
   constructor(private admin: DurableObjectStub<AdminSettings>, private adminUserId: string,
-              private ledger: DurableObjectStub<UsageLedger>, private admins: string[] = []) {
+              private ledger: DurableObjectStub<UsageLedger>, private admins: string[] = [],
+              // The Matters gatekeeper's vendor entrypoint (the GATEKEEPER_MATTER binding), or null
+              // when the deployment has none. It hands over the firm-wide admin view.
+              private matters: FirmMattersVendor | null = null) {
     super();
+  }
+
+  async #firmAdmin(): Promise<FirmAdminView | null> {
+    if (!this.matters) return null;
+    try {
+      return await this.matters.getFirmAdminApi();
+    } catch (err) {
+      console.warn("Legal OS: the Matters gatekeeper did not hand over its admin view", err);
+      return null;
+    }
+  }
+
+  async listFirmMatters(): Promise<FirmMatterRow[]> {
+    let view = await this.#firmAdmin();
+    if (!view) return [];
+    let now = new Date();
+    let since = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1)).toISOString();
+    let daysThisMonth = Math.max(1, Math.ceil((now.getTime() - Date.parse(since)) / 86_400_000));
+    let [rows, usage] = await Promise.all([view.listFirmMatters(), this.ledger.summary(daysThisMonth)]);
+    let byWorkspace = new Map<string, number>();
+    for (let w of usage.byWorkspace) byWorkspace.set(w.workspaceId, (byWorkspace.get(w.workspaceId) ?? 0) + w.cost);
+    return rows.map(r => ({
+      ...r,
+      monthCost: r.workspaceId ? (byWorkspace.get(r.workspaceId) ?? 0) : null,
+    }));
+  }
+
+  async firmAnalytics(days: number): Promise<FirmAnalytics> {
+    let n = Math.max(1, Math.min(365, Math.floor(days)));
+    let view = await this.#firmAdmin();
+    let [analytics, usage] = await Promise.all([
+      view ? view.firmAnalytics(n) : Promise.resolve(null),
+      this.ledger.summary(n),
+    ]);
+    let wakeTurns = usage.byUser.reduce((a, u) => a + (u.automatedTurns ?? 0), 0);
+    if (!analytics) {
+      return { days: n, since: usage.since, matters: 0, documentsRead: 0, factsOnFile: 0, claimsOnFile: 0,
+               sectionsDrafted: 0, decisionsAnswered: 0, clientMessages: 0, wakeTurns, byDay: [] };
+    }
+    return { ...analytics, wakeTurns };
   }
 
   async listMembers(): Promise<FirmMember[]> {

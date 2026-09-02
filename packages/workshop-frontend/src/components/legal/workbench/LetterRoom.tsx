@@ -134,7 +134,7 @@ export function LetterRoom({
         />
       </div>
       <aside className="hidden w-[340px] shrink-0 self-stretch xl:flex">
-        {active && <IntelPanel key={active.key} section={active} caseType={petition.caseType} onRedraft={redraft} />}
+        {active && <IntelPanel key={active.key} section={active} caseType={petition.caseType} onRedraft={redraft} desk={desk} />}
       </aside>
 
       <HistoryPanel open={history} onClose={() => setHistory(false)} versions={petition.versions} />

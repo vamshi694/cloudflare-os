@@ -1913,7 +1913,10 @@ export const ChatInput = ({
   onStop,
   showThinkingTraces = true,
   onToggleThinkingTraces,
+  legalMode,
 }: {
+  /** Legal OS: files go to the matter's record and the resource chrome is hidden. */
+  legalMode?: LegalChatMode;
   createCapsuleGatekeeper: (
     accountId: number,
     url: string,
@@ -2336,7 +2339,42 @@ export const ChatInput = ({
     }
   };
 
+  // Legal OS: a file a lawyer hands the counsel belongs on the matter's record, where every fact
+  // it yields carries a quote and a page. It is uploaded there, then the composer names it so the
+  // counsel reads it. Sent at once when nothing is being typed; appended to the draft otherwise.
+  const attachFilesToRecord = async (files: File[]) => {
+    const attach = legalMode?.attachToRecord;
+    if (!attach) return;
+    const landed: string[] = [];
+    for (const file of files) {
+      try {
+        await attach(file);
+        landed.push(file.name);
+      } catch (err: any) {
+        console.error("Failed to put a file on the record:", err);
+        toasts.add({
+          title: `"${file.name}" did not reach the matter`,
+          description: "Nothing was added to the record. Drop it again to retry.",
+          variant: "error",
+        });
+      }
+    }
+    if (landed.length === 0) return;
+    const line = landed.length === 1
+      ? `I put "${landed[0]}" on the record. Read it and tell me what it establishes.`
+      : `I put ${landed.length} documents on the record: ${landed.map((n) => `"${n}"`).join(", ")}. Read them and tell me what they establish.`;
+    if (inputValue.trim() === "") {
+      await onSend(line, selectedModel);
+    } else {
+      setInputValue((prev) => `${prev.trimEnd()}\n${line}`);
+    }
+  };
+
   const addFiles = async (files: FileList | File[]) => {
+    if (legalMode?.attachToRecord) {
+      await attachFilesToRecord(Array.from(files));
+      return;
+    }
     const attachmentFiles = Array.from(files);
 
     const initialRoom = MAX_PENDING_ATTACHMENTS - pendingAttachmentsRef.current.length;
@@ -3628,14 +3666,18 @@ export const ChatInput = ({
                 </DropdownMenu.Item>
               </DropdownMenu.Content>
             </DropdownMenu>
-            <button
-              type="button"
-              onClick={handleAttachOpen}
-              className="inline-flex h-10 flex-shrink-0 cursor-pointer items-center gap-1.5 rounded-lg px-2 text-[14px] leading-none text-kumo-inactive transition-[background-color,color,transform] duration-150 ease-out hover:bg-kumo-tint hover:text-kumo-subtle focus-visible:bg-kumo-tint focus-visible:text-kumo-subtle focus-visible:outline-none active:scale-[0.97] sm:h-8 sm:text-[13px]"
-            >
-              <Plug size={15} className="flex-shrink-0" />
-              <span className={`leading-none ${styles.attachLabelText}`}>{attachLabel ?? "Add resource"}</span>
-            </button>
+            {/* Legal OS: the matter and the firm's method are already in the counsel's hands;
+                there is no resource to add. */}
+            {!legalMode && (
+              <button
+                type="button"
+                onClick={handleAttachOpen}
+                className="inline-flex h-10 flex-shrink-0 cursor-pointer items-center gap-1.5 rounded-lg px-2 text-[14px] leading-none text-kumo-inactive transition-[background-color,color,transform] duration-150 ease-out hover:bg-kumo-tint hover:text-kumo-subtle focus-visible:bg-kumo-tint focus-visible:text-kumo-subtle focus-visible:outline-none active:scale-[0.97] sm:h-8 sm:text-[13px]"
+              >
+                <Plug size={15} className="flex-shrink-0" />
+                <span className={`leading-none ${styles.attachLabelText}`}>{attachLabel ?? "Add resource"}</span>
+              </button>
+            )}
           </div>
 
           {/* Right actions */}
@@ -4405,9 +4447,24 @@ function fallbackToStoredModelSelection(
   return getStoredSelectedModel(availableModels);
 }
 
+/**
+ * Legal OS: the conversation lives inside a matter or the firm's desk. Files a lawyer attaches go
+ * to the matter's record (the counsel reads them there), never to the chat; resource chrome and
+ * gadget affordances stay out of a lawyer's sight.
+ */
+export type LegalChatMode = {
+  /** Put a file on the matter's record; resolves once the document is registered. */
+  attachToRecord?: (file: File) => Promise<{ id: string }>;
+};
+
 interface ChatInterfaceProps {
   workspaceId: string | undefined;
   overseer: RpcStub<Overseer>;
+  /** Legal OS chrome for the composer; see LegalChatMode. */
+  legalMode?: LegalChatMode;
+  /** Seed the new-conversation composer from outside (a suggestion pill); re-applied per nonce. */
+  composerSeedText?: string;
+  composerSeedNonce?: number;
   selectedChatId: number | null;
   onNavigateToChat: (
     chatId: number | null,
@@ -4602,6 +4659,9 @@ function getOrCreateProvisionalToolCall(
 function ChatInterface({
   workspaceId,
   overseer,
+  legalMode,
+  composerSeedText,
+  composerSeedNonce,
   selectedChatId,
   onNavigateToChat,
   onChatChangesChange,
@@ -7261,6 +7321,9 @@ function ChatInterface({
             onToggleThinkingTraces={toggleShowThinkingTraces}
             minRows={2}
             newChat
+            legalMode={legalMode}
+            seedText={composerSeedText}
+            seedNonce={composerSeedNonce}
             draftStorageKey={currentUser && workspaceId
               ? composerDraftStorageKey(currentUser.id, `workspace:${workspaceId}:new`)
               : undefined}
@@ -8237,6 +8300,7 @@ function ChatInterface({
                     onStop={handleStop}
                     showThinkingTraces={showThinkingTraces}
                     onToggleThinkingTraces={toggleShowThinkingTraces}
+                    legalMode={legalMode}
                     draftStorageKey={currentUser && workspaceId && selectedChatId !== null
                       ? composerDraftStorageKey(
                           currentUser.id,

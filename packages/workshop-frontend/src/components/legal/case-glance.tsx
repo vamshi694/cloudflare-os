@@ -3,6 +3,7 @@ import type { RpcStub } from 'capnweb'
 import type { MatterDesk, Readiness } from '@gadgets/workshop-shared/legal'
 import { useDeskData } from './useMatterDesk'
 import { plural } from './labels'
+import { MethodPanel } from './method-panel'
 
 /**
  * THE CASE AT A GLANCE — the conversation tab's quiet right rail. Only what a lawyer acts on: which
@@ -24,17 +25,20 @@ export function CaseGlance({
   const [showAll, setShowAll] = useState(false)
 
   if (data === null) {
-    if (failed) return null
+    if (failed) return <MethodPanel desk={desk} />
     return <div className="skeleton h-[220px] w-full" />
   }
   const sections = data.sections.filter((s) => s.key)
   if (sections.length === 0 && data.gate === 'undecided') {
     return (
-      <div className="shadow-depth rise rounded-[14px] border border-kumo-line bg-kumo-base px-4 py-4">
-        <p className="docket m-0">The case at a glance</p>
-        <p className="mt-2 mb-0 text-[12.5px] leading-[18px] text-kumo-subtle">
-          The counsel has not committed a case type yet. Once it does, this rail shows which sections the record supports.
-        </p>
+      <div className="space-y-4">
+        <div className="shadow-depth rise rounded-[14px] border border-kumo-line bg-kumo-base px-4 py-4">
+          <p className="docket m-0">The case at a glance</p>
+          <p className="mt-2 mb-0 text-[12.5px] leading-[18px] text-kumo-subtle">
+            The counsel has not committed a case type yet. Once it does, this rail shows which sections the record supports.
+          </p>
+        </div>
+        <MethodPanel desk={desk} />
       </div>
     )
   }
@@ -43,6 +47,7 @@ export function CaseGlance({
   const shownNeeds = showAll ? stillNeeded : stillNeeded.slice(0, 4)
 
   return (
+    <div className="space-y-4">
     <div className="shadow-depth rise divide-y divide-kumo-line rounded-[14px] border border-kumo-line bg-kumo-base">
       <section className="px-4 py-3.5">
         <p className="docket m-0">Evidence by section</p>
@@ -104,6 +109,8 @@ export function CaseGlance({
           </p>
         )}
       </section>
+    </div>
+    <MethodPanel desk={desk} />
     </div>
   )
 }
