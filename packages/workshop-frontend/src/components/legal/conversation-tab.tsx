@@ -155,7 +155,9 @@ function EmbeddedChat({ workspaceId }: { workspaceId: string }) {
         const hooks = await overseer.stub.listHooks()
         for (const hook of hooks) {
           if (cancelled) return
-          if (!hook.enabled && hook.resourceUrl?.startsWith('legal://matter/')) {
+          const isMatterHook = hook.resourceUrl?.startsWith('legal://matter/')
+            || hook.description.title.startsWith('Wake the counsel')
+          if (!hook.enabled && isMatterHook) {
             await overseer.stub.enableHook(hook.id)
           }
         }

@@ -130,7 +130,10 @@ export function fitTransform(placed: Placed[], viewW: number, viewH: number): { 
   const x1 = q(xs, 0.97) + maxR + pad
   const y0 = q(ys, 0.03) - maxR - pad
   const y1 = q(ys, 0.97) + maxR + pad
-  const k = Math.min(2.2, viewW / Math.max(1, x1 - x0), viewH / Math.max(1, y1 - y0))
+  // A handful of nodes must not balloon to fill the frame: below six entities the map stays at
+  // natural size, so three circles read as three circles, not as a wall.
+  const maxK = placed.length < 6 ? 1 : 2.2
+  const k = Math.min(maxK, viewW / Math.max(1, x1 - x0), viewH / Math.max(1, y1 - y0))
   return { k, tx: (viewW - (x0 + x1) * k) / 2, ty: (viewH - (y0 + y1) * k) / 2 }
 }
 
