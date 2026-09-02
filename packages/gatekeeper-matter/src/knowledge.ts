@@ -45,14 +45,22 @@ async function askModel(env: Cloudflare.Env, system: string, user: string): Prom
     }
   }
   if (!out) throw new Error("The knowledge reader returned nothing.");
-  return typeof out.response === "string" ? out.response
-    : typeof out.choices?.[0]?.message?.content === "string" ? out.choices[0].message.content
-    : JSON.stringify(out);
+  // Workers AI answers in one of three shapes: {response: string}, {response: object} (already
+  // parsed when json_object is honored), or OpenAI-style choices. Normalize all three to text.
+  if (typeof out.response === "string") return out.response;
+  if (out.response && typeof out.response === "object") return JSON.stringify(out.response);
+  const content = out.choices?.[0]?.message?.content;
+  if (typeof content === "string") return content;
+  if (content && typeof content === "object") return JSON.stringify(content);
+  return JSON.stringify(out);
 }
 
 export function parseClaims(raw: string, batch: Fact[], allowedKeys: Set<string>): { statement: string; criteria: string[]; entities: { name: string; kind: EntityKind }[]; factIds: string[] }[] {
   const start = raw.indexOf("{"); const end = raw.lastIndexOf("}");
-  if (start < 0 || end <= start) throw new Error("The knowledge reader returned no JSON.");
+  if (start < 0 || end <= start) {
+    // Say what came back, so the attorney's screen and the log show the shape, never a bare "no JSON".
+    throw new Error(`The knowledge reader returned no JSON (it said: ${raw.replace(/\s+/g, " ").slice(0, 160) || "nothing"}).`);
+  }
   let parsed: { claims?: unknown };
   try { parsed = JSON.parse(raw.slice(start, end + 1)); } catch { throw new Error("The knowledge reader returned malformed JSON."); }
   const out: ReturnType<typeof parseClaims> = [];
