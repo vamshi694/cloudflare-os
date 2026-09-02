@@ -32,8 +32,7 @@
     "UNDERSTAND_MODEL": "deepseek/deepseek-v4-pro",
     // Public origin for portal and file links (deploy.ts sets it); empty means relative paths.
     "PUBLIC_BASE_URL": "",
-    // Extra entropy for signed file links. Set a real value with `wrangler secret put PORTAL_SECRET`.
-    "PORTAL_SECRET": ""
+    // PORTAL_SECRET (extra entropy for signed file links) is a secret: `wrangler secret put PORTAL_SECRET --name legal-os-matter`.
   },
   "observability": {
     "enabled": true,

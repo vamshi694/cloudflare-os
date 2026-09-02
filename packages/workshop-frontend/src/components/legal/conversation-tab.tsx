@@ -143,6 +143,31 @@ function EmbeddedChat({ workspaceId }: { workspaceId: string }) {
     }
   }, [authenticatedApi])
 
+  // The matter's own wake hook ("wake the counsel when the matter changes") is the attorney's
+  // standing wish, not a permission to negotiate per matter: the platform binds it disabled until
+  // someone enables it, so this screen enables any hook that the matter itself delivers. Checked on
+  // open and every 15 seconds, since the counsel binds it during its first turn.
+  useEffect(() => {
+    if (!overseer) return
+    let cancelled = false
+    const enableMatterHooks = async () => {
+      try {
+        const hooks = await overseer.stub.listHooks()
+        for (const hook of hooks) {
+          if (cancelled) return
+          if (!hook.enabled && hook.resourceUrl?.startsWith('legal://matter/')) {
+            await overseer.stub.enableHook(hook.id)
+          }
+        }
+      } catch (err) {
+        logRpcFailure('Failed to enable the matter wake hook:', err)
+      }
+    }
+    void enableMatterHooks()
+    const id = setInterval(() => { if (document.visibilityState === 'visible') void enableMatterHooks() }, 15_000)
+    return () => { cancelled = true; clearInterval(id) }
+  }, [overseer])
+
   const navigateToChat = useCallback((chatId: number | null) => {
     setSelectedChatId(chatId)
     writeChatToUrl(chatId)

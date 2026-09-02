@@ -644,7 +644,9 @@ export class MatterStore extends DurableObject<Cloudflare.Env> {
     this.#db.metaSet("knowledge_built_at", now());
     this.#db.metaSet("knowledge_from_documents", String(fromDocuments));
     const map = K.listMap(this.#db);
-    this.#log("system", note ?? `Built the case knowledge: ${map.entities.length} entities bound by ${map.claims.filter(c => !c.removed).length} claims, from ${fromDocuments} documents.`);
+    const summary = note ?? `Built the case knowledge: ${map.entities.length} entities bound by ${map.claims.filter(c => !c.removed).length} claims, from ${fromDocuments} documents.`;
+    this.#db.metaSet("knowledge_note", summary);
+    this.#log("system", summary);
     this.#wake("knowledge built");
   }
 

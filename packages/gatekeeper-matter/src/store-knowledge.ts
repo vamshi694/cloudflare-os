@@ -70,6 +70,7 @@ export function listMap(db: Db): CaseMap {
     builtAt: db.metaGet("knowledge_built_at"),
     building: db.metaGet("knowledge_building") === "1",
     fromDocuments: Number(db.metaGet("knowledge_from_documents") ?? "0"),
+    note: db.metaGet("knowledge_note"),
   };
 }
 

@@ -52,10 +52,12 @@ export function CaseMapTab({ desk }: { desk: RpcStub<MatterDesk> }) {
         {map.building ? (
           <p className="m-0 flex items-center gap-2 text-[13.5px] text-kumo-default"><StatusDot tone="working" className="breathe" /> The firm is building the case knowledge — this map fills in as it works.</p>
         ) : (
-          <EmptyLine title="No case knowledge yet." body="The map builds itself as the firm reads documents." />
+          <EmptyLine title="No case knowledge yet." body={map.note ?? 'The map builds itself as the firm reads documents.'} />
         )}
-        {!map.building && map.fromDocuments === 0 && (
-          <WorkshopButton className="!h-8" onClick={() => void rebuild()} disabled={rebuilding}>{rebuilding ? 'Starting…' : 'Build it now'}</WorkshopButton>
+        {!map.building && (
+          <WorkshopButton className="!h-8" onClick={() => void rebuild()} disabled={rebuilding}>
+            {rebuilding ? 'Starting…' : map.fromDocuments === 0 ? 'Build it now' : 'Build it again'}
+          </WorkshopButton>
         )}
       </div>
     )

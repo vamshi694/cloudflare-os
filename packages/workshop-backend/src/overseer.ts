@@ -7218,11 +7218,13 @@ class OverseerImpl implements AgentHooks {
     }
 
     // Legal OS: one ledger row per turn, fire-and-forget (accounting must never slow the work).
-    // A spawned agent's author.id is already the owning user's id, so attribution is uniform.
+    // A spawned agent's author.id is already the owning user's id. An agent turn's author.id is
+    // the MODEL id, so it is attributed to the workspace owner: the lawyer whose matter it is.
     if (turn && this.ownerId) {
       let ledger = this.ctx.exports.UsageLedger.getByName("");
+      let userId = turn.author.type === "agent" ? this.ownerId : (turn.author.id || this.ownerId);
       void ledger.record({
-        userId: turn.author.id || this.ownerId, workspaceId: this.ctx.id.toString(), chatId,
+        userId, workspaceId: this.ctx.id.toString(), chatId,
         modelId: turn.modelId ?? null, automated: turn.author.type === "gadget",
         totalTokens: turn.totalTokens ?? null, cost,
       }).catch((err: unknown) => this.logger.warn("usage ledger write failed", { event: "usage.ledger.failed", error: err }));

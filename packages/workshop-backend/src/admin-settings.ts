@@ -665,6 +665,9 @@ export class AdminApiImpl extends RpcTarget implements AdminApi {
     add(this.adminUserId, "admin", null);
     for (let inv of invites) if (inv.usedBy) add(inv.usedBy, inv.role, inv.usedAt);
     for (let s of seen) {
+      // Rows written before agent turns were attributed to the workspace owner carry a model id
+      // ("@cf/..."). A model is not a member of the firm.
+      if (s.userId.startsWith("@") || s.userId.includes("/")) continue;
       add(s.userId, "practitioner", null);
       let m = byId.get(s.userId)!;
       byId.set(s.userId, { ...m, month: { cost: s.cost, turns: s.turns, tokens: s.tokens, workspaces: s.workspaces }, lastActiveAt: s.lastActiveAt });

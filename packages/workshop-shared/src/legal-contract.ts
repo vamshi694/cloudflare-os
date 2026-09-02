@@ -63,6 +63,8 @@ export type CaseMap = {
   building: boolean;
   /** How many documents' facts fed the current map. */
   fromDocuments: number;
+  /** What the last build reported, in plain words: what it built, or why it stopped early. */
+  note: string | null;
 };
 
 // ── Case type, criteria, readiness ──────────────────────────────────────────────────────────────
