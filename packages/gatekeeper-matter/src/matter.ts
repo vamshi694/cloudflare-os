@@ -140,9 +140,19 @@ export class MatterAccount extends DurableObject<Cloudflare.Env> {
     await this.ctx.exports.FirmIndex.getByName("").remove(matterId).catch(() => {});
   }
 
-  /** Tell the firm's registry whose matters these are; called whenever the lawyer's desk opens. */
+  /**
+   * Tell the firm's registry whose matters these are; called whenever the lawyer's desk opens.
+   * Also backfills matters opened before the registry existed, so an admin's Matters view is
+   * complete after each lawyer's first visit rather than only for new matters.
+   */
   async claimOwner(ownerUserId: string): Promise<void> {
-    await this.ctx.exports.FirmIndex.getByName("").claimOwner(this.ctx.id.toString(), ownerUserId).catch(() => {});
+    const index = this.ctx.exports.FirmIndex.getByName("");
+    const ownerAccountId = this.ctx.id.toString();
+    for (const m of await this.listMatters()) {
+      await index.upsert({ matterId: m.id, ownerAccountId, ownerUserId, title: m.title, clientName: m.clientName, createdAt: m.createdAt })
+        .catch(() => {});
+    }
+    await index.claimOwner(ownerAccountId, ownerUserId).catch(() => {});
   }
 }
 
