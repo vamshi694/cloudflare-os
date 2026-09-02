@@ -15,6 +15,7 @@ import { ReadError, parseUnderstanding } from "./pure.js";
 const WINDOW_CHARS = 60_000;
 const EMBED_MODEL = "@cf/baai/bge-m3";
 const EMBED_BATCH = 50;
+const WORKERS_AI_READER = "@cf/zai-org/glm-5.3-flash";
 
 type ToMarkdownResult = { name: string; mimeType: string; format: string; tokens: number; data: string };
 
@@ -83,12 +84,20 @@ function fence(text: string, nonce: string): string {
 }
 
 async function callReader(env: Cloudflare.Env, filename: string, windowText: string, windowIndex: number, windows: number): Promise<Understanding> {
-  const key = env.OPENROUTER_API_KEY;
-  if (!key) throw new ReadError("The firm's model key (OPENROUTER_API_KEY) is not configured.", true);
   const nonce = crypto.randomUUID().replace(/-/g, "");
   const user = `Document filename: ${filename}\n` +
     (windows > 1 ? `This is window ${windowIndex + 1} of ${windows} of the document.\n` : "") +
     `\n${fence(windowText, nonce)}`;
+  const key = env.OPENROUTER_API_KEY;
+  if (!key) {
+    // No firm key yet: read on Workers AI so the record still gets built. The model is weaker at
+    // long documents, so this is a bootstrap path, not the production lane.
+    const out = await env.AI.run(WORKERS_AI_READER as Parameters<Ai["run"]>[0], {
+      messages: [{ role: "system", content: UNDERSTAND_SYSTEM }, { role: "user", content: user }],
+      max_tokens: 8192,
+    }) as { response?: string };
+    return parseUnderstanding(out.response ?? "", windowText);
+  }
   const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
     method: "POST",
     headers: { "content-type": "application/json", authorization: `Bearer ${key}`, "HTTP-Referer": "https://legal-os" },
