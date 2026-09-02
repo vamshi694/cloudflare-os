@@ -102,6 +102,8 @@ CREATE TABLE IF NOT EXISTS activity (seq INTEGER PRIMARY KEY AUTOINCREMENT, at T
 
 export const EXTRACTION_VERSION = 1;
 const MAX_READ_ATTEMPTS = 4;
+/** A queued or reading document older than this is a stalled read (the queue retries within it). */
+const STALLED_READ_MS = 20 * 60 * 1000;
 const FIND_WINDOW = 150;
 const NARRATIVE_WINDOW_MS = 10 * 60 * 1000;
 
@@ -257,7 +259,25 @@ export class MatterStore extends DurableObject<Cloudflare.Env> implements IntelS
 
   // ---- overview --------------------------------------------------------------------------------
 
+  /**
+   * A read that never came back (the queue gave up, a consumer crashed) must never sit as
+   * "Reading…" forever (Counsel OS bug class: the invisible outage). Past the stall window it
+   * becomes a failed read with its reason, retryable, and the record can settle without it.
+   */
+  #sweepStalledReads(): number {
+    const cutoff = new Date(Date.now() - STALLED_READ_MS).toISOString();
+    const stalled = this.#sql<{ id: string; filename: string }>(
+      "SELECT id, filename FROM documents WHERE status IN ('queued','reading') AND updated_at < ?", cutoff);
+    for (const d of stalled) {
+      this.#sql("UPDATE documents SET status = 'failed', note = ?, updated_at = ? WHERE id = ?",
+        "The reading did not finish. Nothing was lost; retry when ready.", now(), d.id);
+      this.#log("system", `Could not finish reading "${d.filename}"; it can be retried.`);
+    }
+    return stalled.length;
+  }
+
   async overview(): Promise<FullOverview> {
+    if (this.#sweepStalledReads() > 0) await this.settleIfDrained();
     const meta = await this.#requireMeta();
     const counts: Record<string, number> = {};
     for (const row of this.#sql<{ status: string; n: number }>("SELECT status, COUNT(*) AS n FROM documents GROUP BY status")) counts[row.status] = row.n;
