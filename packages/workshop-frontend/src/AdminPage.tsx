@@ -4,6 +4,7 @@ import { Switch, Textarea, Input, Button, Tabs, useKumoToastManager } from '@clo
 import { Hexagon, ShieldWarning, UserPlus } from '@phosphor-icons/react'
 import { useAuthenticatedApi } from './AuthContext'
 import { AdminApi, AdminFormat, AdminResourceVendor, AmbientGatekeeperMode, MAX_INSTANCE_INSTRUCTIONS_LENGTH, MAX_ANNOUNCEMENT_LENGTH, MAX_SITE_NAME_LENGTH, DEFAULT_SITE_NAME, BannerColor, BANNER_COLORS, DEFAULT_BANNER_COLOR } from '@gadgets/workshop-shared/api'
+import InvitesPanel from './components/InvitesPanel'
 import { applyAccentColor, DEFAULT_ACCENT_COLOR } from './theme'
 import { cacheBustSiteLogoUrl, prepareSiteLogo } from './siteLogoUtils'
 import SiteLogo from './components/SiteLogo'
@@ -436,6 +437,10 @@ export default function AdminPage() {
             />
           </div>
         </div>
+      )}
+
+      {activeTab === 'access' && admin && (
+        <InvitesPanel api={admin.api} />
       )}
 
       {/* Site name */}

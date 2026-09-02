@@ -1,4 +1,7 @@
-import { AdminApi, AdminFormat, AdminFormatPatch, AdminResourceVendor, AdminSettingsView, AmbientGatekeeperMode, BannerColor, BlueprintPublicInfo, MAX_ANNOUNCEMENT_LENGTH, MAX_INSTANCE_INSTRUCTIONS_LENGTH, MAX_SITE_NAME_LENGTH, isAmbientGatekeeperMode, isBannerColor, isHexColor } from '@gadgets/workshop-shared/api';
+import { AdminApi, AdminFormat, AdminFormatPatch, AdminResourceVendor, AdminSettingsView, AmbientGatekeeperMode, BannerColor, BlueprintPublicInfo, Invite, MAX_ANNOUNCEMENT_LENGTH, MAX_INSTANCE_INSTRUCTIONS_LENGTH, MAX_SITE_NAME_LENGTH, isAmbientGatekeeperMode, isBannerColor, isHexColor } from '@gadgets/workshop-shared/api';
+
+// Legal OS: an attorney joins this week or gets re-invited (Counsel OS used 30 days for attorneys).
+const INVITE_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 import { GatekeeperVendor } from '@gadgets/workshop-shared/gatekeeper';
 import { DurableObject } from 'cloudflare:workers';
 import { RpcTarget } from 'capnweb';
@@ -73,6 +76,11 @@ export class AdminSettings extends DurableObject<Cloudflare.Env> {
     this.storage = makeAdminSettingsStorage(ctx.storage);
     this.users = this.ctx.exports.UserDurableObject;
     this.vendors = buildGatekeeperVendorMap(env);
+    // Legal OS: invite-only accounts. Tokens are minted by an admin and consumed once at signup.
+    ctx.storage.sql.exec(`CREATE TABLE IF NOT EXISTS invites (
+      token TEXT PRIMARY KEY, email TEXT NOT NULL, role TEXT NOT NULL, created_by TEXT NOT NULL,
+      created_at TEXT NOT NULL, expires_at TEXT NOT NULL, used_by TEXT, used_at TEXT,
+      revoked INTEGER NOT NULL DEFAULT 0)`);
   }
 
   /**
@@ -86,6 +94,68 @@ export class AdminSettings extends DurableObject<Cloudflare.Env> {
    * Callers are coalesced onto one run, or two isolates racing on a fresh deployment both promote
    * the same blueprints, and a duplicated id makes setFormatOrder() reject every reordering.
    */
+  // --- Invites (Legal OS) ---
+  // An unknown, expired, used or revoked token answers identically (null), so a probe learns
+  // nothing about whether a token ever existed. Re-inviting an email revokes its earlier tokens.
+
+  #inviteRow(token: string): Invite | null {
+    let row = this.ctx.storage.sql.exec(
+      "SELECT token, email, role, created_by, created_at, expires_at, used_by, used_at, revoked FROM invites WHERE token = ?",
+      token).toArray()[0] as Record<string, unknown> | undefined;
+    if (!row) return null;
+    return {
+      token: row.token as string, email: row.email as string, role: row.role as Invite["role"],
+      createdBy: row.created_by as string, createdAt: row.created_at as string,
+      expiresAt: row.expires_at as string, usedBy: (row.used_by as string | null) ?? null,
+      usedAt: (row.used_at as string | null) ?? null, revoked: Boolean(row.revoked),
+    };
+  }
+
+  #inviteLive(inv: Invite | null): inv is Invite {
+    return !!inv && !inv.revoked && !inv.usedAt && inv.expiresAt > new Date().toISOString();
+  }
+
+  async createInvite(email: string, role: Invite["role"], createdBy: string): Promise<Invite> {
+    email = email.trim().toLowerCase();
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) throw new Error("Enter a valid email address.");
+    if (role !== "admin" && role !== "practitioner") throw new Error("Role must be admin or practitioner.");
+    // One live invite per email: the newest wins, older links go dead.
+    this.ctx.storage.sql.exec("UPDATE invites SET revoked = 1 WHERE email = ? AND used_at IS NULL", email);
+    let bytes = new Uint8Array(16);
+    crypto.getRandomValues(bytes);
+    let token = [...bytes].map(b => b.toString(16).padStart(2, "0")).join("");
+    let now = new Date();
+    let expires = new Date(now.getTime() + INVITE_TTL_MS);
+    this.ctx.storage.sql.exec(
+      "INSERT INTO invites(token, email, role, created_by, created_at, expires_at) VALUES(?, ?, ?, ?, ?, ?)",
+      token, email, role, createdBy, now.toISOString(), expires.toISOString());
+    return this.#inviteRow(token)!;
+  }
+
+  async listInvites(): Promise<Invite[]> {
+    return (this.ctx.storage.sql.exec("SELECT token FROM invites ORDER BY created_at DESC LIMIT 200")
+      .toArray() as { token: string }[]).map(r => this.#inviteRow(r.token)!);
+  }
+
+  async revokeInvite(token: string): Promise<void> {
+    this.ctx.storage.sql.exec("UPDATE invites SET revoked = 1 WHERE token = ?", token);
+  }
+
+  /** The invite behind a token if it can still be used, else null. Never says why. */
+  async peekInvite(token: string): Promise<{ email: string; role: Invite["role"] } | null> {
+    let inv = this.#inviteRow(token);
+    return this.#inviteLive(inv) ? { email: inv.email, role: inv.role } : null;
+  }
+
+  /** Consume a live invite for the account that just signed up. Returns null when not live. */
+  async consumeInvite(token: string, username: string): Promise<{ email: string; role: Invite["role"] } | null> {
+    let inv = this.#inviteRow(token);
+    if (!this.#inviteLive(inv)) return null;
+    this.ctx.storage.sql.exec("UPDATE invites SET used_by = ?, used_at = ? WHERE token = ? AND used_at IS NULL",
+      username, new Date().toISOString(), token);
+    return { email: inv.email, role: inv.role };
+  }
+
   ensureFormatBlueprintsInstalled(): Promise<boolean> {
     return this.#installInFlight ??= this.#installFormatBlueprints()
         .finally(() => { this.#installInFlight = undefined; });
@@ -576,6 +646,18 @@ export class AdminApiImpl extends RpcTarget implements AdminApi {
 
   async setSignupsEnabled(enabled: boolean): Promise<void> {
     await this.admin.updateAdminConfig({ signupsEnabled: enabled });
+  }
+
+  createInvite(email: string, role: Invite["role"]): Promise<Invite> {
+    return this.admin.createInvite(email, role, this.adminUserId);
+  }
+
+  listInvites(): Promise<Invite[]> {
+    return this.admin.listInvites();
+  }
+
+  revokeInvite(token: string): Promise<void> {
+    return this.admin.revokeInvite(token);
   }
 
   async setSiteName(name: string): Promise<void> {

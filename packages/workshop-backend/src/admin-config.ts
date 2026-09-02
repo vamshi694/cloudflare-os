@@ -80,7 +80,8 @@ export type FormatCuration = {
 };
 
 export const DEFAULT_ADMIN_CONFIG: AdminConfig = {
-  signupsEnabled: true,
+  // Legal OS: a firm is invite only by construction. Admins may open signups in /admin.
+  signupsEnabled: false,
   siteName: "",
   siteLogoConfigured: false,
   instanceInstructions: "",
@@ -299,7 +300,7 @@ export function parseAdminConfig(raw: string | null): AdminConfig {
       }
     }
     return {
-      signupsEnabled: typeof p.signupsEnabled === "boolean" ? p.signupsEnabled : true,
+      signupsEnabled: typeof p.signupsEnabled === "boolean" ? p.signupsEnabled : false,
       siteName: typeof p.siteName === "string" ? p.siteName : "",
       siteLogoConfigured: typeof p.siteLogoConfigured === "boolean" ? p.siteLogoConfigured : false,
       instanceInstructions: typeof p.instanceInstructions === "string" ? p.instanceInstructions : "",

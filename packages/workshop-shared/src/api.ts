@@ -116,8 +116,15 @@ export interface PublicApi extends RpcTarget {
    *
    * This API may be disabled when the server uses SSO for authentication.
    */
-  createAccount(username: string, displayName: string, passwordHash: Uint8Array)
+  createAccount(username: string, displayName: string, passwordHash: Uint8Array, inviteToken?: string)
       : Promise<string | null>;
+
+  /**
+   * Legal OS: the email and role behind an invitation token, or null when the token cannot be used
+   * (unknown, expired, used or revoked all answer the same). The signup page calls this to show
+   * the invitee whose account they are creating.
+   */
+  checkInvite(token: string): Promise<{ email: string; role: string } | null>;
 
   /**
    * Fetch blueprint metadata by ID. Returns null if the blueprint doesn't exist. No
@@ -853,6 +860,19 @@ export const MAX_SITE_LOGO_BYTES = 256 * 1024;
 /** Maximum width or height of an admin-uploaded site logo in pixels. */
 export const MAX_SITE_LOGO_DIMENSION = 512;
 
+/** Legal OS: an invitation to create an account on this firm's deployment. */
+export type Invite = {
+  token: string;
+  email: string;
+  role: "admin" | "practitioner";
+  createdBy: string;
+  createdAt: string;
+  expiresAt: string;
+  usedBy: string | null;
+  usedAt: string | null;
+  revoked: boolean;
+};
+
 /** All admin-managed deployment settings, returned by AdminApi.getSettings() for the admin UI. */
 export type AdminSettingsView = {
   /** Whether new account signups are allowed. */
@@ -931,6 +951,15 @@ export interface AdminApi {
 
   /** Enable or disable new account signups. Existing users can still log in while signups are closed. */
   setSignupsEnabled(enabled: boolean): Promise<void>;
+
+  /** Legal OS: mint an invitation for an email. Re-inviting an email revokes its earlier links. */
+  createInvite(email: string, role: Invite["role"]): Promise<Invite>;
+
+  /** Legal OS: every invitation, newest first. */
+  listInvites(): Promise<Invite[]>;
+
+  /** Legal OS: kill an invitation link. */
+  revokeInvite(token: string): Promise<void>;
 
   /**
    * Set the site name shown next to the top-bar logo. Pass "" to reset to DEFAULT_SITE_NAME.

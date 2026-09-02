@@ -1,4 +1,4 @@
-import { useState, FormEvent } from "react";
+import { useState, useEffect, FormEvent } from "react";
 import { Link } from "@tanstack/react-router";
 import { RpcStub } from "capnweb";
 import { PublicApi } from "@gadgets/workshop-shared/api";
@@ -21,6 +21,18 @@ export default function SignupPage({ rpcStub }: SignupPageProps) {
   const siteName = useSiteName();
   const connectionLost = useConnectionLost();
   useDocumentTitle("Create account");
+  // Legal OS: an invitation token in the URL (?invite=...) opens signup on an invite-only firm.
+  const inviteToken = new URLSearchParams(window.location.search).get("invite") ?? "";
+  const [invite, setInvite] = useState<{ email: string; role: string } | null | "checking" | "invalid">(
+    inviteToken ? "checking" : null);
+  useEffect(() => {
+    if (!inviteToken) return;
+    let cancelled = false;
+    rpcStub.checkInvite(inviteToken).then(
+      (found) => { if (!cancelled) setInvite(found ?? "invalid"); },
+      () => { if (!cancelled) setInvite("invalid"); });
+    return () => { cancelled = true; };
+  }, [inviteToken, rpcStub]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -63,6 +75,7 @@ export default function SignupPage({ rpcStub }: SignupPageProps) {
         username,
         username,
         passwordHash,
+        inviteToken || undefined,
       );
       if (token) {
         localStorage.setItem("authToken", token);
@@ -102,8 +115,10 @@ export default function SignupPage({ rpcStub }: SignupPageProps) {
   }
 
   const authVendors = serverConfig.authVendors ?? [];
-  const signupsEnabled = serverConfig.signupsEnabled;
-  // The password create-account form requires both password auth AND open signups.
+  const hasInvite = typeof invite === "object" && invite !== null;
+  // Legal OS: a live invitation opens signup on an invite-only firm.
+  const signupsEnabled = serverConfig.signupsEnabled || hasInvite;
+  // The password create-account form requires both password auth AND open signups (or an invite).
   const passwordAuthEnabled = serverConfig.passwordAuthEnabled && signupsEnabled;
 
   return (
@@ -136,13 +151,28 @@ export default function SignupPage({ rpcStub }: SignupPageProps) {
           <p className="text-sm text-kumo-subtle mt-1">Create your account</p>
         </div>
 
-        {!signupsEnabled && (
+        {invite === "checking" && (
+          <Banner variant="default" title="Checking your invitation" className="mb-4">
+            One moment.
+          </Banner>
+        )}
+        {invite === "invalid" && (
+          <Banner variant="error" title="This invitation is not valid" className="mb-4">
+            It may have expired or been used. Ask your firm's admin for a fresh one.
+          </Banner>
+        )}
+        {hasInvite && (
+          <Banner variant="default" title={`Invitation for ${invite.email}`} className="mb-4">
+            Choose a username and password to join the firm as {invite.role === "admin" ? "an admin" : "a practitioner"}.
+          </Banner>
+        )}
+        {!signupsEnabled && invite !== "checking" && invite !== "invalid" && (
           <Banner
             variant="default"
-            title="Signups are closed"
+            title="This firm is invite only"
             className="mb-4"
           >
-            New account registration is currently disabled on this deployment.
+            Accounts are created from an invitation sent by your firm's admin.
           </Banner>
         )}
 

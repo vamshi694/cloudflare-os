@@ -741,7 +741,13 @@ class PublicApiImpl extends RpcTarget implements PublicApi {
     return `${username}:${token}`;
   }
 
-  async createAccount(username: string, displayName: string, passwordHash: Uint8Array)
+  /** Legal OS: the invite behind a signup link, or null when it cannot be used. */
+  async checkInvite(token: string): Promise<{ email: string; role: string } | null> {
+    if (!/^[0-9a-f]{32}$/.test(token)) return null;
+    return await this.ctx.exports.AdminSettings.getByName("").peekInvite(token);
+  }
+
+  async createAccount(username: string, displayName: string, passwordHash: Uint8Array, inviteToken?: string)
       : Promise<string | null> {
     if (this.env.CF_ACCESS_AUD) {
       throw new Error("This deployment requires Cloudflare Access authentication.");
@@ -749,17 +755,33 @@ class PublicApiImpl extends RpcTarget implements PublicApi {
     if (!isPasswordAuthEnabled(this.env)) {
       throw new Error("Password signup is disabled on this deployment. Use a sign-in option.");
     }
-    if (!(await readAdminConfig(this.env)).signupsEnabled) {
-      throw new Error("New signups are currently disabled on this deployment.");
-    }
 
     username = normalizeUsername(username);
+
+    // Legal OS: with signups closed, an account is created only for a configured admin username
+    // (the bootstrap) or with a live invite minted by an admin.
+    let signupsEnabled = (await readAdminConfig(this.env)).signupsEnabled;
+    let admins = this.env.ADMINS;
+    if (typeof admins === "string") admins = JSON.parse(admins);
+    let bootstrapAdmin = Array.isArray(admins) && admins.includes(username);
+    let invite: { email: string; role: string } | null = null;
+    if (!signupsEnabled && !bootstrapAdmin) {
+      if (!inviteToken || !/^[0-9a-f]{32}$/.test(inviteToken)) {
+        throw new Error("This firm is invite only. Ask your firm's admin for an invitation.");
+      }
+      invite = await this.ctx.exports.AdminSettings.getByName("").peekInvite(inviteToken);
+      if (!invite) throw new Error("This invitation is not valid. Ask your firm's admin for a fresh one.");
+    }
 
     let id = this.users.idFromName(username);
     let user = this.users.get(id);
 
     let token = await user.createAccount(username, displayName, passwordHash);
     if (!token) return null;
+    if (invite && inviteToken) {
+      // Consume only after the account exists, so a taken username does not burn the invitation.
+      await this.ctx.exports.AdminSettings.getByName("").consumeInvite(inviteToken, username);
+    }
 
     recordAnalytics(this.ctx, this.env, {
       event_name: "account_created",
