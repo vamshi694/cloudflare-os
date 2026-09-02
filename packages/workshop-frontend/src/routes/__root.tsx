@@ -27,11 +27,14 @@ function RootComponent() {
   // Routes that don't require auth (public routes)
   const isSignup = pathname === '/signup'
   const isBlueprint = pathname.startsWith('/blueprint/')
+  // Legal OS: the client portal is a different product register. No attorney chrome, ever, and
+  // no sign-in: the private link is the credential.
+  const isPortal = pathname.startsWith('/portal/')
 
   // A standalone (no app shell) render is used only for signed-out visitors of public routes.
   // Signed-in users get the full app chrome so public pages (esp. the blueprint detail) feel
   // native — sidebar and all — instead of floating on a bare page.
-  const standalone = isSignup || (isBlueprint && !isAuthenticated)
+  const standalone = isSignup || isPortal || (isBlueprint && !isAuthenticated)
 
   // The workspace editor renders fullscreen (no app chrome). /gadget/ is the legacy URL, kept
   // here so the chrome doesn't flash in during the redirect to /workspace/.
@@ -86,7 +89,7 @@ function RootComponent() {
 
   // Signed-out visitors of public routes render without the auth wrapper / app shell.
   if (standalone) {
-    const showHeader = !isSignup
+    const showHeader = !isSignup && !isPortal
     return (
       <TooltipProvider>
         <Toasty>

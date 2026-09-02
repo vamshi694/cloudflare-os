@@ -1,5 +1,5 @@
 import type { UsageLedger } from './usage-ledger.js';
-import { AdminApi, AdminFormat, AdminFormatPatch, AdminResourceVendor, AdminSettingsView, AmbientGatekeeperMode, BannerColor, BlueprintPublicInfo, Invite, UsageSummary, MAX_ANNOUNCEMENT_LENGTH, MAX_INSTANCE_INSTRUCTIONS_LENGTH, MAX_SITE_NAME_LENGTH, isAmbientGatekeeperMode, isBannerColor, isHexColor } from '@gadgets/workshop-shared/api';
+import { AdminApi, AdminFormat, AdminFormatPatch, AdminResourceVendor, AdminSettingsView, AmbientGatekeeperMode, BannerColor, BlueprintPublicInfo, Invite, UsageSummary, FirmMember, MAX_ANNOUNCEMENT_LENGTH, MAX_INSTANCE_INSTRUCTIONS_LENGTH, MAX_SITE_NAME_LENGTH, isAmbientGatekeeperMode, isBannerColor, isHexColor } from '@gadgets/workshop-shared/api';
 
 // Legal OS: an attorney joins this week or gets re-invited (Counsel OS used 30 days for attorneys).
 const INVITE_TTL_MS = 30 * 24 * 60 * 60 * 1000;
@@ -643,8 +643,33 @@ export class AdminApiImpl extends RpcTarget implements AdminApi {
    * resource catalog (some are RBAC-gated per user). It's plain data — not a user-DO dependency.
    */
   constructor(private admin: DurableObjectStub<AdminSettings>, private adminUserId: string,
-              private ledger: DurableObjectStub<UsageLedger>) {
+              private ledger: DurableObjectStub<UsageLedger>, private admins: string[] = []) {
     super();
+  }
+
+  async listMembers(): Promise<FirmMember[]> {
+    let now = new Date();
+    let since = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1)).toISOString();
+    let [invites, seen] = await Promise.all([this.admin.listInvites(), this.ledger.members(since)]);
+    let byId = new Map<string, FirmMember>();
+    let add = (userId: string, role: FirmMember["role"], joinedAt: string | null) => {
+      let prev = byId.get(userId);
+      byId.set(userId, {
+        userId, role: prev?.role === "admin" || role === "admin" ? "admin" : "practitioner",
+        joinedAt: prev?.joinedAt ?? joinedAt,
+        month: prev?.month ?? { cost: 0, turns: 0, tokens: 0, workspaces: 0 },
+        lastActiveAt: prev?.lastActiveAt ?? null,
+      });
+    };
+    for (let a of this.admins) add(a, "admin", null);
+    add(this.adminUserId, "admin", null);
+    for (let inv of invites) if (inv.usedBy) add(inv.usedBy, inv.role, inv.usedAt);
+    for (let s of seen) {
+      add(s.userId, "practitioner", null);
+      let m = byId.get(s.userId)!;
+      byId.set(s.userId, { ...m, month: { cost: s.cost, turns: s.turns, tokens: s.tokens, workspaces: s.workspaces }, lastActiveAt: s.lastActiveAt });
+    }
+    return [...byId.values()].sort((a, b) => a.userId.localeCompare(b.userId));
   }
 
   getUsageSummary(days: number): Promise<UsageSummary> {

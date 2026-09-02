@@ -1,5 +1,6 @@
 import { Link } from '@tanstack/react-router'
-import { Hexagon, List, X } from '@phosphor-icons/react'
+import { List, X } from '@phosphor-icons/react'
+import BrandMark from './BrandMark'
 import { useOptionalAuthenticatedApi } from '../AuthContext'
 import { useGatekeeperApps } from '../useGatekeeperApps'
 import { useSiteName } from '../ServerConfigContext'
@@ -47,7 +48,7 @@ export default function Header() {
         <div className="flex items-center gap-6">
           <Link to="/" className="flex items-center gap-2">
             <SiteLogo size={22} className="shrink-0">
-              <Hexagon size={22} className="text-kumo-brand" weight="bold" />
+              <BrandMark size={22} className="text-kumo-brand" />
             </SiteLogo>
             <span className="text-base font-semibold tracking-tight text-kumo-default">
               {siteName}

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import type { RpcStub } from 'capnweb'
 import type { LegalDesk, MatterDesk, MatterOverviewView } from '@gadgets/workshop-shared/legal'
 import { useAuthenticatedApi } from '../../AuthContext'
@@ -68,41 +68,74 @@ export function useMatterDesk(matterId: string): MatterDeskState {
   return state
 }
 
+/** True while the document is visible; polling stops when the tab is hidden. */
+function useVisible(): boolean {
+  const [visible, setVisible] = useState(() => typeof document === 'undefined' || !document.hidden)
+  useEffect(() => {
+    const onChange = () => setVisible(!document.hidden)
+    document.addEventListener('visibilitychange', onChange)
+    return () => document.removeEventListener('visibilitychange', onChange)
+  }, [])
+  return visible
+}
+
 /**
- * The matter's overview, polled. `overview` stays null until the first load; `failed` flips on
- * any failed refresh and clears on the next good one — so the screen can tell "never loaded"
- * from "showing the last view that loaded". `refresh` forces a re-read after an action.
+ * Three-state data: `data` stays null until the first load; `failed` flips on any failed refresh
+ * and clears on the next good one, so a screen can tell never-loaded from stale. `reload` forces a
+ * re-read after an action. Polling (when `pollMs` is set) pauses while the tab is hidden.
  */
-export function useMatterOverview(desk: RpcStub<MatterDesk> | null, intervalMs = 8000) {
-  const [overview, setOverview] = useState<MatterOverviewView | null>(null)
+export function useDeskData<T>(
+  load: (() => Promise<T>) | null,
+  options: { pollMs?: number; deps?: unknown[] } = {},
+) {
+  const { pollMs, deps = [] } = options
+  const [data, setData] = useState<T | null>(null)
   const [failed, setFailed] = useState(false)
   const [loadedAt, setLoadedAt] = useState<number | null>(null)
   const [tick, setTick] = useState(0)
+  const visible = useVisible()
+  const loadRef = useRef(load)
+  loadRef.current = load
 
   useEffect(() => {
-    if (!desk) return
+    const loader = loadRef.current
+    if (!loader) return
     let cancelled = false
-    const load = async () => {
+    const run = async () => {
       try {
-        const view = await desk.overview()
+        const next = await loader()
         if (cancelled) return
-        setOverview(view)
+        setData(next)
         setFailed(false)
         setLoadedAt(Date.now())
       } catch (err) {
         if (cancelled) return
-        logRpcFailure('Failed to read the matter overview:', err)
+        logRpcFailure('A matter read failed:', err)
         setFailed(true)
       }
     }
-    void load()
-    const timer = window.setInterval(() => void load(), intervalMs)
+    void run()
+    let timer: number | undefined
+    if (pollMs && visible) timer = window.setInterval(() => void run(), pollMs)
     return () => {
       cancelled = true
-      window.clearInterval(timer)
+      if (timer !== undefined) window.clearInterval(timer)
     }
-  }, [desk, intervalMs, tick])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [load === null, pollMs, visible, tick, ...deps])
 
-  const refresh = () => setTick((t) => t + 1)
-  return { overview, failed, loadedAt, refresh }
+  const reload = useCallback(() => setTick((t) => t + 1), [])
+  /** Apply a local change immediately (after an action) without waiting for the poll. */
+  const patch = useCallback((fn: (prev: T | null) => T | null) => setData(fn), [])
+  return { data, failed, loadedAt, reload, patch }
+}
+
+/** The matter's overview, polled every 5 seconds while the tab is visible. */
+export function useMatterOverview(desk: RpcStub<MatterDesk> | null, intervalMs = 5000) {
+  const load = useCallback(() => (desk ? desk.overview() : Promise.reject(new Error('no desk'))), [desk])
+  const { data, failed, loadedAt, reload } = useDeskData<MatterOverviewView>(desk ? load : null, {
+    pollMs: intervalMs,
+    deps: [desk],
+  })
+  return { overview: data, failed, loadedAt, refresh: reload }
 }

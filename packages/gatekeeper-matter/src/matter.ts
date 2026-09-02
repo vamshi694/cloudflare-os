@@ -11,13 +11,17 @@ import {
 import { skipRpcValidation, validateRpc } from "capnweb-validate";
 import type {
   AccountDescription, ApprovalQueue, Gatekeeper, GatekeeperConnectCallback, GatekeeperConnectOptions,
-  GatekeeperUser, GatekeeperUserVerifier, ObservationDescription, ResourceConfiguratorFrame,
-  ResourceDescription, SupportedResource, VendorDescription,
+  GatekeeperUser, GatekeeperUserVerifier, HookController, HookInitiator, HookTargetMetadata,
+  ObservationDescription, ResourceConfiguratorFrame, ResourceDescription, SupportedResource,
+  VendorDescription,
 } from "@gadgets/workshop-shared/gatekeeper";
+import type { MatterWatcher } from "./types.js";
 import type {
-  ActivityEntry, Decision, DeskFile, DocumentSummary, DocumentText, Fact, FactFilter, MatterDecisions,
-  MatterDesk, MatterEvidence, MatterFiles, MatterOverview, MatterSession, SearchHit, TextHit,
+  ActivityEntry, CaseClaim, CaseEntity, Deadline, Decision, DeskFile, DocumentSummary, DocumentText, Fact, FactFilter,
+  MatterClient, MatterDecisions, MatterDesk, MatterDocket, MatterEvidence, MatterFiles, MatterForms, MatterKnowledge,
+  MatterOverview, MatterPetition, MatterSession, PetitionSectionState, Readiness, SearchHit, TextHit,
 } from "./types.js";
+import { CASE_TYPES } from "./case-types.js";
 import TYPES_CODE from "./types.txt";
 import { MatterStore, type MatterMeta } from "./store.js";
 import { normalizePath, parseMatterUrl } from "./pure.js";
@@ -25,6 +29,7 @@ import { MatterConfiguratorUI } from "./configurator.js";
 import { LegalDeskImpl } from "./desk.js";
 import type { LegalDesk } from "@gadgets/workshop-shared/legal";
 import MATTER_CONFIGURATOR_HTML from "./generated/matter-configurator-ui.txt";
+import type { FirmMattersSession } from "./types.js";
 
 export const MATTER_ICON = {
   url: "data:image/svg+xml," + encodeURIComponent(
@@ -117,6 +122,10 @@ export class MatterAccount extends DurableObject<Cloudflare.Env> {
   async hasMatter(matterId: string): Promise<boolean> {
     return this.ctx.storage.sql.exec("SELECT 1 FROM matters WHERE id = ?", matterId).toArray().length > 0;
   }
+
+  async removeMatter(matterId: string): Promise<void> {
+    this.ctx.storage.sql.exec("DELETE FROM matters WHERE id = ?", matterId);
+  }
 }
 
 // ---- User entrypoint --------------------------------------------------------------------------
@@ -129,7 +138,13 @@ export class MatterUser extends WorkerEntrypoint<Cloudflare.Env, AccountProps> i
   }
 
   async describe(): Promise<AccountDescription> {
-    return { displayName: "Matters", avatar: MATTER_ICON };
+    // Legal OS: the account also carries the firm-wide MATTERS singleton, folded into every
+    // workspace as an ambient capsule (see firm-matters.ts).
+    return { displayName: "Matters", avatar: MATTER_ICON, singleton: { tsType: "FirmMattersSession" } };
+  }
+
+  async getSingletonGatekeeperClass(): Promise<DurableObjectClass<Gatekeeper<FirmMattersSession>>> {
+    return this.ctx.exports.FirmMattersGatekeeper({ props: { accountObjectId: this.ctx.props.accountObjectId } });
   }
 
   async getSupportedResources(): Promise<SupportedResource[]> { return [MATTER_RESOURCE]; }
@@ -199,7 +214,17 @@ export class MatterGatekeeper extends DurableObject<Cloudflare.Env, MatterProps>
   async getAutoApprovableActions(): Promise<[]> { return []; }
 
   async startSession(approvalQueue: RpcStub<ApprovalQueue>): Promise<MatterSession> {
-    return new MatterSessionImpl(approvalQueue.dup(), this.#store(), this.env, this.ctx.props.matterId);
+    const queue = approvalQueue.dup();
+    const matterId = this.ctx.props.matterId;
+    return new MatterSessionImpl(queue, this.#store(), this.env, matterId, async callback => {
+      await queue.bindHook(
+        // @ts-expect-error Workers widens the controller's hook type across the bindHook RPC.
+        this.ctx.exports.MatterWatchController({ props: { matterId } }),
+        callback,
+        { title: "Wake the counsel when the matter changes",
+          description: "The record settled, the attorney decided or asked for a redraft, or the client sent something." },
+      );
+    });
   }
 
   async addObserver(_id: string, user: Fetcher<GatekeeperUserVerifier>): Promise<void> {
@@ -217,6 +242,34 @@ export class MatterGatekeeper extends DurableObject<Cloudflare.Env, MatterProps>
 // ---- Session ----------------------------------------------------------------------------------
 
 type ObservationQueue = Pick<ApprovalQueue, "authorizeObservation"> & Partial<{ [Symbol.dispose](): void }>;
+
+/** The watcher as the hook machinery sees it: the agent's `self` stub, an RpcTarget on the wire. */
+export type MatterWatcherTarget = RpcTarget & MatterWatcher;
+
+/** Binds a watch hook on the session's own approval queue; the gatekeeper DO supplies it. */
+type WatchBinder = (callback: RpcStub<MatterWatcherTarget>) => Promise<void>;
+
+/**
+ * The hook controller for a matter watch. Stateless: `enable` hands the overseer's initiator to the
+ * matter store, which keeps it and calls `startHook()` whenever the record moves (see store.ts
+ * #wake); `disable` drops it.
+ */
+@validateRpc()
+export class MatterWatchController extends WorkerEntrypoint<Cloudflare.Env, { matterId: string }>
+    implements HookController<MatterWatcherTarget> {
+  #store(): DurableObjectStub<MatterStore> {
+    return this.env.MATTER_STORE.get(this.env.MATTER_STORE.idFromName(this.ctx.props.matterId));
+  }
+
+  @skipRpcValidation()
+  async enable(initiator: Fetcher<HookInitiator<MatterWatcherTarget>>, target: HookTargetMetadata): Promise<void> {
+    await this.#store().setWatcher(initiator, target.workspaceId);
+  }
+
+  async disable(): Promise<void> {
+    await this.#store().clearWatcher();
+  }
+}
 
 async function observe(queue: ObservationQueue, title: string, description: string): Promise<void> {
   await queue.authorizeObservation({ title, description } satisfies ObservationDescription);
@@ -359,26 +412,232 @@ class DecisionsImpl extends RpcTarget implements MatterDecisions {
   }
 }
 
+
+@validateRpc()
+class KnowledgeImpl extends RpcTarget implements MatterKnowledge {
+  constructor(private readonly q: ObservationQueue, private readonly store: DurableObjectStub<MatterStore>) { super(); }
+
+  async map(): Promise<{ entities: CaseEntity[]; claims: CaseClaim[]; builtAt: string | null; building: boolean }> {
+    const m = await this.store.caseMap();
+    await observe(this.q, "Read the case knowledge", `${m.entities.length} entities, ${m.claims.filter(c => !c.removed).length} claims.`);
+    return { entities: m.entities, claims: m.claims, builtAt: m.builtAt, building: m.building };
+  }
+  async addClaim(input: { statement: string; criteria: string[]; entities: { name: string; kind: CaseEntity["kind"] }[]; factIds: string[] }): Promise<{ id: string }> {
+    const r = await this.store.addClaim(input, "firm");
+    await observe(this.q, "Add a claim to the case knowledge", input.statement.slice(0, 160));
+    return r ?? { id: "" };
+  }
+  async retagClaim(claimId: string, criteria: string[]): Promise<void> {
+    await this.store.retagClaim(claimId, criteria, "firm");
+    await observe(this.q, "Refile a claim", `Claim ${claimId} now argues in ${criteria.join(", ") || "no section"}.`);
+  }
+  async mergeEntities(keepId: string, mergeId: string, reason: string): Promise<void> {
+    await this.store.mergeEntities(keepId, mergeId, reason, "firm");
+    await observe(this.q, "Tidy the case map", `Merged ${mergeId} into ${keepId}: ${reason}`);
+  }
+  async describeEntity(entityId: string, description: string): Promise<void> {
+    await this.store.describeEntity(entityId, description);
+    await observe(this.q, "Describe an entity", description.slice(0, 160));
+  }
+  async readiness(): Promise<Readiness> {
+    const r = await this.store.readiness();
+    await observe(this.q, "Check readiness", `${r.sufficient} of ${r.required} required sections sufficient; gate: ${r.gate}.`);
+    return r;
+  }
+  async rebuild(): Promise<void> {
+    await this.store.requestRebuild("agent");
+    await observe(this.q, "Rebuild the case knowledge", "Queued a rebuild from every fact on the record.");
+  }
+  async caseTypes(): Promise<Awaited<ReturnType<MatterKnowledge["caseTypes"]>>> {
+    await observe(this.q, "Read the case type catalog", `${CASE_TYPES.length} case types.`);
+    return CASE_TYPES.map(c => ({ key: c.key, title: c.title, required: c.required, sections: c.sections }));
+  }
+}
+
+@validateRpc()
+class PetitionImpl extends RpcTarget implements MatterPetition {
+  constructor(private readonly q: ObservationQueue, private readonly store: DurableObjectStub<MatterStore>) { super(); }
+
+  async sections(): Promise<PetitionSectionState[]> {
+    const p = await this.store.petition();
+    await observe(this.q, "Read the petition", `${p.sections.filter(s => s.status === "drafted").length} of ${p.sections.length} sections drafted.`);
+    return p.sections.map(s => ({
+      key: s.key, title: s.title, criterion: s.criterion, purpose: s.purpose, status: s.status, body: s.body, version: s.version,
+      heldReasons: s.heldReasons, evidence: s.evidence, review: s.review ? { score: s.review.score, weaknesses: s.review.weaknesses } : null,
+      guidance: s.guidance,
+    }));
+  }
+  async begin(key: string): Promise<void> {
+    await this.store.beginSection(key);
+    await observe(this.q, "Start drafting a section", key);
+  }
+  async write(key: string, body: string, citedFactIds: string[]): Promise<{ version: number; unverifiedQuotes: number }> {
+    const r = await this.store.writeSection(key, body, citedFactIds);
+    await observe(this.q, "Draft a petition section", `${key}: version ${r.version}, ${r.unverifiedQuotes} unverified quotes.`);
+    return r;
+  }
+  async hold(key: string, reasons: string[]): Promise<void> {
+    await this.store.holdSection(key, reasons.map(r => r.trim()).filter(Boolean));
+    await observe(this.q, "Hold a section", `${key}: ${reasons.join("; ").slice(0, 160)}`);
+  }
+  async review(key: string, score: number, weaknesses: { severity: "high" | "medium" | "low"; issue: string; fix: string }[]): Promise<void> {
+    await this.store.reviewSection(key, score, weaknesses);
+    await observe(this.q, "Record the reviewer's read", `${key}: ${score}/100, ${weaknesses.length} notes.`);
+  }
+  async exhibits(): Promise<{ exhibitNo: number; documentId: string; title: string }[]> {
+    const p = await this.store.petition();
+    await observe(this.q, "Read the exhibit list", `${p.exhibits.length} exhibits.`);
+    return p.exhibits;
+  }
+  async assignExhibits(documentIds: string[]): Promise<void> {
+    await this.store.assignExhibits(documentIds);
+    await observe(this.q, "Number the exhibits", `${documentIds.length} documents.`);
+  }
+  async directive(): Promise<{ targetPages: number | null; text: string } | null> {
+    const d = await this.store.directive();
+    await observe(this.q, "Read the standing directive", d ? d.text.slice(0, 120) : "none");
+    return d;
+  }
+  async recordCoherence(findings: { a: string; b: string; issue: string; fix: string; severity: "high" | "medium" | "low" }[]): Promise<void> {
+    await this.store.recordCoherence(findings);
+    await observe(this.q, "Record the cross-section review", `${findings.length} findings.`);
+  }
+  async saveVersion(reason: string): Promise<{ id: string }> {
+    const r = await this.store.savePetitionVersion(reason);
+    await observe(this.q, "Save a letter version", reason);
+    return r;
+  }
+  async instructions(): Promise<{ id: string; key: string | null; instruction: string; at: string }[]> {
+    const rows = await this.store.pendingInstructions();
+    await observe(this.q, "Read the attorney's instructions", `${rows.length} pending.`);
+    return rows.map(r => ({ id: r.id, key: r.key, at: r.at, instruction: r.remember ? `${r.instruction} (The attorney asked to remember this for every matter of this type: record it with FIRM.library().rememberRule.)` : r.instruction }));
+  }
+  async resolveInstruction(id: string): Promise<void> {
+    await this.store.resolveInstruction(id);
+    await observe(this.q, "Resolve an instruction", id);
+  }
+}
+
+@validateRpc()
+class FormsImpl extends RpcTarget implements MatterForms {
+  constructor(private readonly q: ObservationQueue, private readonly store: DurableObjectStub<MatterStore>) { super(); }
+
+  async list(): Promise<Awaited<ReturnType<MatterForms["list"]>>> {
+    const forms = await this.store.forms();
+    await observe(this.q, "Read the government forms", `${forms.length} forms.`);
+    return forms.map(f => ({ code: f.code, title: f.title, filedOnline: f.filedOnline, status: f.status,
+      fields: f.fields.map(x => ({ name: x.name, label: x.label, value: x.value, sourceFactId: x.sourceFactId })) }));
+  }
+  async fill(code: string, values: { name: string; value: string | null; sourceFactId: string | null }[]): Promise<void> {
+    await this.store.fillForm(code, values);
+    await observe(this.q, "Fill a government form", `${code}: ${values.length} fields.`);
+  }
+}
+
+@validateRpc()
+class DocketImpl extends RpcTarget implements MatterDocket {
+  constructor(private readonly q: ObservationQueue, private readonly store: DurableObjectStub<MatterStore>) { super(); }
+
+  async list(): Promise<Deadline[]> {
+    const d = await this.store.deadlines();
+    await observe(this.q, "Read the docket", `${d.length} deadlines.`);
+    return d.map(x => ({ id: x.id, title: x.title, dueOn: x.dueOn, kind: x.kind, met: x.met, daysLeft: x.daysLeft }));
+  }
+  async add(title: string, dueOn: string, kind: Deadline["kind"]): Promise<{ id: string }> {
+    const d = await this.store.addDeadline({ title, dueOn, kind }, "agent");
+    await observe(this.q, "Docket a deadline", `${title} on ${dueOn}.`);
+    return { id: d.id };
+  }
+  async markMet(id: string): Promise<void> {
+    await this.store.markDeadlineMet(id, "agent");
+    await observe(this.q, "Mark a deadline met", id);
+  }
+}
+
+@validateRpc()
+class ClientImpl extends RpcTarget implements MatterClient {
+  constructor(private readonly q: ObservationQueue, private readonly store: DurableObjectStub<MatterStore>) { super(); }
+
+  async record(): Promise<Awaited<ReturnType<MatterClient["record"]>>> {
+    const c = await this.store.client();
+    await observe(this.q, "Read the client record", c.name);
+    return { name: c.name, email: c.email, phone: c.phone, portal: c.portal, documentsSent: c.documentsSent };
+  }
+  async messages(): Promise<Awaited<ReturnType<MatterClient["messages"]>>> {
+    const m = await this.store.messages();
+    await observe(this.q, "Read the client messages", `${m.length} messages.`);
+    return m;
+  }
+  async draft(subject: string, body: string): Promise<{ itemId: string }> {
+    const r = await this.store.draftOutreach(subject, body);
+    // Not an outward action: nothing reaches the client until the attorney releases it from their desk.
+    await observe(this.q, "Draft a message to the client", `Put "${subject || "a message"}" on the attorney's desk for release.`);
+    return r;
+  }
+  async submissions(): Promise<{ id: string; at: string; text: string }[]> {
+    const s = await this.store.submissions();
+    await observe(this.q, "Read the client's own words", `${s.length} submissions.`);
+    return s;
+  }
+}
+
 @validateRpc()
 export class MatterSessionImpl extends RpcTarget implements MatterSession {
   readonly #files: FilesImpl;
   readonly #evidence: EvidenceImpl;
   readonly #desk: DeskImpl;
   readonly #decisions: DecisionsImpl;
+  readonly #knowledge: KnowledgeImpl;
+  readonly #petition: PetitionImpl;
+  readonly #forms: FormsImpl;
+  readonly #docket: DocketImpl;
+  readonly #client: ClientImpl;
 
   constructor(private readonly q: ObservationQueue, private readonly store: DurableObjectStub<MatterStore>,
-              env: Cloudflare.Env, matterId: string) {
+              env: Cloudflare.Env, matterId: string,
+              private readonly bindWatch?: WatchBinder) {
     super();
     this.#files = new FilesImpl(q, store, env, matterId);
     this.#evidence = new EvidenceImpl(q, store, env, matterId);
     this.#desk = new DeskImpl(q, store);
     this.#decisions = new DecisionsImpl(q, store);
+    this.#knowledge = new KnowledgeImpl(q, store);
+    this.#petition = new PetitionImpl(q, store);
+    this.#forms = new FormsImpl(q, store);
+    this.#docket = new DocketImpl(q, store);
+    this.#client = new ClientImpl(q, store);
+  }
+
+  @skipRpcValidation()
+  async watch(callback: RpcStub<MatterWatcherTarget>): Promise<{ status: "bound" | "already_watching" }> {
+    if (!this.bindWatch) throw new Error("watch() is only available on the matter's own workspace, not from the firm desk.");
+    if (await this.store.watchIsLive()) return { status: "already_watching" };
+    await this.bindWatch(callback);
+    await this.store.markWatchBound();
+    await observe(this.q, "Watch the matter", "Asked to be woken when the matter changes.");
+    return { status: "bound" };
   }
 
   async files(): Promise<MatterFiles> { return this.#files; }
   async evidence(): Promise<MatterEvidence> { return this.#evidence; }
   async desk(): Promise<MatterDesk> { return this.#desk; }
   async decisions(): Promise<MatterDecisions> { return this.#decisions; }
+  async knowledge(): Promise<MatterKnowledge> { return this.#knowledge; }
+  async petition(): Promise<MatterPetition> { return this.#petition; }
+  async forms(): Promise<MatterForms> { return this.#forms; }
+  async docket(): Promise<MatterDocket> { return this.#docket; }
+  async client(): Promise<MatterClient> { return this.#client; }
+
+  async proposePlan(summary: string): Promise<{ id: string }> {
+    const r = await this.store.proposePlan(summary.trim());
+    await observe(this.q, "Propose the plan", "Put the plan on the attorney's desk for approval.");
+    return r;
+  }
+  async planApproved(): Promise<boolean> {
+    const ok = await this.store.planApproved();
+    await observe(this.q, "Check the plan's approval", ok ? "Approved." : "Not yet approved.");
+    return ok;
+  }
 
   async overview(): Promise<MatterOverview> {
     const o = await this.store.overview();
@@ -405,3 +664,5 @@ export class MatterSessionImpl extends RpcTarget implements MatterSession {
 
 export type { MatterMeta };
 export { normalizePath, parseMatterUrl };
+
+export { FirmMattersGatekeeper } from "./firm-matters.js";

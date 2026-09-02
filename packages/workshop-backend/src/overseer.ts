@@ -6428,7 +6428,8 @@ class OverseerImpl implements AgentHooks {
       // determinism. New singletons the owner gains only appear in chats started afterwards; a
       // since-disconnected one stays in the frozen list but becomes inert.
       context.alwaysAvailableCapsuleIds = [...this.storage.gatekeepers.list()]
-          .filter(gk => gk.creationSpec?.type === "ambient")
+          .filter(gk => gk.creationSpec?.type === "ambient"
+              || (gk.creationSpec?.type === "gatekeeper" && gk.creationSpec.alwaysAvailable === true))
           .map(gk => gk.id)
           .toSorted((a, b) => a - b);
       dirty = true;
@@ -9403,7 +9404,8 @@ class OverseerClientInterface extends RpcTarget implements Overseer {
     });
   }
 
-  async newGatekeeper(accountId: number, resourceUrl: string)
+  async newGatekeeper(accountId: number, resourceUrl: string,
+                      options?: { alwaysAvailable?: boolean })
       : Promise<GatekeeperClient<any> | null> {
     let {class: cls, vendorId, typeUrlPattern} =
         await this.#clientUser.getGatekeeperClassFor(accountId, resourceUrl);
@@ -9412,6 +9414,7 @@ class OverseerClientInterface extends RpcTarget implements Overseer {
       vendorId,
       resourceUrl,
       typeUrlPattern,
+      ...(options?.alwaysAvailable ? {alwaysAvailable: true} : {}),
     };
     let result = await this.impl.addGatekeeper(cls, creationSpec);
     await this.recordConnectionCreated(result, "gatekeeper", vendorId);
@@ -10722,7 +10725,8 @@ class UseOverseerInterface extends RpcTarget implements Overseer {
   }
   async listPreApprovableActions(): Promise<PreApprovableAction[]> { this.#deny(); }
   async getGatekeeperById(_id: number): Promise<GatekeeperClient<any>> { this.#deny(); }
-  async newGatekeeper(_accountId: number, _resourceUrl: string)
+  async newGatekeeper(_accountId: number, _resourceUrl: string,
+                      _options?: { alwaysAvailable?: boolean })
       : Promise<GatekeeperClient<any> | null> { this.#deny(); }
   async newAiModelGatekeeper(_modelId: string): Promise<GatekeeperClient<any>> { this.#deny(); }
   async newAgentSpawnerGatekeeper(_config: AgentSpawnerConfig): Promise<GatekeeperClient<any>> {

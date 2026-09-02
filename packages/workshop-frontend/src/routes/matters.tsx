@@ -1,9 +1,8 @@
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
-import { useCallback, useEffect, useState, type ChangeEvent } from 'react'
+import { useCallback, useEffect, useMemo, useState, type ChangeEvent } from 'react'
 import type { RpcStub } from 'capnweb'
-import { Plus } from '@phosphor-icons/react'
+import { Plus, Trash } from '@phosphor-icons/react'
 import type { LegalDesk, MatterListEntry } from '@gadgets/workshop-shared/legal'
-import { useAuthenticatedApi } from '../AuthContext'
 import { useDocumentTitle } from '../useDocumentTitle'
 import { logRpcFailure } from '../rpcErrors'
 import { WorkshopButton, WorkshopInput } from '../components/WorkshopControls'
@@ -22,6 +21,7 @@ import {
   plural,
   type DotTone,
 } from '../components/legal/primitives'
+import { useDesk } from '../components/firm/useDesk'
 
 export const Route = createFileRoute('/matters')({
   component: MattersPage,
@@ -29,13 +29,11 @@ export const Route = createFileRoute('/matters')({
 
 const POLL_MS = 10_000
 
-type DeskState =
-  | { kind: 'loading' }
-  | { kind: 'disabled' }
-  | { kind: 'failed' }
-  | { kind: 'ready'; api: RpcStub<LegalDesk> }
-
-/** One status line per matter. Status (may the firm work?) outranks everything else. */
+/**
+ * One status line per matter. ONE TRUTH with the matter page: status (may the firm work?)
+ * outranks stage (where the work is). A paused matter that showed only "Drafting" read as
+ * "in progress" to the lawyer who had stopped it.
+ */
 export function matterStatusLine(m: MatterListEntry): { tone: DotTone; text: string } {
   if (m.status === 'paused') return { tone: 'paused', text: 'Paused by you' }
   if (m.status === 'closed') return { tone: 'quiet', text: 'Closed' }
@@ -48,59 +46,57 @@ export function matterStatusLine(m: MatterListEntry): { tone: DotTone; text: str
       text: `${plural(m.record.failed, 'document needs', 'documents need')} a clearer copy`,
     }
   }
+  if (m.record.documents === 0) return { tone: 'hollow', text: 'Waiting for the record' }
   return { tone: 'quiet', text: 'Up to date' }
 }
 
-/** Say WHAT needs the lawyer, in their language. Null when nothing does. */
+/**
+ * Say WHAT needs the lawyer, in their language. Only fall back to the bare "need you" when the
+ * work is a mix of kinds.
+ */
 export function needsLabel(m: MatterListEntry): string | null {
-  const n = m.needsYou.openDecisions
-  if (n <= 0) return null
-  return plural(n, 'question for you', 'questions for you')
+  const dec = m.needsYou.openDecisions
+  const docs = m.needsYou.unreadableDocuments
+  const total = dec + docs
+  if (total === 0) return null
+  if (dec === total) return plural(dec, 'question for you', 'questions for you')
+  if (docs === total) return plural(docs, 'document needs you', 'documents need you')
+  return `${total} need you`
 }
 
 /**
- * THE MATTERS DESK — the lawyer's front door: their matters, each with one honest line — what the
- * firm is doing on it and whether it needs them. Nothing else.
+ * What needs the lawyer floats up; then the firm's live work; the rest by recency. (The docket
+ * will order the desk once matters carry their next deadline.)
+ */
+export function orderMatters(list: MatterListEntry[]): MatterListEntry[] {
+  const rank = (m: MatterListEntry) => {
+    const needs = m.needsYou.openDecisions + m.needsYou.unreadableDocuments
+    if (m.status === 'closed') return 4
+    if (needs > 0) return 0
+    if (m.status === 'paused') return 1
+    if (m.record.reading > 0) return 2
+    return 3
+  }
+  return [...list].sort((a, b) => rank(a) - rank(b) || (a.createdAt < b.createdAt ? 1 : -1))
+}
+
+const mintLegalDesk = (api: RpcStub<import('@gadgets/workshop-shared/api').AuthenticatedApi>) => api.getLegalDesk()
+
+/**
+ * THE MATTERS DESK — the lawyer's front door: their matters, each with one honest line — what
+ * stage it's in and whether it needs them. Nothing else. The primary action lives where the
+ * lawyer looks for it.
  */
 function MattersPage() {
   useDocumentTitle('Matters')
-  const { authenticatedApi } = useAuthenticatedApi()
   const navigate = useNavigate()
+  const desk = useDesk<LegalDesk>(mintLegalDesk, 'the matters desk')
+  const api = desk.kind === 'ready' ? desk.stub : null
 
-  const [desk, setDesk] = useState<DeskState>({ kind: 'loading' })
   const [matters, setMatters] = useState<MatterListEntry[] | null>(null)
   const [failed, setFailed] = useState(false)
   const [creating, setCreating] = useState(false)
-
-  // Mint the lawyer's desk once; dispose it when the screen leaves.
-  useEffect(() => {
-    let cancelled = false
-    let stub: RpcStub<LegalDesk> | null = null
-    authenticatedApi
-      .getLegalDesk()
-      .then((api) => {
-        if (cancelled) {
-          api?.[Symbol.dispose]?.()
-          return
-        }
-        if (!api) {
-          setDesk({ kind: 'disabled' })
-          return
-        }
-        stub = api
-        setDesk({ kind: 'ready', api })
-      })
-      .catch((err) => {
-        logRpcFailure('Failed to open the matters desk:', err)
-        if (!cancelled) setDesk({ kind: 'failed' })
-      })
-    return () => {
-      cancelled = true
-      stub?.[Symbol.dispose]?.()
-    }
-  }, [authenticatedApi])
-
-  const api = desk.kind === 'ready' ? desk.api : null
+  const [deleting, setDeleting] = useState<MatterListEntry | null>(null)
 
   const load = useCallback(async () => {
     if (!api) return
@@ -121,18 +117,33 @@ function MattersPage() {
     return () => window.clearInterval(timer)
   }, [api, load])
 
-  const handleCreate = async (input: { title: string; clientName: string; caseType: string | null }) => {
+  const ordered = useMemo(() => (matters ? orderMatters(matters) : null), [matters])
+
+  const handleCreate = async (input: { title: string; clientName: string; caseType: string | null; clientEmail: string | null }) => {
     if (!api) return
     const created = await api.createMatter(input)
     setCreating(false)
     void navigate({ to: '/matter/$id', params: { id: created.id } })
   }
 
+  const handleDelete = async (m: MatterListEntry, confirmTitle: string) => {
+    if (!api) return
+    const matter = await api.openMatter(m.id)
+    try {
+      await matter.deleteMatter(confirmTitle)
+    } finally {
+      matter[Symbol.dispose]?.()
+    }
+    setDeleting(null)
+    setMatters((prev) => (prev ? prev.filter((x) => x.id !== m.id) : prev))
+    void load()
+  }
+
   return (
     <div className="mx-auto flex h-full w-full max-w-3xl flex-col px-3 sm:px-10">
       <header className="flex flex-col items-stretch gap-4 px-3 pb-5 pt-6 sm:flex-row sm:items-end sm:justify-between sm:pt-10">
         <div className="min-w-0">
-          <h1 className="text-2xl font-semibold tracking-tight text-kumo-default">Matters</h1>
+          <h1 className="text-[28px] leading-8 font-semibold tracking-[-0.6px] text-kumo-default">Matters</h1>
           <p className="mt-1 text-[13px] leading-[18px] tracking-[-0.25px] text-kumo-subtle">
             Every matter the firm is running, and where each one stands.
           </p>
@@ -162,7 +173,7 @@ function MattersPage() {
           />
         ) : (
           <ThreeState
-            items={matters}
+            items={ordered}
             failed={failed}
             skeleton={
               <div className="space-y-3">
@@ -186,7 +197,7 @@ function MattersPage() {
             {(items) => (
               <ul className="m-0 list-none space-y-3 p-0">
                 {items.map((m) => (
-                  <MatterRow key={m.id} matter={m} />
+                  <MatterRow key={m.id} matter={m} onDelete={() => setDeleting(m)} />
                 ))}
               </ul>
             )}
@@ -194,22 +205,23 @@ function MattersPage() {
         )}
       </div>
 
-      {creating && (
-        <NewMatterDialog onCancel={() => setCreating(false)} onCreate={handleCreate} />
+      {creating && <NewMatterDialog onCancel={() => setCreating(false)} onCreate={handleCreate} />}
+      {deleting && (
+        <DeleteMatterDialog matter={deleting} onCancel={() => setDeleting(null)} onConfirm={handleDelete} />
       )}
     </div>
   )
 }
 
-function MatterRow({ matter }: { matter: MatterListEntry }) {
+function MatterRow({ matter, onDelete }: { matter: MatterListEntry; onDelete: () => void }) {
   const status = matterStatusLine(matter)
   const needs = needsLabel(matter)
   return (
-    <li>
+    <li className="group relative">
       <Link
         to="/matter/$id"
         params={{ id: matter.id }}
-        className="themed-card-hover-shadow flex items-center gap-4 rounded-2xl border border-kumo-line bg-kumo-base px-5 py-4 transition-[border-color,transform,box-shadow] duration-150 ease-out hover:-translate-y-px hover:border-kumo-fill"
+        className="themed-card-hover-shadow flex items-center gap-4 rounded-2xl border border-kumo-line bg-kumo-base px-5 py-4 pr-14 transition-[border-color,transform,box-shadow] duration-150 ease-out hover:-translate-y-px hover:border-kumo-fill"
       >
         <div className="min-w-0 flex-1">
           <div className="flex min-w-0 flex-wrap items-center gap-2">
@@ -228,6 +240,16 @@ function MatterRow({ matter }: { matter: MatterListEntry }) {
         </div>
         {needs && <Pill tone="needsYou">{needs}</Pill>}
       </Link>
+      {/* Touch has no hover: visible at rest on touch, revealed on hover elsewhere. */}
+      <button
+        type="button"
+        aria-label={`Remove ${matter.title}`}
+        title="Remove this matter"
+        onClick={onDelete}
+        className="absolute top-1/2 right-4 flex h-8 w-8 -translate-y-1/2 cursor-pointer items-center justify-center rounded-md text-kumo-inactive opacity-60 transition-opacity hover:bg-kumo-tint hover:text-kumo-danger group-hover:opacity-100 [@media(hover:hover)]:opacity-0"
+      >
+        <Trash size={15} />
+      </button>
     </li>
   )
 }
@@ -239,15 +261,17 @@ function NewMatterDialog({
   onCreate,
 }: {
   onCancel: () => void
-  onCreate: (input: { title: string; clientName: string; caseType: string | null }) => Promise<void>
+  onCreate: (input: { title: string; clientName: string; caseType: string | null; clientEmail: string | null }) => Promise<void>
 }) {
   const [title, setTitle] = useState('')
   const [clientName, setClientName] = useState('')
+  const [clientEmail, setClientEmail] = useState('')
   const [category, setCategory] = useState<string>(UNDECIDED)
   const [busy, setBusy] = useState(false)
   const [failure, setFailure] = useState<string | null>(null)
 
-  const canSubmit = title.trim() !== '' && clientName.trim() !== '' && !busy
+  const emailOk = clientEmail.trim() === '' || /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(clientEmail.trim())
+  const canSubmit = title.trim() !== '' && clientName.trim() !== '' && emailOk && !busy
 
   const submit = async () => {
     if (!canSubmit) return
@@ -258,6 +282,7 @@ function NewMatterDialog({
         title: title.trim(),
         clientName: clientName.trim(),
         caseType: category === UNDECIDED ? null : category,
+        clientEmail: clientEmail.trim() || null,
       })
     } catch (err) {
       logRpcFailure('Failed to create the matter:', err, { reportSite: 'legal.createMatter' })
@@ -313,6 +338,21 @@ function NewMatterDialog({
           />
         </div>
         <div>
+          <FieldLabel hint="Optional. The client's private portal link goes here when you invite them from the matter.">
+            Client email
+          </FieldLabel>
+          <WorkshopInput
+            type="email"
+            value={clientEmail}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => setClientEmail(e.target.value)}
+            placeholder="client@example.com"
+            className="w-full"
+          />
+          {!emailOk && (
+            <p className="mt-1 text-[12px] leading-4 text-kumo-danger">That doesn&apos;t look like an email address.</p>
+          )}
+        </div>
+        <div>
           <FieldLabel hint="Undecided is fine — the firm can commit the strategy once it has read the record.">
             Category
           </FieldLabel>
@@ -329,13 +369,7 @@ function NewMatterDialog({
                 {t.label}
               </RadioRow>
             ))}
-            <RadioRow
-              name="case-type"
-              value={UNDECIDED}
-              checked={category === UNDECIDED}
-              onChange={setCategory}
-              disabled={busy}
-            >
+            <RadioRow name="case-type" value={UNDECIDED} checked={category === UNDECIDED} onChange={setCategory} disabled={busy}>
               Undecided
             </RadioRow>
           </div>
@@ -346,6 +380,81 @@ function NewMatterDialog({
           </p>
         )}
       </form>
+    </LegalDialog>
+  )
+}
+
+/**
+ * Deletion is two-factor: the phrase to type is the matter's title, shown visibly, selectable
+ * and copyable — never a grey placeholder (caught live: hint text plus a dash in the title made
+ * deletion feel random).
+ */
+function DeleteMatterDialog({
+  matter,
+  onCancel,
+  onConfirm,
+}: {
+  matter: MatterListEntry
+  onCancel: () => void
+  onConfirm: (matter: MatterListEntry, confirmTitle: string) => Promise<void>
+}) {
+  const [typed, setTyped] = useState('')
+  const [busy, setBusy] = useState(false)
+  const [failure, setFailure] = useState<string | null>(null)
+  const matches = typed.trim() === matter.title.trim()
+
+  const submit = async () => {
+    if (!matches || busy) return
+    setBusy(true)
+    setFailure(null)
+    try {
+      await onConfirm(matter, typed.trim())
+    } catch (err) {
+      logRpcFailure('Failed to delete the matter:', err, { reportSite: 'legal.deleteMatter' })
+      setFailure("The matter wasn't removed. Nothing has changed — try again.")
+      setBusy(false)
+    }
+  }
+
+  return (
+    <LegalDialog
+      open
+      busy={busy}
+      onOpenChange={(open) => {
+        if (!open) onCancel()
+      }}
+      title="Remove this matter?"
+      description="This removes the matter, its record, the facts the firm drew from it, and its conversation. Nothing on your other matters is affected."
+      footer={
+        <>
+          <WorkshopButton className="!h-9" onClick={onCancel} disabled={busy}>
+            Keep
+          </WorkshopButton>
+          <WorkshopButton tone="danger" className="!h-9" onClick={() => void submit()} disabled={!matches || busy}>
+            {busy ? 'Removing…' : 'Remove matter'}
+          </WorkshopButton>
+        </>
+      }
+    >
+      <FieldLabel>To confirm, type the matter&apos;s title</FieldLabel>
+      <p className="mb-2 select-all rounded-md bg-kumo-tint px-2.5 py-1.5 font-mono text-[13px] leading-5 text-kumo-default">
+        {matter.title}
+      </p>
+      <WorkshopInput
+        value={typed}
+        onChange={(e: ChangeEvent<HTMLInputElement>) => setTyped(e.target.value)}
+        placeholder="Type the title exactly"
+        className="w-full"
+        autoFocus
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') void submit()
+        }}
+      />
+      {failure && (
+        <p role="alert" className="mt-2 text-[12.5px] leading-[18px] text-kumo-danger">
+          {failure}
+        </p>
+      )}
     </LegalDialog>
   )
 }

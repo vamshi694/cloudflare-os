@@ -26,7 +26,7 @@
 import { RpcCompatible, RpcStub, RpcTarget } from "capnweb";
 import { AccountDescription, ActionKind, ActionDescription, AvatarImage, GatekeeperUiFrame, ObservationDescription, ResourceDescription, ResourceConfiguratorFrame, SupportedResource, VendorDescription, HookDescription } from "./gatekeeper.js";
 import type { CodeChange } from "./code-change.js";
-import type { LegalDesk } from "./legal.js";
+import type { LegalDesk, PlaybookDesk } from "./legal.js";
 import type { UiFeatureFlags } from "./feature-flags.js";
 
 export const SERVICE_SALT = new Uint8Array([
@@ -731,6 +731,22 @@ export interface AuthenticatedApi extends RpcTarget {
    */
   ensureMatterWorkspace(matterId: string): Promise<string>;
 
+  /**
+   * Legal OS: the firm's playbooks from this lawyer's side (their personal layer over the firm's base;
+   * admins may also write the base). Null when the firm gatekeeper is disabled on this deployment.
+   */
+  getPlaybookDesk(): Promise<RpcStub<PlaybookDesk> | null>;
+
+  /**
+   * Legal OS: the workspace whose chat is this lawyer's firm-wide conversation ("Ask the firm").
+   * Created once per user; the firm's method (FIRM) and their matters (MATTERS) reach it as ambient
+   * capsules. Returns its id.
+   */
+  ensureFirmWorkspace(): Promise<string>;
+
+  /** Legal OS: this lawyer's own model spend this calendar month against their allowance. */
+  getMyUsage(): Promise<MyUsage>;
+
   // TODO:
   // - Edit permissions on a connected account.
 }
@@ -857,7 +873,7 @@ export const MAX_SITE_NAME_LENGTH = 40;
  * What this deployment calls itself when the admin has not set a custom `siteName`. Also the
  * product's own name, so it appears in prose the server and UI address to the user.
  */
-export const DEFAULT_SITE_NAME = "Cloudflare OS";
+export const DEFAULT_SITE_NAME = "Legal OS";
 
 /**
  * The name to display for this deployment. Accepts an unset or not-yet-loaded `siteName` so both
@@ -886,6 +902,29 @@ export type UsageSummary = {
   byWorkspace: { workspaceId: string; userId: string; turns: number; cost: number }[];
 };
 
+/** Legal OS: one lawyer's spend this calendar month, for the corner card. Dollars. */
+export type MyUsage = {
+  /** First day of the month, ISO. */
+  since: string;
+  cost: number;
+  turns: number;
+  tokens: number;
+  /** The monthly ceiling an admin set, or null when there is none. */
+  limit: number | null;
+};
+
+/** Legal OS: a member of the firm as the admin's Team screen shows them. */
+export type FirmMember = {
+  userId: string;
+  role: "admin" | "practitioner";
+  /** When they joined by invitation, or null when known only from configuration or the ledger. */
+  joinedAt: string | null;
+  /** This calendar month. */
+  month: { cost: number; turns: number; tokens: number; workspaces: number };
+  /** The last model turn the ledger saw, or null. */
+  lastActiveAt: string | null;
+};
+
 /** Legal OS: an invitation to create an account on this firm's deployment. */
 export type Invite = {
   token: string;
@@ -905,7 +944,7 @@ export type AdminSettingsView = {
   signupsEnabled: boolean;
   /** Site name shown next to the top-bar logo ("" falls back to DEFAULT_SITE_NAME). */
   siteName: string;
-  /** Custom deployment logo, or undefined to use the default Cloudflare OS mark. */
+  /** Custom deployment logo, or undefined to use the default Legal OS mark. */
   siteLogo?: AvatarImage;
   /** Agent system-prompt instructions ("" when unset). */
   instanceInstructions: string;
@@ -997,13 +1036,20 @@ export interface AdminApi {
   setUserMonthlyLimit(userId: string, dollars: number): Promise<void>;
 
   /**
+   * Legal OS: everyone the firm knows as a member: the configured admins, everyone who joined by
+   * invitation, and anyone the usage ledger has seen. Password-mode deployments keep no user
+   * directory, so this is the honest union, with each member's month of spend alongside.
+   */
+  listMembers(): Promise<FirmMember[]>;
+
+  /**
    * Set the site name shown next to the top-bar logo. Pass "" to reset to DEFAULT_SITE_NAME.
    * Rejects over MAX_SITE_NAME_LENGTH.
    */
   setSiteName(name: string): Promise<void>;
 
   /** Set the deployment logo from browser-rasterized PNG bytes and return its canonical public
-   * image, or undefined after reset. Pass null to restore the default Cloudflare OS mark. The
+   * image, or undefined after reset. Pass null to restore the default Legal OS mark. The
    * caller must supply decodable PNG data; the server enforces its header, size, and dimensions. */
   setSiteLogo(data: Uint8Array | null): Promise<AvatarImage | undefined>;
 
@@ -1147,7 +1193,7 @@ export type ServerConfig = {
    */
   siteName: string;
 
-  /** Custom deployment logo, or undefined to use the default Cloudflare OS mark. */
+  /** Custom deployment logo, or undefined to use the default Legal OS mark. */
   siteLogo?: AvatarImage;
 
   /** Deployment-wide top-bar notice (centered text in the top navigation bar). Empty when none is set. */
@@ -1829,7 +1875,8 @@ export interface Overseer extends RpcTarget {
    * The new gatekeeper is a workspace-level workpiece; it is not bound into any gadget's `env` by
    * default. Use GadgetClient.bind() / bindWithSuggestedName() to expose it to a gadget.
    */
-  newGatekeeper(accountId: number, resourceUrl: string): Promise<GatekeeperClient<any> | null>;
+  newGatekeeper(accountId: number, resourceUrl: string,
+                options?: { alwaysAvailable?: boolean }): Promise<GatekeeperClient<any> | null>;
 
   /**
    * Create a new gatekeeper for an AI model binding. The model can be any returned by
@@ -3641,6 +3688,12 @@ export type GatekeeperCreationSpec = {
   vendorId: string;        // identifies the gatekeeper adapter (e.g. "google")
   resourceUrl: string;
   typeUrlPattern: string;  // URL pattern from the vendor's SupportedResource (not the specific URL)
+  /**
+   * Legal OS: fold this resource into every chat's env like an ambient capsule, named by the
+   * gatekeeper's suggested binding name. Set for a matter workspace's own matter, so the
+   * counsel holds the case file on every conversation without the lawyer pasting it in.
+   */
+  alwaysAvailable?: boolean;
 } | {
   type: "aiModel";
   modelId: string;         // the user's configured model ID

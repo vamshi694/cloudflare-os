@@ -1,0 +1,14 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "bounce-easing",
+        "value": "cubic-bezier(0.22, 1.2, 0.36, 1)",
+        "createdAt": "2026-09-02T03:17:47.205Z",
+        "reason": "upstream cloudflare-os vendor CSS (packages/workshop-frontend/src/styles.css), not authored or modified in this session"
+      }
+    ]
+  }
+}

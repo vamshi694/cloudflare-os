@@ -52,6 +52,26 @@ export class UsageLedger extends DurableObject<Cloudflare.Env> {
     return row?.c ?? 0;
   }
 
+  /** Legal OS: one user's spend since `sinceIso` (the corner card's month). */
+  async monthFor(userId: string, sinceIso: string): Promise<{ cost: number; turns: number; tokens: number }> {
+    const row = this.ctx.storage.sql.exec(
+      "SELECT COUNT(*) AS turns, COALESCE(SUM(cost),0) AS cost, COALESCE(SUM(total_tokens),0) AS tokens FROM turns WHERE user_id = ? AND at >= ?",
+      userId, sinceIso).toArray()[0] as { turns: number; cost: number; tokens: number };
+    return { cost: row.cost, turns: row.turns, tokens: row.tokens };
+  }
+
+  /** Legal OS: every user the ledger has seen, with their month and their last turn. */
+  async members(sinceIso: string): Promise<{ userId: string; lastActiveAt: string; cost: number; turns: number; tokens: number; workspaces: number }[]> {
+    return this.ctx.storage.sql.exec(
+      `SELECT user_id AS userId, MAX(at) AS lastActiveAt,
+              COALESCE(SUM(CASE WHEN at >= ? THEN cost END), 0) AS cost,
+              COALESCE(SUM(CASE WHEN at >= ? THEN 1 END), 0) AS turns,
+              COALESCE(SUM(CASE WHEN at >= ? THEN total_tokens END), 0) AS tokens,
+              COUNT(DISTINCT CASE WHEN at >= ? THEN workspace_id END) AS workspaces
+       FROM turns GROUP BY user_id ORDER BY lastActiveAt DESC`, sinceIso, sinceIso, sinceIso, sinceIso)
+      .toArray() as { userId: string; lastActiveAt: string; cost: number; turns: number; tokens: number; workspaces: number }[];
+  }
+
   async summary(days: number): Promise<UsageSummary> {
     const n = Math.max(1, Math.min(365, Math.floor(days)));
     const since = new Date(Date.now() - n * 86_400_000).toISOString();

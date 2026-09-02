@@ -251,3 +251,244 @@ export interface MatterSession {
   /** Questions for the attorney. */
   decisions(): Promise<MatterDecisions>;
 }
+
+// ── Case knowledge, readiness, the petition, the docket, the client ─────────────────────────────
+
+/** An entity in the case knowledge: a person, organization, project, work product, publication, achievement or credential. */
+export interface CaseEntity {
+  id: string;
+  name: string;
+  kind: "person" | "organization" | "project" | "work_product" | "publication" | "achievement" | "credential" | "other";
+  /** How much the record says about it. */
+  salience: number;
+  description: string;
+  claimCount: number;
+  /** True when the attorney fixed this entity; never rename or merge it. */
+  locked: boolean;
+}
+
+/** A legal claim binding entities, argued in petition sections, resting on facts. */
+export interface CaseClaim {
+  id: string;
+  statement: string;
+  /** Petition section keys this claim argues in. */
+  criteria: string[];
+  entityIds: string[];
+  /** At least one fact id. A claim with no fact is not a claim. */
+  factIds: string[];
+  removed: boolean;
+}
+
+export interface SectionReadiness {
+  key: string;
+  title: string;
+  /** The sufficiency gate's verdict: none, thin or sufficient. This is THE evidence verdict; never second-guess it with your own count. */
+  evidence: "none" | "thin" | "sufficient";
+  supportingClaims: number;
+  supportingDocuments: number;
+  /** What would strengthen it, for the client ask. */
+  stillNeeded: string[];
+}
+
+export interface Readiness {
+  caseType: string | null;
+  sections: SectionReadiness[];
+  sufficient: number;
+  required: number;
+  /** build: draft the whole letter. build_with_gaps: draft cleared sections, hold the rest, ask the client. gather: ask the client first. undecided: set the case type first. */
+  gate: "build" | "build_with_gaps" | "gather" | "undecided";
+  stillNeeded: string[];
+}
+
+/** The case knowledge: entities and claims built from the facts, plus the readiness the gate derives from them. */
+export interface MatterKnowledge {
+  /** The whole map: entities, claims. Read `readiness()` for the verdict, never count claims yourself. */
+  map(): Promise<{ entities: CaseEntity[]; claims: CaseClaim[]; builtAt: string | null; building: boolean }>;
+  /**
+   * Add a claim to the case knowledge. `entities` are names with kinds; existing entities are
+   * matched by name. Every claim needs at least one fact id from `evidence.facts()`.
+   */
+  addClaim(input: { statement: string; criteria: string[]; entities: { name: string; kind: CaseEntity["kind"] }[]; factIds: string[] }): Promise<{ id: string }>;
+  /** Change which sections a claim argues in. */
+  retagClaim(claimId: string, criteria: string[]): Promise<void>;
+  /** Merge duplicate entities (the firm's chore, ledgered and undoable). Locked entities cannot be merged. */
+  mergeEntities(keepId: string, mergeId: string, reason: string): Promise<void>;
+  /** Describe an entity in plain legal English from its claims. */
+  describeEntity(entityId: string, description: string): Promise<void>;
+  /** The sufficiency gate's verdict per section, from the claims on file. */
+  readiness(): Promise<Readiness>;
+  /**
+   * Rebuild the case knowledge from every fact on the record. Long-running; returns at once.
+   * The firm runs this itself after a record settles; call it only when the attorney asks or the
+   * record changed materially (documents removed, relevance rulings).
+   */
+  rebuild(): Promise<void>;
+  /** The case type catalog: sections, criteria, purposes, forms, for every visa the firm practices. */
+  caseTypes(): Promise<{ key: string; title: string; required: number; sections: { key: string; title: string; criterion: string; purpose: string; evidentiary: boolean }[] }[]>;
+}
+
+export interface PetitionSectionState {
+  key: string;
+  title: string;
+  criterion: string;
+  purpose: string;
+  status: "not_drafted" | "held" | "drafting" | "drafted";
+  body: string;
+  version: number;
+  heldReasons: string[];
+  evidence: "none" | "thin" | "sufficient";
+  review: { score: number; weaknesses: { severity: "high" | "medium" | "low"; issue: string; fix: string }[] } | null;
+  guidance: string | null;
+}
+
+/** The petition letter: one section at a time, every version kept. */
+export interface MatterPetition {
+  /** Every section with its state and current body. */
+  sections(): Promise<PetitionSectionState[]>;
+  /** Mark a section as being written, so the attorney's screen says "the firm is writing this section now". */
+  begin(key: string): Promise<void>;
+  /**
+   * Land a draft. `citedFactIds` are the facts the prose relies on; exhibits are assigned from them.
+   * Cite exhibits in the prose as "Exhibit N" using the numbers from `exhibits()`. Quote only the
+   * verbatim words of facts; the verifier rejects quotes it cannot find.
+   */
+  write(key: string, body: string, citedFactIds: string[]): Promise<{ version: number; unverifiedQuotes: number }>;
+  /** Hold a section: the evidence is too thin; say what was requested from the client. */
+  hold(key: string, reasons: string[]): Promise<void>;
+  /** Record the adversarial reviewer's read of a section: a score 0 to 100 and specific weaknesses, each with a fix. */
+  review(key: string, score: number, weaknesses: { severity: "high" | "medium" | "low"; issue: string; fix: string }[]): Promise<void>;
+  /** The exhibit list: which document carries which exhibit number. Assign with `assignExhibits()` before citing. */
+  exhibits(): Promise<{ exhibitNo: number; documentId: string; title: string }[]>;
+  /** Number the record's included documents as exhibits in the order given (document ids). */
+  assignExhibits(documentIds: string[]): Promise<void>;
+  /** The attorney's standing directive for the whole letter (target pages, instruction). */
+  directive(): Promise<{ targetPages: number | null; text: string } | null>;
+  /** Record cross-section findings from a coherence pass. */
+  recordCoherence(findings: { a: string; b: string; issue: string; fix: string; severity: "high" | "medium" | "low" }[]): Promise<void>;
+  /** Save a version of the whole letter (after a full draft or a revision). */
+  saveVersion(reason: string): Promise<{ id: string }>;
+  /** Pending redraft instructions from the attorney (from the workbench), oldest first. Work each one, then `resolveInstruction`. */
+  instructions(): Promise<{ id: string; key: string | null; instruction: string; at: string }[]>;
+  resolveInstruction(id: string): Promise<void>;
+}
+
+/** Government forms for this filing, filled from the evidence with a source per value. */
+export interface MatterForms {
+  list(): Promise<{ code: string; title: string; filedOnline: boolean; status: string; fields: { name: string; label: string; value: string | null; sourceFactId: string | null }[] }[]>;
+  /** Fill fields on a form. Every value names the fact it came from, or null when the attorney must supply it. */
+  fill(code: string, values: { name: string; value: string | null; sourceFactId: string | null }[]): Promise<void>;
+}
+
+export interface Deadline {
+  id: string; title: string; dueOn: string; kind: "filing" | "rfe" | "client" | "internal" | "other"; met: boolean; daysLeft: number;
+}
+
+/** The docket: the dates the firm must not miss. */
+export interface MatterDocket {
+  list(): Promise<Deadline[]>;
+  /** Docket a deadline. `dueOn` is an ISO date. RFE clocks use kind "rfe". */
+  add(title: string, dueOn: string, kind: Deadline["kind"]): Promise<{ id: string }>;
+  markMet(id: string): Promise<void>;
+}
+
+/** The client on this matter, and the firm's outreach to them. */
+export interface MatterClient {
+  record(): Promise<{ name: string; email: string | null; phone: string | null; portal: "not_invited" | "invited" | "signed_in" | "expired"; documentsSent: number }>;
+  /** Every message between the firm and the client, oldest first. */
+  messages(): Promise<{ id: string; direction: "outbound" | "inbound"; subject: string | null; body: string; at: string; sent: boolean; source: string }[]>;
+  /**
+   * Draft a message to the client. It does NOT go out: it lands on the attorney's desk as an
+   * outreach to release, shown to them exactly as written. Write the whole message, plainly, as
+   * the firm speaking to its client. Never promise dates or outcomes.
+   */
+  draft(subject: string, body: string): Promise<{ itemId: string }>;
+  /** The client's own words and answers submitted through the portal, newest first. */
+  submissions(): Promise<{ id: string; at: string; text: string }[]>;
+}
+
+/** Extensions to the matter session. The methods below are reached the same way as `files()`. */
+export interface MatterSession {
+  /** The case knowledge and readiness. */
+  knowledge(): Promise<MatterKnowledge>;
+  /** The petition letter. */
+  petition(): Promise<MatterPetition>;
+  /** The government forms. */
+  forms(): Promise<MatterForms>;
+  /** The docket. */
+  docket(): Promise<MatterDocket>;
+  /** The client and the outreach. */
+  client(): Promise<MatterClient>;
+  /**
+   * Put a plan on the attorney's desk for approval. Write plan.md on the desk first; this raises
+   * the plan decision that shows the plan's phases and lets the attorney edit and approve it.
+   * Do not draft the petition before the plan is approved.
+   */
+  proposePlan(summary: string): Promise<{ id: string }>;
+  /** True once the attorney approved the plan (possibly edited: re-read plan.md). */
+  planApproved(): Promise<boolean>;
+}
+
+// ── WP-C · The firm's matters (MATTERS, the singleton on every workspace) ────────────────────────
+// Delimited block: the firm-wide capability. Everything above is one matter (MATTER).
+
+export interface FirmMatterSummary {
+  id: string;
+  title: string;
+  caseType: string | null;
+  clientName: string;
+  status: "open" | "paused" | "closed";
+  record: { documents: number; reading: number; failed: number; facts: number };
+  needsYou: { openDecisions: number; unreadableDocuments: number };
+}
+
+export interface FirmBriefRow {
+  matterId: string;
+  title: string;
+  caseType: string | null;
+  /** The matter's own open question for the attorney, when there is one. */
+  ask: string | null;
+  /** The single strongest signal: paused by the attorney, needs them, or still reading. */
+  signal: { kind: "paused" | "needs_you" | "reading" | "updates"; count: number };
+}
+
+/**
+ * Every matter on this lawyer's desk. Use it to answer firm-level questions ("which cases need
+ * documents?", "what needs me today?"). For anything about one matter's record, open it.
+ */
+export interface FirmMattersSession {
+  /** One line per matter: where it stands and what needs the attorney. */
+  listMatters(): Promise<FirmMatterSummary[]>;
+  /** One matter in depth: its overview, the open decisions, and recent activity. `matterId` from listMatters(). */
+  readMatter(matterId: string): Promise<{ overview: MatterOverview; openDecisions: Decision[]; activity: ActivityEntry[] }>;
+  /** The day: how many items need the attorney, the matters that are active and why, and how many rest. */
+  brief(): Promise<{ needsYou: number; active: FirmBriefRow[]; resting: number; today: string }>;
+  /** The full matter session (documents, evidence, desk, decisions) for one matter, for questions about its record. */
+  openMatter(matterId: string): Promise<MatterSession>;
+}
+
+// ── Waking the counsel (WP-D) ───────────────────────────────────────────────────────────────────
+
+/** What changed on the matter, delivered to the counsel's chat when the record moves without them. */
+export interface MatterEvent {
+  /** "record settled", "decision answered", "instruction queued", "client submission", "client replied", "knowledge built", "form requested", "resumed". */
+  reason: string;
+  /** One plain sentence about what happened, to act on. */
+  summary: string;
+  at: string;
+}
+
+/** The callback the counsel hands to `watch()`. Pass `self`: the matter then delivers `matterEvent` to this chat and activates you. */
+export interface MatterWatcher {
+  matterEvent(event: MatterEvent): Promise<void>;
+}
+
+export interface MatterSession {
+  /**
+   * Have the matter wake you whenever it changes without you: a record settles, the attorney
+   * answers a decision or asks for a redraft, the client uploads or writes. Call this ONCE per
+   * matter, on your first turn, passing `self` (the persistent handle to this chat):
+   * `await env.MATTER.watch(self)`. It is idempotent while a watch is live. The attorney enables
+   * the hook from their screen; until then, events wait on the record. A paused matter never wakes you.
+   */
+  watch(callback: RpcStub<MatterWatcher>): Promise<{ status: "bound" | "already_watching" }>;
+}

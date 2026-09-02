@@ -1,4 +1,4 @@
-// The reading pipeline: one queue message per uploaded document.
+// The reading pipeline: one queue message per uploaded document, plus one per knowledge build.
 //
 //   queued -> reading -> ready | empty          (a reader produced facts, or honestly none)
 //                     -> queued (transient)     (provider hiccup: re-queued with backoff, capped)
@@ -9,6 +9,7 @@
 
 import { MatterStore, type IngestMessage, type Understanding, EXTRACTION_VERSION } from "./store.js";
 import { ReadError, parseUnderstanding } from "./pure.js";
+import { buildKnowledge } from "./knowledge.js";
 
 // Documents are read whole (owner rule: no truncation on any LLM path). Long documents are read in
 // windows of this many characters, each window carrying the page markers inside it.
@@ -18,6 +19,7 @@ const EMBED_BATCH = 50;
 const WORKERS_AI_READER = "@cf/zai-org/glm-5.3-flash";
 
 type ToMarkdownResult = { name: string; mimeType: string; format: string; tokens: number; data: string };
+type DocumentMessage = Extract<IngestMessage, { documentId: string }>;
 
 function storeFor(env: Cloudflare.Env, matterId: string): DurableObjectStub<MatterStore> {
   const ns = env.MATTER_STORE;
@@ -150,25 +152,19 @@ function windows(text: string): string[] {
 async function understand(env: Cloudflare.Env, filename: string, text: string): Promise<Understanding> {
   const parts = windows(text);
   const results = await Promise.all(parts.map((w, i) => callReader(env, filename, w, i, parts.length)));
-  return {
-    docType: results[0].docType,
-    displayTitle: results[0].displayTitle,
-    facts: results.flatMap(r => r.facts),
-  };
+  return { docType: results[0].docType, displayTitle: results[0].displayTitle, facts: results.flatMap(r => r.facts) };
 }
 
 async function embedFacts(env: Cloudflare.Env, matterId: string, documentId: string, facts: { id: string; statement: string; quote: string }[]): Promise<void> {
   for (let i = 0; i < facts.length; i += EMBED_BATCH) {
     const batch = facts.slice(i, i + EMBED_BATCH);
     const res = await env.AI.run(EMBED_MODEL, { text: batch.map(f => `${f.statement}\n${f.quote}`) }) as { data: number[][] };
-    await env.FACT_VECTORS.upsert(batch.map((f, j) => ({
-      id: f.id, values: res.data[j], namespace: matterId, metadata: { matterId, documentId },
-    })));
+    await env.FACT_VECTORS.upsert(batch.map((f, j) => ({ id: f.id, values: res.data[j], namespace: matterId, metadata: { matterId, documentId } })));
   }
 }
 
 /** Read one document end to end. Throws ReadError; the caller maps it to a state transition. */
-async function readDocument(env: Cloudflare.Env, msg: IngestMessage): Promise<void> {
+async function readDocument(env: Cloudflare.Env, msg: DocumentMessage): Promise<void> {
   const store = storeFor(env, msg.matterId);
   const claim = await store.claimForReading(msg.documentId);
   if (!claim) return; // already read, superseded, or gone
@@ -179,9 +175,7 @@ async function readDocument(env: Cloudflare.Env, msg: IngestMessage): Promise<vo
   const textKey = `${claim.r2Key}.text.md`;
   await env.MATTER_FILES.put(textKey, text, { httpMetadata: { contentType: "text/markdown; charset=utf-8" } });
   await store.recordText(msg.documentId, textKey, pageCount, text.length);
-  const understanding = text.trim().length < 20
-    ? { docType: null, displayTitle: null, facts: [] }
-    : await understand(env, claim.filename, text);
+  const understanding = text.trim().length < 20 ? { docType: null, displayTitle: null, facts: [] } : await understand(env, claim.filename, text);
   const stored = await store.recordUnderstanding(msg.documentId, understanding);
   if (stored.length > 0) await embedFacts(env, msg.matterId, msg.documentId, stored);
   await store.supersedeOlderVersions(msg.documentId, text.length);
@@ -191,15 +185,26 @@ export async function handleIngestBatch(batch: MessageBatch<IngestMessage>, env:
   for (const message of batch.messages) {
     const msg = message.body;
     const store = storeFor(env, msg.matterId);
+    if ("type" in msg && msg.type === "knowledge") {
+      try {
+        await buildKnowledge(env, store);
+        console.log(`[knowledge] built matter=${msg.matterId}`);
+      } catch (error) {
+        console.error(`[knowledge] failed matter=${msg.matterId}: ${error instanceof Error ? error.message : String(error)}`);
+      }
+      message.ack();
+      continue;
+    }
+    const doc = msg as DocumentMessage;
     try {
-      await readDocument(env, msg);
-      console.log(`[ingest] read ok matter=${msg.matterId} doc=${msg.documentId}`);
+      await readDocument(env, doc);
+      console.log(`[ingest] read ok matter=${doc.matterId} doc=${doc.documentId}`);
       message.ack();
     } catch (error) {
       const err = error instanceof ReadError ? error : new ReadError(error instanceof Error ? error.message : String(error), true);
       // Loud, never silent: the failure note lands on the document AND in the worker logs.
-      console.error(`[ingest] read failed matter=${msg.matterId} doc=${msg.documentId} attempt=${message.attempts} retryable=${err.retryable}: ${err.message}`);
-      const outcome = await store.recordFailure(msg.documentId, err.message, err.retryable);
+      console.error(`[ingest] read failed matter=${doc.matterId} doc=${doc.documentId} attempt=${message.attempts} retryable=${err.retryable}: ${err.message}`);
+      const outcome = await store.recordFailure(doc.documentId, err.message, err.retryable);
       if (outcome === "requeued") {
         message.retry({ delaySeconds: Math.min(600, 30 * (message.attempts + 1)) });
         continue;

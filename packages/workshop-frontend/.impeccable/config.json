@@ -1,0 +1,23 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "bounce-easing",
+        "value": "cubic-bezier(0.22, 1.2, 0.36, 1)",
+        "createdAt": "2026-09-02T06:15:01.797Z",
+        "reason": "lead: upstream Cloudflare OS presence-pop-in animation in the inherited styles.css, not a Legal OS surface"
+      },
+      {
+        "rule": "gradient-text",
+        "value": "*",
+        "files": [
+          "src/styles.css"
+        ],
+        "createdAt": "2026-09-02T06:15:01.896Z",
+        "reason": "lead: .text-shimmer is the Ellis brief's TextShimmer for the one narrated status line while the firm works (brief section 2, status row); the gradient is motion on a single line, not decorative heading text"
+      }
+    ]
+  }
+}

@@ -17,12 +17,16 @@ declare namespace Cloudflare {
     READER_MODEL?: string;
     /** Firm-level OpenRouter key for the reading lane (a Worker secret, never in config). */
     OPENROUTER_API_KEY?: string;
+    /** Public origin of the deployment (e.g. https://ocios.app); empty means relative links. Set by deploy.ts. */
+    PUBLIC_BASE_URL?: string;
+    /** Extra entropy for signed file links (a var or secret); empty is allowed but weaker. */
+    PORTAL_SECRET?: string;
     /** The per-matter case store. */
     MATTER_STORE: DurableObjectNamespace<import("./store.js").MatterStore>;
   }
 
   interface GlobalProps {
     mainModule: typeof import("./index.js");
-    durableNamespaces: "MatterAccount" | "MatterGatekeeper" | "MatterStore";
+    durableNamespaces: "MatterAccount" | "MatterGatekeeper" | "MatterStore" | "FirmMattersGatekeeper";
   }
 }

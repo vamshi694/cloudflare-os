@@ -17,14 +17,18 @@ import { Route as ExploreRouteImport } from './routes/explore'
 import { Route as GatekeepersRouteImport } from './routes/gatekeepers'
 import { Route as MattersRouteImport } from './routes/matters'
 import { Route as OutputsRouteImport } from './routes/outputs'
+import { Route as PlaybooksRouteImport } from './routes/playbooks'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as ProvidersRouteImport } from './routes/providers'
 import { Route as SignupRouteImport } from './routes/signup'
+import { Route as TeamRouteImport } from './routes/team'
 import { Route as WorkspacesRouteImport } from './routes/workspaces'
 import { Route as BlueprintIdRouteImport } from './routes/blueprint.$id'
 import { Route as GadgetIdRouteImport } from './routes/gadget.$id'
 import { Route as GatekeepersAppIdRouteImport } from './routes/gatekeepers_.$appId'
 import { Route as MatterIdRouteImport } from './routes/matter.$id'
+import { Route as PlaybooksSlugRouteImport } from './routes/playbooks.$slug'
+import { Route as PortalTokenRouteImport } from './routes/portal.$token'
 import { Route as WorkspaceIdRouteImport } from './routes/workspace.$id'
 
 const IndexRoute = IndexRouteImport.update({
@@ -67,6 +71,11 @@ const OutputsRoute = OutputsRouteImport.update({
   path: '/outputs',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PlaybooksRoute = PlaybooksRouteImport.update({
+  id: '/playbooks',
+  path: '/playbooks',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
@@ -80,6 +89,11 @@ const ProvidersRoute = ProvidersRouteImport.update({
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TeamRoute = TeamRouteImport.update({
+  id: '/team',
+  path: '/team',
   getParentRoute: () => rootRouteImport,
 } as any)
 const WorkspacesRoute = WorkspacesRouteImport.update({
@@ -107,6 +121,16 @@ const MatterIdRoute = MatterIdRouteImport.update({
   path: '/matter/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PlaybooksSlugRoute = PlaybooksSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => PlaybooksRoute,
+} as any)
+const PortalTokenRoute = PortalTokenRouteImport.update({
+  id: '/portal/$token',
+  path: '/portal/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const WorkspaceIdRoute = WorkspaceIdRouteImport.update({
   id: '/workspace/$id',
   path: '/workspace/$id',
@@ -122,14 +146,18 @@ export interface FileRoutesByFullPath {
   '/gatekeepers': typeof GatekeepersRoute
   '/matters': typeof MattersRoute
   '/outputs': typeof OutputsRoute
+  '/playbooks': typeof PlaybooksRouteWithChildren
   '/profile': typeof ProfileRoute
   '/providers': typeof ProvidersRoute
   '/signup': typeof SignupRoute
+  '/team': typeof TeamRoute
   '/workspaces': typeof WorkspacesRoute
   '/blueprint/$id': typeof BlueprintIdRoute
   '/gadget/$id': typeof GadgetIdRoute
   '/gatekeepers/$appId': typeof GatekeepersAppIdRoute
   '/matter/$id': typeof MatterIdRoute
+  '/playbooks/$slug': typeof PlaybooksSlugRoute
+  '/portal/$token': typeof PortalTokenRoute
   '/workspace/$id': typeof WorkspaceIdRoute
 }
 export interface FileRoutesByTo {
@@ -141,14 +169,18 @@ export interface FileRoutesByTo {
   '/gatekeepers': typeof GatekeepersRoute
   '/matters': typeof MattersRoute
   '/outputs': typeof OutputsRoute
+  '/playbooks': typeof PlaybooksRouteWithChildren
   '/profile': typeof ProfileRoute
   '/providers': typeof ProvidersRoute
   '/signup': typeof SignupRoute
+  '/team': typeof TeamRoute
   '/workspaces': typeof WorkspacesRoute
   '/blueprint/$id': typeof BlueprintIdRoute
   '/gadget/$id': typeof GadgetIdRoute
   '/gatekeepers/$appId': typeof GatekeepersAppIdRoute
   '/matter/$id': typeof MatterIdRoute
+  '/playbooks/$slug': typeof PlaybooksSlugRoute
+  '/portal/$token': typeof PortalTokenRoute
   '/workspace/$id': typeof WorkspaceIdRoute
 }
 export interface FileRoutesById {
@@ -161,14 +193,18 @@ export interface FileRoutesById {
   '/gatekeepers': typeof GatekeepersRoute
   '/matters': typeof MattersRoute
   '/outputs': typeof OutputsRoute
+  '/playbooks': typeof PlaybooksRouteWithChildren
   '/profile': typeof ProfileRoute
   '/providers': typeof ProvidersRoute
   '/signup': typeof SignupRoute
+  '/team': typeof TeamRoute
   '/workspaces': typeof WorkspacesRoute
   '/blueprint/$id': typeof BlueprintIdRoute
   '/gadget/$id': typeof GadgetIdRoute
   '/gatekeepers_/$appId': typeof GatekeepersAppIdRoute
   '/matter/$id': typeof MatterIdRoute
+  '/playbooks/$slug': typeof PlaybooksSlugRoute
+  '/portal/$token': typeof PortalTokenRoute
   '/workspace/$id': typeof WorkspaceIdRoute
 }
 export interface FileRouteTypes {
@@ -182,14 +218,18 @@ export interface FileRouteTypes {
     | '/gatekeepers'
     | '/matters'
     | '/outputs'
+    | '/playbooks'
     | '/profile'
     | '/providers'
     | '/signup'
+    | '/team'
     | '/workspaces'
     | '/blueprint/$id'
     | '/gadget/$id'
     | '/gatekeepers/$appId'
     | '/matter/$id'
+    | '/playbooks/$slug'
+    | '/portal/$token'
     | '/workspace/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -201,14 +241,18 @@ export interface FileRouteTypes {
     | '/gatekeepers'
     | '/matters'
     | '/outputs'
+    | '/playbooks'
     | '/profile'
     | '/providers'
     | '/signup'
+    | '/team'
     | '/workspaces'
     | '/blueprint/$id'
     | '/gadget/$id'
     | '/gatekeepers/$appId'
     | '/matter/$id'
+    | '/playbooks/$slug'
+    | '/portal/$token'
     | '/workspace/$id'
   id:
     | '__root__'
@@ -220,14 +264,18 @@ export interface FileRouteTypes {
     | '/gatekeepers'
     | '/matters'
     | '/outputs'
+    | '/playbooks'
     | '/profile'
     | '/providers'
     | '/signup'
+    | '/team'
     | '/workspaces'
     | '/blueprint/$id'
     | '/gadget/$id'
     | '/gatekeepers_/$appId'
     | '/matter/$id'
+    | '/playbooks/$slug'
+    | '/portal/$token'
     | '/workspace/$id'
   fileRoutesById: FileRoutesById
 }
@@ -240,14 +288,17 @@ export interface RootRouteChildren {
   GatekeepersRoute: typeof GatekeepersRoute
   MattersRoute: typeof MattersRoute
   OutputsRoute: typeof OutputsRoute
+  PlaybooksRoute: typeof PlaybooksRouteWithChildren
   ProfileRoute: typeof ProfileRoute
   ProvidersRoute: typeof ProvidersRoute
   SignupRoute: typeof SignupRoute
+  TeamRoute: typeof TeamRoute
   WorkspacesRoute: typeof WorkspacesRoute
   BlueprintIdRoute: typeof BlueprintIdRoute
   GadgetIdRoute: typeof GadgetIdRoute
   GatekeepersAppIdRoute: typeof GatekeepersAppIdRoute
   MatterIdRoute: typeof MatterIdRoute
+  PortalTokenRoute: typeof PortalTokenRoute
   WorkspaceIdRoute: typeof WorkspaceIdRoute
 }
 
@@ -309,6 +360,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OutputsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/playbooks': {
+      id: '/playbooks'
+      path: '/playbooks'
+      fullPath: '/playbooks'
+      preLoaderRoute: typeof PlaybooksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/profile': {
       id: '/profile'
       path: '/profile'
@@ -328,6 +386,13 @@ declare module '@tanstack/react-router' {
       path: '/signup'
       fullPath: '/signup'
       preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/team': {
+      id: '/team'
+      path: '/team'
+      fullPath: '/team'
+      preLoaderRoute: typeof TeamRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/workspaces': {
@@ -365,6 +430,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MatterIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/playbooks/$slug': {
+      id: '/playbooks/$slug'
+      path: '/$slug'
+      fullPath: '/playbooks/$slug'
+      preLoaderRoute: typeof PlaybooksSlugRouteImport
+      parentRoute: typeof PlaybooksRoute
+    }
+    '/portal/$token': {
+      id: '/portal/$token'
+      path: '/portal/$token'
+      fullPath: '/portal/$token'
+      preLoaderRoute: typeof PortalTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/workspace/$id': {
       id: '/workspace/$id'
       path: '/workspace/$id'
@@ -375,6 +454,18 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface PlaybooksRouteChildren {
+  PlaybooksSlugRoute: typeof PlaybooksSlugRoute
+}
+
+const PlaybooksRouteChildren: PlaybooksRouteChildren = {
+  PlaybooksSlugRoute: PlaybooksSlugRoute,
+}
+
+const PlaybooksRouteWithChildren = PlaybooksRoute._addFileChildren(
+  PlaybooksRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
@@ -384,14 +475,17 @@ const rootRouteChildren: RootRouteChildren = {
   GatekeepersRoute: GatekeepersRoute,
   MattersRoute: MattersRoute,
   OutputsRoute: OutputsRoute,
+  PlaybooksRoute: PlaybooksRouteWithChildren,
   ProfileRoute: ProfileRoute,
   ProvidersRoute: ProvidersRoute,
   SignupRoute: SignupRoute,
+  TeamRoute: TeamRoute,
   WorkspacesRoute: WorkspacesRoute,
   BlueprintIdRoute: BlueprintIdRoute,
   GadgetIdRoute: GadgetIdRoute,
   GatekeepersAppIdRoute: GatekeepersAppIdRoute,
   MatterIdRoute: MatterIdRoute,
+  PortalTokenRoute: PortalTokenRoute,
   WorkspaceIdRoute: WorkspaceIdRoute,
 }
 export const routeTree = rootRouteImport

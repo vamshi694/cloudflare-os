@@ -36,9 +36,9 @@
   --color-kumo-fill-hover: #dededb;
   --color-kumo-interact: #cac8c3;
 
-  /* Brand — warm orange accent (intent only) */
-  --color-kumo-brand: #ff4801;
-  --color-kumo-brand-hover: #e03f00;
+  /* Brand — ink. Legal OS is calm enterprise-neutral; the accent is a deep ink, never a signal color. */
+  --color-kumo-brand: #1f2b40;
+  --color-kumo-brand-hover: #141d2e;
 
   /* Border / line tokens — neutral hairlines */
   --color-kumo-line: #1411100f;
@@ -69,15 +69,15 @@
   --text-color-kumo-strong: #100f0d;
   --text-color-kumo-subtle: oklch(52% 0.006 60);
   --text-color-kumo-inactive: oklch(66% 0.005 60);
-  --text-color-kumo-brand: #ff4801;
-  --text-color-kumo-link: #ff4801;
+  --text-color-kumo-brand: #1f2b40;
+  --text-color-kumo-link: #1f2b40;
   --text-color-kumo-success: oklch(72.3% 0.219 149.579);
   --text-color-kumo-danger: oklch(63.7% 0.237 25.331);
   --text-color-kumo-warning: oklch(47.6% 0.114 61.907);
 
   /* ===== CUSTOM BRAND TOKENS (for direct use alongside Kumo tokens) ===== */
-  --color-accent-100: #ff4801;
-  --color-accent-200: #ff7038;
+  --color-accent-100: #1f2b40;
+  --color-accent-200: #4a5a78;
   --color-background-100: #fcfcfb;
   --color-background-200: #f8f8f7;
   --color-background-300: #f3f3f1;
@@ -142,6 +142,12 @@
 }
 
 [data-mode="dark"] {
+  --color-kumo-brand: #b9c6de;
+  --color-kumo-brand-hover: #d3dcec;
+  --text-color-kumo-brand: #b9c6de;
+  --text-color-kumo-link: #b9c6de;
+  --color-accent-100: #b9c6de;
+  --color-accent-200: #8b9bb8;
   /* Seal-inspired dark palette: violet-tinted surfaces around hue 285, not neutral black. */
   --color-kumo-base: oklch(0.115 0.012 285);
   --color-kumo-elevated: oklch(0.155 0.011 285);
@@ -898,4 +904,83 @@ html {
    Kumo's internal backdrop class names. */
 body:has([role="dialog"], [role="alertdialog"]) .app-header {
   z-index: 0;
+}
+
+/* ===== Legal OS: the Ellis register (utilities only; tokens above stay the shell's) ===== */
+/* Numerals in tables, chips, timers and counts line up. */
+.tnum { font-variant-numeric: tabular-nums; }
+/* The typewriter docket line that opens a case file. */
+.docket {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-color-kumo-inactive);
+}
+/* The letter is paper: white, ink, justified, whatever the theme. */
+.paper {
+  background: #ffffff;
+  color: #1c1c1e;
+  font-family: Georgia, "Times New Roman", Times, serif;
+}
+.paper p { text-align: justify; hyphens: auto; }
+.paper ::selection { background: #e8e2d1; }
+/* Highlighted placeholders are the attorney's to fill before filing. */
+.ph-mark { background: #fff2a8; color: #1c1c1e; padding: 0 2px; border-radius: 2px; }
+.filing-heading {
+  text-align: center;
+  text-transform: uppercase;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  letter-spacing: 0.04em;
+  font-size: 13.5px;
+  font-weight: 700;
+}
+/* A skeleton means loading and nothing else. */
+.skeleton {
+  border-radius: 12px;
+  background: var(--color-kumo-tint);
+  animation: legal-skeleton 1.4s ease-in-out infinite;
+}
+@keyframes legal-skeleton { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
+/* Two elevations: at rest and lifted. Offset and blur, never a halo. */
+.shadow-depth { box-shadow: 0 1px 2px rgba(20, 17, 16, 0.05), 0 1px 1px rgba(20, 17, 16, 0.03); }
+.shadow-lift { box-shadow: 0 8px 24px rgba(20, 17, 16, 0.10), 0 2px 6px rgba(20, 17, 16, 0.06); }
+[data-mode="dark"] .shadow-depth { box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35); }
+[data-mode="dark"] .shadow-lift { box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), 0 2px 6px rgba(0, 0, 0, 0.35); }
+/* The only perpetual motion: a 2px breathing dot. */
+.breathe { animation: legal-breathe 1.8s ease-in-out infinite; }
+@keyframes legal-breathe { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.45; transform: scale(0.85); } }
+/* Things arrive: a spring settle, never a pop. */
+.rise { animation: legal-rise 420ms cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+@keyframes legal-rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.slide-over { animation: legal-slide 360ms cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+@keyframes legal-slide { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: none; } }
+/* Shimmer for the one narrated status line while the firm works. */
+.text-shimmer {
+  background: linear-gradient(90deg, var(--text-color-kumo-default) 0%, var(--text-color-kumo-inactive) 50%, var(--text-color-kumo-default) 100%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: legal-shimmer 2.4s linear infinite;
+}
+@keyframes legal-shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+/* The section being rewritten recedes under a soft sweep. */
+.rewriting { position: relative; opacity: 0.45; }
+.rewriting::after {
+  content: "";
+  position: absolute; inset: 0;
+  background: linear-gradient(100deg, transparent 20%, rgba(255,255,255,0.75) 50%, transparent 80%);
+  animation: legal-sweep 2.2s linear infinite;
+  pointer-events: none;
+}
+@keyframes legal-sweep { from { transform: translateX(-60%); } to { transform: translateX(60%); } }
+/* Retina hairline. */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 2dppx) {
+  .hairline { border-width: 0.5px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .skeleton, .breathe, .rise, .slide-over, .text-shimmer, .rewriting::after { animation: none; }
+  .text-shimmer { color: var(--text-color-kumo-default); background: none; }
 }

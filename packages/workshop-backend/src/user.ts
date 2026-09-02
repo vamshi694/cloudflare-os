@@ -1,5 +1,5 @@
 import { RpcStub } from "capnweb";
-import type { LegalDesk } from '@gadgets/workshop-shared/legal';
+import type { LegalDesk, PlaybookDesk } from '@gadgets/workshop-shared/legal';
 import { GadgetMetadataWithTimestamps, AiChatAuthorInfo, AiModelConfig, SUGGESTED_MODELS, CollaboratorRole, ConnectedAccountsSubscriber, ConnectedAccountsFilter, GatekeeperVendorFilter, GadgetMetadata, BlueprintMetadata, BlueprintLibrarySummary, BlueprintSource, BlueprintUserSummary, BLUEPRINT_SCREENSHOT_R2_PREFIX, GatekeeperVendorInfo, BlueprintOutput, OutputSummary, WorkpieceId, ListOutputsResult, AUTH_ERROR_CODES, createAuthError } from '@gadgets/workshop-shared/api';
 import { Gatekeeper, GatekeeperUser, GatekeeperUserVerifier, GatekeeperVendor, AccountDescription, VendorDescription, GatekeeperConnectCallback, SupportedResource, ResourceConfiguratorFrame, AppUiContext, GatekeeperUiFrame } from "@gadgets/workshop-shared/gatekeeper";
 import { shouldAutoProvisionAccount, ambientGatekeeperMode } from "./provisioning-policy.js";
@@ -212,6 +212,9 @@ function makeUserStorage(storage: DurableObjectStorage) {
 
       nextAccountId: 0,
       pinnedBlueprints: <string[]>[],
+
+      // Legal OS: the workspace whose chat is this lawyer's firm-wide conversation ("Ask the firm").
+      firmWorkspaceId: <string | null>null,
 
       // Per-user free-tier daily LLM-call counter (only used when ENABLE_CLOUDFLARE_LIMITS is on).
       // Stores the current UTC day and the calls made that day; a stale `day` implicitly resets the
@@ -1394,6 +1397,37 @@ export class UserDurableObject extends DurableObject<Cloudflare.Env> {
   async matterAccountId(): Promise<number | null> {
     const record = await this.#matterAccount();
     return record?.id ?? null;
+  }
+
+  /** The user's firm account (the custom "The firm" gatekeeper), provisioning it on first use. */
+  async #firmAccount(): Promise<ConnectedAccountRecord | null> {
+    const vendorId = "custom";
+    if (!this.vendors.has(vendorId)) return null;
+    if (!this.#hasAccountForVendor(vendorId)) {
+      try { await this.provisionAmbientAccount(vendorId); } catch { return null; }
+    }
+    for (let record of this.storage.connectedAccounts.list()) {
+      if (record.vendorId === vendorId) return record;
+    }
+    return null;
+  }
+
+  /** Legal OS: the firm's playbooks from this lawyer's side. `isAdmin` lets them write the firm's base copy. */
+  async startPlaybookDesk(context: { isAdmin: boolean; userId: string }): Promise<RpcStub<PlaybookDesk> | null> {
+    const record = await this.#firmAccount();
+    if (!record) return null;
+    return (record.account as unknown as { startPlaybookDesk(c: { isAdmin: boolean; userId: string }): Promise<RpcStub<PlaybookDesk>> }).startPlaybookDesk(context);
+  }
+
+  async getFirmWorkspaceId(): Promise<string | null> {
+    const id = this.storage.firmWorkspaceId.get();
+    // The workspace may have been deleted from the Conversations list; forget it then.
+    if (id && !this.storage.gadgets.get(id)) { this.storage.firmWorkspaceId.put(null); return null; }
+    return id;
+  }
+
+  async setFirmWorkspaceId(id: string): Promise<void> {
+    this.storage.firmWorkspaceId.put(id);
   }
 
   async ensureAccountResources(accountId: number, resourceUrlPatterns: string[]): Promise<{url?: string}> {

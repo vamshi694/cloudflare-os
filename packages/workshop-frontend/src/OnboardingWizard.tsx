@@ -15,11 +15,10 @@ import {
   Check,
   Plus,
   PlugsConnected,
-  Sparkle,
-  UsersThree,
-  Key,
-  Plugs,
-  Hexagon,
+  Files,
+  Quotes,
+  BookOpenText,
+  ShieldCheck,
 } from '@phosphor-icons/react'
 import AddModelModal from './AddModelModal'
 import { persistSelectedModel } from './modelSelection'
@@ -30,6 +29,7 @@ import { invalidateAvatarCache } from './useAvatar'
 import { useTheme } from './ThemeContext'
 import { useSiteName } from './ServerConfigContext'
 import SiteLogo from './components/SiteLogo'
+import BrandMark from './components/BrandMark'
 import { useDocumentTitle } from './useDocumentTitle'
 import { AccountsSubscriberAdapter } from './accountsSubscriber'
 
@@ -338,7 +338,7 @@ export default function OnboardingWizard({
           }`}
         >
           <SiteLogo size={22}>
-            <Hexagon size={22} className="text-kumo-brand" weight="bold" />
+            <BrandMark size={22} className="text-kumo-brand" />
           </SiteLogo>
           <span className="text-base font-semibold tracking-tight text-kumo-default">
             {siteName}
@@ -359,7 +359,7 @@ export default function OnboardingWizard({
               mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
             }`}
           >
-            Just a few things before you start building
+            Two things before your first matter
           </p>
         </div>
 
@@ -391,7 +391,7 @@ export default function OnboardingWizard({
                 Create your profile
               </h2>
               <p className="text-sm text-kumo-subtle mb-12">
-                This is how you&apos;ll appear in conversations
+                This is how the firm sees you on matters and in conversations
               </p>
 
               {/* Avatar + Display name side by side */}
@@ -480,7 +480,7 @@ export default function OnboardingWizard({
                   Choose your model
                 </h2>
                 <p className="text-sm text-kumo-subtle mb-6">
-                  Pick the AI model you&apos;d like to use by default
+                  The model your counsel works with by default. It can be changed on any conversation.
                 </p>
 
                 {modelsLoading ? (
@@ -564,7 +564,7 @@ export default function OnboardingWizard({
                   Connect your services
                 </h2>
                 <p className="text-sm text-kumo-subtle mb-6">
-                  Link your accounts so your gadgets can access them. You can always add more later.
+                  Link the services your matters draw on. You can always add more later.
                 </p>
 
                 {vendorsLoading ? (
@@ -723,7 +723,7 @@ export default function OnboardingWizard({
 // ─── showcase step ──────────────────────────────────────────────────────────────
 
 interface ShowcaseFeature {
-  icon: typeof Sparkle
+  icon: typeof Files
   iconColor: string
   iconBg: string
   title: string
@@ -732,36 +732,36 @@ interface ShowcaseFeature {
 
 const SHOWCASE_FEATURES: ShowcaseFeature[] = [
   {
-    icon: Sparkle,
-    iconColor: 'text-media-100',
-    iconBg: 'bg-media-200',
-    title: 'Build gadgets or just chat',
+    icon: Files,
+    iconColor: 'text-kumo-default',
+    iconBg: 'bg-kumo-tint',
+    title: 'Drop the record in',
     description:
-      'Create full web apps, or keep it simple with agent-only conversations. Your call.',
+      'Upload the client\'s documents, one or a thousand. Every page is read, and anything the firm could not read says so.',
   },
   {
-    icon: UsersThree,
-    iconColor: 'text-compute-100',
-    iconBg: 'bg-compute-200',
-    title: 'Collaborate in real time',
+    icon: Quotes,
+    iconColor: 'text-kumo-default',
+    iconBg: 'bg-kumo-tint',
+    title: 'Every claim carries its quote',
     description:
-      'Share a workspace with teammates and work on it together, live.',
+      'Facts point to the document and the verbatim words they rest on, page included.',
   },
   {
-    icon: Key,
-    iconColor: 'text-kumo-warning',
-    iconBg: 'bg-kumo-warning-tint',
-    title: 'Bring your own models',
+    icon: BookOpenText,
+    iconColor: 'text-kumo-default',
+    iconBg: 'bg-kumo-tint',
+    title: 'The firm\'s playbooks drive the work',
     description:
-      'Plug in personal API tokens from any provider to use the models you love.',
+      'Plans and drafts follow the playbook and petition style your firm wrote and can edit.',
   },
   {
-    icon: Plugs,
-    iconColor: 'text-storage-100',
-    iconBg: 'bg-storage-200',
-    title: 'AI meets your tools',
+    icon: ShieldCheck,
+    iconColor: 'text-kumo-default',
+    iconBg: 'bg-kumo-tint',
+    title: 'Nothing leaves without you',
     description:
-      'Have AI review a Google Doc, summarize Slack threads, triage Jira tickets, and more.',
+      'Client messages, filings and exports wait for the attorney\'s release.',
   },
 ]
 
@@ -784,7 +784,7 @@ function ShowcaseStep({ active, siteName }: { active: boolean; siteName: string 
           You&apos;re all set
         </h2>
         <p className="text-sm text-kumo-subtle">
-          Here&apos;s a taste of what you can do with {siteName}
+          How {siteName} works a matter
         </p>
       </div>
 

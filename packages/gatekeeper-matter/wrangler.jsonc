@@ -11,7 +11,8 @@
     { "type": "Text", "globs": ["**/*.txt", "**/*.svg"], "fallthrough": false }
   ],
   "migrations": [
-    { "tag": "v0", "new_sqlite_classes": ["MatterAccount", "MatterGatekeeper", "MatterStore"] }
+    { "tag": "v0", "new_sqlite_classes": ["MatterAccount", "MatterGatekeeper", "MatterStore"] },
+    { "tag": "v1", "new_sqlite_classes": ["FirmMattersGatekeeper"] }
   ],
   "durable_objects": {
     "bindings": [{ "name": "MATTER_STORE", "class_name": "MatterStore" }]
@@ -28,7 +29,11 @@
     // OPENROUTER_API_KEY secret) to read on OpenRouter with UNDERSTAND_MODEL instead.
     "READER_PROVIDER": "workers-ai",
     "READER_MODEL": "@cf/deepseek-ai/deepseek-v4-pro-0813",
-    "UNDERSTAND_MODEL": "deepseek/deepseek-v4-pro"
+    "UNDERSTAND_MODEL": "deepseek/deepseek-v4-pro",
+    // Public origin for portal and file links (deploy.ts sets it); empty means relative paths.
+    "PUBLIC_BASE_URL": "",
+    // Extra entropy for signed file links. Set a real value with `wrangler secret put PORTAL_SECRET`.
+    "PORTAL_SECRET": ""
   },
   "observability": {
     "enabled": true,

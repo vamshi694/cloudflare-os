@@ -6,7 +6,6 @@ import {
   Pencil,
   Check,
   X,
-  Hexagon,
   Blueprint,
   Trash,
   ArrowsOutSimple,
@@ -19,6 +18,7 @@ import { useAuthenticatedApi } from './AuthContext'
 import { useConnectionLost } from './RpcContext'
 import UserMenu from './components/UserMenu'
 import SiteLogo from './components/SiteLogo'
+import BrandMark from './components/BrandMark'
 
 import {
   GadgetClient,
@@ -1395,7 +1395,7 @@ export default function GadgetEditor() {
             className="flex-shrink-0 hover:opacity-80 transition-opacity"
           >
             <SiteLogo size={22}>
-              <Hexagon size={22} className="text-kumo-brand" weight="bold" />
+              <BrandMark size={22} className="text-kumo-brand" />
             </SiteLogo>
           </Link>
 

@@ -1,18 +1,14 @@
 import { Link } from '@tanstack/react-router'
 import {
-  Blueprint,
   BookOpen,
-  Compass,
-  Hexagon,
-  House,
+  ChatsCircle,
   MagnifyingGlass,
   Scales,
   SidebarSimple,
-  SquaresFour,
-  Stack,
 } from '@phosphor-icons/react'
 import { useSiteName } from '../../ServerConfigContext'
 import SiteLogo from '../SiteLogo'
+import BrandMark from '../BrandMark'
 import { useGatekeeperApps } from '../../useGatekeeperApps'
 import { openCommandPalette } from './commandPaletteBus'
 import SidebarItem from './SidebarItem'
@@ -21,7 +17,7 @@ import {
   SidebarWorkspacesTools,
   SidebarWorkspacesLists,
 } from './SidebarWorkspaces'
-import SidebarUtilityStrip from './SidebarUtilityStrip'
+import CornerCard from './CornerCard'
 
 /**
  * The persistent left rail. Three pinned regions sandwich a single scrolling region of lists, so
@@ -68,7 +64,7 @@ export default function Sidebar({
       >
         <Link to="/" aria-label={siteName} className="flex min-w-0 items-center gap-2">
           <SiteLogo size={20} className="shrink-0">
-            <Hexagon size={20} weight="bold" className="text-kumo-brand shrink-0" />
+            <BrandMark size={20} className="text-kumo-brand shrink-0" />
           </SiteLogo>
           {!collapsed && (
             <span className="truncate text-[14px] leading-5 font-semibold tracking-[-0.25px] text-kumo-default">
@@ -118,8 +114,15 @@ export default function Sidebar({
         <div className="flex shrink-0 flex-col gap-3 pt-3">
           {/* Primary nav */}
           <nav className="flex flex-col gap-0.5 px-2">
-            {/* Legal OS: the lawyer's matters lead the rail — the per-case drill-down is the
-                desk they work from; the matter page itself lives under /matter/$id. */}
+            {/* Legal OS: Ask leads (the concierge spans every matter), Matters is the per-case
+                drill-down that follows from it, Playbook is the firm's method. Team is deliberately
+                absent: it lives behind the admin's own card in the corner. */}
+            <SidebarItem
+              to="/"
+              label="Ask"
+              icon={<ChatsCircle size={14} weight="regular" />}
+              collapsed={collapsed}
+            />
             <SidebarItem
               to="/matters"
               label="Matters"
@@ -128,28 +131,11 @@ export default function Sidebar({
               matchPrefix
             />
             <SidebarItem
-              to="/"
-              label="Home"
-              icon={<House size={14} weight="regular" />}
+              to="/playbooks"
+              label="Playbook"
+              icon={<BookOpen size={14} weight="regular" />}
               collapsed={collapsed}
-            />
-            <SidebarItem
-              to="/workspaces"
-              label="Workspaces"
-              icon={<SquaresFour size={14} weight="regular" />}
-              collapsed={collapsed}
-            />
-            <SidebarItem
-              to="/blueprints"
-              label="Blueprints"
-              icon={<Blueprint size={14} weight="regular" />}
-              collapsed={collapsed}
-            />
-            <SidebarItem
-              to="/outputs"
-              label="Outputs"
-              icon={<Stack size={14} weight="regular" />}
-              collapsed={collapsed}
+              matchPrefix
             />
             {/* Gatekeeper management apps (e.g. the Context Library), listed dynamically. */}
             {gatekeeperApps.map((app) => {
@@ -190,12 +176,6 @@ export default function Sidebar({
               />
               )
             })}
-            <SidebarItem
-              to="/explore"
-              label="Explore"
-              icon={<Compass size={14} weight="regular" />}
-              collapsed={collapsed}
-            />
           </nav>
 
           {/* Workspace tools: search. Pinned so it's always reachable. */}
@@ -209,7 +189,7 @@ export default function Sidebar({
         </div>
       </SidebarWorkspacesProvider>
 
-      <SidebarUtilityStrip collapsed={collapsed} />
+      <CornerCard collapsed={collapsed} />
     </aside>
   )
 }

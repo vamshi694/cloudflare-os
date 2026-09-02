@@ -1,12 +1,12 @@
 import { Loader } from '@cloudflare/kumo'
-import { Hexagon } from '@phosphor-icons/react'
+import BrandMark from '../BrandMark'
 import type { ChatMessage as ChatMessageType } from '../../data/chat'
 import ToolCallCard from './ToolCallCard'
 
 function AssistantAvatar() {
   return (
     <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 bg-kumo-brand">
-      <Hexagon size={12} className="text-kumo-inverse" weight="bold" />
+      <BrandMark size={13} className="text-kumo-inverse" />
     </div>
   )
 }

@@ -1,7 +1,8 @@
 import { RpcStub, RpcTarget, newHttpBatchRpcResponse, newWebSocketRpcSession, RpcSessionOptions } from "capnweb";
 import { validateRpc } from "capnweb-validate";
 import type { JWTPayload } from "jose";
-import type { LegalDesk, MatterDesk } from '@gadgets/workshop-shared/legal';
+import type { LegalDesk, MatterDesk, PlaybookDesk } from '@gadgets/workshop-shared/legal';
+import type { MyUsage } from '@gadgets/workshop-shared/api';
 import { PublicApi, AuthenticatedApi, Overseer, GadgetMetadataWithTimestamps, AiChatAuthorInfo, AiModelConfig, AiGatewayInfo, AiModelProvider, ConnectedAccountsSubscriber, ConnectedAccountsFilter, GatekeeperVendorFilter, ObserverConfigCallback, BlueprintLibrarySummary, BlueprintPublicInfo, BlueprintUserSummary, BlueprintBindingAssignment, AgentSpawnerConfig, WorkpieceId, BLUEPRINT_SCREENSHOT_PATH_PREFIX, BLUEPRINT_SCREENSHOT_R2_PREFIX, blueprintScreenshotUrl, ServerConfig, CloudflareUsageInfo, CloudflareAccountOption, LoginAttempt, GatekeeperAppInfo, AdminApi, GatekeeperVendorInfo, OutputFormatOffer, ListOutputsResult, createOpenGadgetError, getOpenGadgetErrorCode, OPEN_GADGET_ERROR_CODES, AUTH_ERROR_CODES, createAuthError } from '@gadgets/workshop-shared/api';
 import type { UiFeatureFlags } from "@gadgets/workshop-shared/feature-flags";
 import { getServerConfig } from "./deployment-config.js";
@@ -97,6 +98,14 @@ class AuthenticatedApiImpl extends RpcTarget implements AuthenticatedApi {
   // have to worry about detecting when a stub has become broken.
   get #user(): DurableObjectStub<UserDurableObject> {
     return wrapDoStubForTelemetry(this.users.get(this.#userId));
+  }
+
+  /** The configured admin usernames (password mode) or emails, as a list. */
+  #adminList(): string[] {
+    let admins = this.env.ADMINS;
+    if (!admins) return [];
+    if (typeof admins === "string") admins = JSON.parse(admins);
+    return Array.isArray(admins) ? admins.map(String) : [];
   }
 
   #isAdmin(): boolean {
@@ -616,9 +625,43 @@ class AuthenticatedApiImpl extends RpcTarget implements AuthenticatedApi {
     await this.#user.newGadget(id, `${overview.title} (${overview.clientName})`);
     let overseer = await this.openGadget(id);
     if (!overseer) throw new Error("Open failed despite newly-created workspace?");
-    await overseer.newGatekeeper(accountId, url);
+    await overseer.setTitle(`${overview.title} (${overview.clientName})`);
+    await overseer.newGatekeeper(accountId, url, {alwaysAvailable: true});
     await matter.setWorkspace(id);
     return id;
+  }
+
+  async getPlaybookDesk(): Promise<RpcStub<PlaybookDesk> | null> {
+    // @ts-expect-error Cap'n Web RPC stubs and native RPC targets are compatible but the type
+    //     system doesn't know this.
+    return this.#user.startPlaybookDesk({ isAdmin: this.#isAdmin(), userId: this.#userId.name ?? "" });
+  }
+
+  /**
+   * The lawyer's firm-wide conversation: one workspace per user, titled "Ask the firm". The firm's
+   * method (FIRM) and their matters (MATTERS) are singleton accounts, so the overseer folds them in
+   * as ambient capsules on open; nothing is bound here by hand.
+   */
+  async ensureFirmWorkspace(): Promise<string> {
+    let existing = await this.#user.getFirmWorkspaceId();
+    if (existing) return existing;
+    let id = this.overseers.newUniqueId().toString();
+    await this.#user.newGadget(id, "Ask the firm");
+    let overseer = await this.openGadget(id);
+    if (!overseer) throw new Error("Open failed despite newly-created workspace?");
+    await overseer.setTitle("Ask the firm");
+    await this.#user.setFirmWorkspaceId(id);
+    return id;
+  }
+
+  async getMyUsage(): Promise<MyUsage> {
+    let userId = this.#userId.name ?? "";
+    let now = new Date();
+    let since = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1)).toISOString();
+    let ledger = this.ctx.exports.UsageLedger.getByName("");
+    let [month, config] = await Promise.all([ledger.monthFor(userId, since), readAdminConfig(this.env)]);
+    let limit = config.monthlyLimits?.[userId];
+    return { since, ...month, limit: limit && limit > 0 ? limit : null };
   }
 
   async getAdminApi(): Promise<RpcStub<AdminApi> | null> {
@@ -629,7 +672,7 @@ class AuthenticatedApiImpl extends RpcTarget implements AuthenticatedApi {
     // @ts-expect-error Cap'n Web RPC stubs and native RPC targets are compatible but the type
     //     system doesn't know this.
     return new AdminApiImpl(this.adminSettings.getByName(""), adminUserId,
-        this.ctx.exports.UsageLedger.getByName(""));
+        this.ctx.exports.UsageLedger.getByName(""), this.#adminList());
   }
 }
 

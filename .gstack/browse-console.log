@@ -1,0 +1,209 @@
+[2026-09-02T03:57:46.638Z] [error] Error: useAuthenticatedApi must be used within an AuthProvider
+    at Mi (https://legal-os-router.vamshisaimugala.workers.dev/assets/index-CXIJi2Nu.js:29:180993)
+    at he (https://legal-os-router.vamshisaimugala.workers.dev/assets/index-bgjYfaFc.js:1:6885)
+    at k2 (https://legal-os-router.vamshisaimugala.workers.dev/assets/index-CXIJi2Nu.js:9:48765)
+    at z2 (https://legal-os-router.vamshisaimugala.workers.dev/assets/index-CXIJi2Nu.js:9:71646)
+    at uv (https://legal-os-router.vamshisaimugala.workers.dev/assets/index-CXIJi2Nu.js:9:82064)
+    at Fv (https://legal-os-router.vamshisaimugala.workers.dev/assets/index-CXIJi2Nu.js:9:117950)
+    at lH (https://legal-os-router.vamshisaimugala.workers.dev/assets/index-CXIJi2Nu.js:9:116987)
+    at ug (https://legal-os-router.vamshisaimugala.workers.dev/assets/index-CXIJi2Nu.js:9:116817)
+    at Iv (https://legal-os-router.vamshisaimugala.workers.dev/assets/index-CXIJi2Nu.js:9:113583)
+    at e5 (https://legal-os-router.vamshisaimugala.workers.dev/assets/index-CXIJi2Nu.js:9:125614)
+[2026-09-02T03:58:37.359Z] [error] Failed to start connection: Error: Matters are auto-provisioned; there is no connect flow.
+    at nE.evaluateImpl (https://legal-os-router.vamshisaimugala.workers.dev/assets/index-CXIJi2Nu.js:10:143136)
+    at nE.evaluateWithDepth (https://legal-os-router.vamshisaimugala.workers.dev/assets/index-CXIJi2Nu.js:10:140846)
+    at nE.evaluate (https://legal-os-router.vamshisaimugala.workers.dev/assets/index-CXIJi2Nu.js:10:140729)
+    at kP.readLoop (https://legal-os-router.vamshisaimugala.workers.dev/assets/index-CXIJi2Nu.js:10:158799)
+[2026-09-02T04:19:48.262Z] [error] WebSocket is already in CLOSING or CLOSED state.
+[2026-09-02T04:19:48.266Z] [warning] RPC connection lost: Error: Peer closed WebSocket: 1006 
+    at WebSocket.<anonymous> (https://legal-os-router.vamshisaimugala.workers.dev/assets/index-CXIJi2Nu.js:10:160448)
+[2026-09-02T04:19:48.791Z] [warning] RPC connection restored.
+[2026-09-02T04:59:06.137Z] [error] Unrecognized Content-Security-Policy directive 'navigate-to'.
+[2026-09-02T05:27:49.728Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T05:28:27.731Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T05:28:40.137Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T05:28:41.232Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T05:28:41.416Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T05:28:41.421Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T05:28:41.425Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T05:28:43.335Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T05:28:44.527Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T05:28:44.738Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T05:28:44.741Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T05:28:44.743Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T05:29:01.560Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T05:32:15.330Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T05:45:51.598Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T05:45:57.940Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T05:46:00.094Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T05:46:01.238Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T05:46:01.444Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T05:46:01.452Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T05:46:01.456Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T05:46:06.448Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T05:46:06.971Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T05:46:20.056Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T05:46:20.057Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T05:46:28.309Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T05:46:28.309Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T05:46:31.321Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T05:46:31.321Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T05:46:31.381Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T05:46:31.381Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T05:46:31.473Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T05:46:31.473Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T05:46:32.572Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T05:46:32.572Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T06:08:32.734Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T06:08:32.734Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T06:08:35.651Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T06:08:35.651Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T06:08:45.651Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T06:08:45.651Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T06:08:46.088Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T06:08:46.088Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T06:08:46.157Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T06:08:46.157Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T06:08:47.264Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T06:08:47.264Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association

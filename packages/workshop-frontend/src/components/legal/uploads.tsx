@@ -4,6 +4,7 @@ import type { MatterDesk } from '@gadgets/workshop-shared/legal'
 import { UploadSimple } from '@phosphor-icons/react'
 import { logRpcFailure } from '../../rpcErrors'
 import { StatusDot } from './primitives'
+import { formatBytes } from './labels'
 
 /** R2 multipart: every part except the last must be at least 5 MiB, so we slice at exactly that. */
 const PART_BYTES = 5 * 1024 * 1024
@@ -19,12 +20,6 @@ export type UploadRow = {
   documentId?: string
   /** Honest failure copy — what didn't happen. */
   failure?: string
-}
-
-function formatBytes(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`
-  if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
 }
 
 async function uploadOne(desk: RpcStub<MatterDesk>, file: File): Promise<string> {
@@ -50,7 +45,7 @@ async function uploadOne(desk: RpcStub<MatterDesk>, file: File): Promise<string>
 /**
  * A queue of uploads with per-file status. Each file: beginUpload → uploadPart in 5 MiB slices →
  * finishUpload, at most three at once. `onUploaded` fires after each registration so the list can
- * refresh.
+ * refresh. The row is reserved before the bytes move.
  */
 export function useUploads(desk: RpcStub<MatterDesk>, onUploaded: () => void) {
   const [rows, setRows] = useState<UploadRow[]>([])
@@ -88,18 +83,10 @@ export function useUploads(desk: RpcStub<MatterDesk>, onUploaded: () => void) {
   const add = useCallback(
     (files: File[]) => {
       if (files.length === 0) return
-      const entries = files.map((file) => ({
-        key: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
-        file,
-      }))
+      const entries = files.map((file) => ({ key: `${Date.now()}-${Math.random().toString(36).slice(2)}`, file }))
       setRows((prev) => [
         ...prev,
-        ...entries.map<UploadRow>((e) => ({
-          key: e.key,
-          name: e.file.name,
-          bytes: e.file.size,
-          phase: 'uploading',
-        })),
+        ...entries.map<UploadRow>((e) => ({ key: e.key, name: e.file.name, bytes: e.file.size, phase: 'uploading' })),
       ])
       queue.current.push(...entries)
       pump()
@@ -107,127 +94,135 @@ export function useUploads(desk: RpcStub<MatterDesk>, onUploaded: () => void) {
     [pump],
   )
 
-  const dismiss = useCallback((key: string) => {
-    setRows((prev) => prev.filter((r) => r.key !== key))
-  }, [])
+  const dismiss = useCallback((key: string) => setRows((prev) => prev.filter((r) => r.key !== key)), [])
 
   return { rows, add, dismiss }
 }
 
-/**
- * Drop target + native picker (a label wrapping a hidden input, so the browser opens the picker
- * itself) and one honest row per file. No percentage bar: nothing here measures progress.
- */
-export function UploadPanel({
-  rows,
-  onFiles,
-  onDismiss,
-}: {
-  rows: UploadRow[]
-  onFiles: (files: File[]) => void
-  onDismiss: (key: string) => void
-}) {
+function useDropTarget(onFiles: (files: File[]) => void) {
   const [dragging, setDragging] = useState(false)
-
-  const handleDrop = (e: DragEvent<HTMLLabelElement>) => {
+  const onDragOver = (e: DragEvent<HTMLLabelElement>) => {
+    e.preventDefault()
+    setDragging(true)
+  }
+  const onDragLeave = () => setDragging(false)
+  const onDrop = (e: DragEvent<HTMLLabelElement>) => {
     e.preventDefault()
     setDragging(false)
     onFiles(Array.from(e.dataTransfer.files))
   }
-  const handlePick = (e: ChangeEvent<HTMLInputElement>) => {
+  const onPick = (e: ChangeEvent<HTMLInputElement>) => {
     onFiles(Array.from(e.target.files ?? []))
     // Reset so the same file re-fires if picked again.
     e.target.value = ''
   }
+  return { dragging, onDragOver, onDragLeave, onDrop, onPick }
+}
 
+/**
+ * The drop target is a <label> wrapping a hidden input: the BROWSER opens the picker natively on
+ * click, no JS .click() that some browsers swallow. Two shapes: the full dropzone, and a compact
+ * toolbar button that is still a drop target.
+ */
+export function Dropzone({ onFiles, hint, busy = false }: { onFiles: (files: File[]) => void; hint?: string; busy?: boolean }) {
+  const d = useDropTarget(onFiles)
   return (
-    <div className="space-y-2">
-      <label
-        onDragOver={(e) => {
-          e.preventDefault()
-          setDragging(true)
-        }}
-        onDragLeave={() => setDragging(false)}
-        onDrop={handleDrop}
-        className={[
-          'flex cursor-pointer flex-col items-center justify-center gap-1.5 rounded-2xl border border-dashed px-6 py-7 text-center transition-colors',
-          dragging
-            ? 'border-kumo-brand bg-kumo-tint'
-            : 'border-kumo-line bg-kumo-base hover:bg-kumo-elevated',
-        ].join(' ')}
-      >
-        <input type="file" multiple className="sr-only" onChange={handlePick} />
-        <span className="grid h-9 w-9 place-items-center rounded-xl bg-kumo-tint text-kumo-subtle">
-          <UploadSimple size={16} />
-        </span>
-        <span className="text-[14px] leading-5 font-medium tracking-[-0.3px] text-kumo-default">
-          {dragging ? 'Drop to add to the matter' : 'Drop documents here'}
-        </span>
-        <span className="text-[12.5px] leading-[18px] tracking-[-0.2px] text-kumo-subtle">
-          or click to choose. Drag as many as you like. PDF, Word, images — scans are read
-          automatically.
-        </span>
-      </label>
+    <label
+      onDragOver={d.onDragOver}
+      onDragLeave={d.onDragLeave}
+      onDrop={d.onDrop}
+      className={`flex cursor-pointer flex-col items-center justify-center gap-1.5 rounded-[16px] border-2 border-dashed px-6 py-8 text-center transition-colors ${
+        d.dragging ? 'border-kumo-brand bg-kumo-brand/5' : 'border-kumo-line bg-kumo-base hover:bg-kumo-elevated'
+      }`}
+    >
+      <input type="file" multiple className="sr-only" onChange={d.onPick} />
+      <span className="grid h-9 w-9 place-items-center rounded-xl bg-kumo-tint text-kumo-subtle">
+        <UploadSimple size={16} />
+      </span>
+      <span className="text-[14px] leading-5 font-medium tracking-[-0.3px] text-kumo-default">
+        {busy ? 'Reading your documents…' : d.dragging ? 'Drop to add to the matter' : 'Drop documents here'}
+      </span>
+      <span className="text-[12.5px] leading-[18px] tracking-[-0.2px] text-kumo-subtle">
+        {hint ?? 'or click to choose. Drag as many as you like. PDF, Word, images (scans are read automatically).'}
+      </span>
+    </label>
+  )
+}
 
-      {rows.length > 0 && (
-        <ul className="m-0 list-none divide-y divide-kumo-line overflow-hidden rounded-xl border border-kumo-line bg-kumo-base p-0">
-          {rows.map((row) => (
-            <li key={row.key} className="flex items-center gap-3 px-4 py-2.5">
-              <div className="min-w-0 flex-1">
-                <div className="flex min-w-0 items-center gap-2">
-                  <span className="truncate text-[13.5px] leading-5 tracking-[-0.25px] text-kumo-default">
-                    {row.name}
-                  </span>
-                  <span
-                    className="shrink-0 text-[12px] text-kumo-inactive"
-                    style={{ fontVariantNumeric: 'tabular-nums' }}
-                  >
-                    {formatBytes(row.bytes)}
-                  </span>
-                </div>
-                {row.phase === 'failed' && row.failure && (
-                  <p className="mt-0.5 text-[12.5px] leading-[18px] text-kumo-danger">{row.failure}</p>
-                )}
+export function UploadButton({ onFiles }: { onFiles: (files: File[]) => void }) {
+  const d = useDropTarget(onFiles)
+  return (
+    <label
+      onDragOver={d.onDragOver}
+      onDragLeave={d.onDragLeave}
+      onDrop={d.onDrop}
+      className={`press inline-flex h-8 cursor-pointer items-center gap-1.5 rounded-lg px-3 text-[13px] font-medium transition-colors ${
+        d.dragging ? 'bg-kumo-brand/10 ring-2 ring-kumo-brand/40 text-kumo-default' : 'bg-kumo-contrast text-kumo-inverse hover:bg-kumo-strong'
+      }`}
+    >
+      <input type="file" multiple className="sr-only" onChange={d.onPick} />
+      <UploadSimple size={14} />
+      Upload
+    </label>
+  )
+}
+
+/** One honest row per file. No percentage bar: nothing here measures progress. */
+export function UploadRows({ rows, onDismiss }: { rows: UploadRow[]; onDismiss: (key: string) => void }) {
+  if (rows.length === 0) return null
+  return (
+    <ul className="m-0 list-none divide-y divide-kumo-line overflow-hidden rounded-xl border border-kumo-line bg-kumo-base p-0">
+      {rows.map((row) => {
+        const ext = (row.name.split('.').pop() ?? '').slice(0, 3).toUpperCase() || 'DOC'
+        return (
+          <li key={row.key} className="flex items-center gap-3 px-4 py-2.5">
+            <span
+              className={`grid h-8 w-8 shrink-0 place-items-center rounded-md text-[10px] font-semibold ${
+                row.phase === 'failed' ? 'bg-kumo-danger-tint text-kumo-danger' : 'bg-kumo-tint text-kumo-subtle'
+              }`}
+            >
+              {ext}
+            </span>
+            <div className="min-w-0 flex-1">
+              <div className="flex min-w-0 items-center gap-2">
+                <span className="truncate text-[13.5px] leading-5 tracking-[-0.25px] text-kumo-default">{row.name}</span>
+                <span className="tnum shrink-0 text-[12px] text-kumo-inactive">{formatBytes(row.bytes)}</span>
               </div>
-              <UploadPhase row={row} />
-              {row.phase === 'failed' && (
-                <button
-                  type="button"
-                  onClick={() => onDismiss(row.key)}
-                  className="press inline-flex h-7 cursor-pointer items-center rounded-md px-2 text-[12.5px] font-medium text-kumo-subtle transition-colors hover:bg-kumo-tint hover:text-kumo-default"
-                >
-                  Dismiss
-                </button>
-              )}
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
+              {row.phase === 'failed' && row.failure && <p className="mt-0.5 text-[12.5px] leading-[18px] text-kumo-danger">{row.failure}</p>}
+            </div>
+            <UploadPhase row={row} />
+            {row.phase === 'failed' && (
+              <button
+                type="button"
+                onClick={() => onDismiss(row.key)}
+                className="press inline-flex h-7 cursor-pointer items-center rounded-md px-2 text-[12.5px] font-medium text-kumo-subtle transition-colors hover:bg-kumo-tint hover:text-kumo-default"
+              >
+                Dismiss
+              </button>
+            )}
+          </li>
+        )
+      })}
+    </ul>
   )
 }
 
 function UploadPhase({ row }: { row: UploadRow }) {
   if (row.phase === 'uploading') {
     return (
-      <span className="inline-flex shrink-0 items-center gap-1.5 text-[12.5px] text-kumo-default">
-        <StatusDot tone="working" />
-        Uploading…
+      <span className="inline-flex shrink-0 items-center gap-1.5 text-[11.5px] text-kumo-default">
+        <StatusDot tone="working" className="breathe" />
+        uploading…
       </span>
     )
   }
   if (row.phase === 'queued') {
-    return (
-      <span className="inline-flex shrink-0 items-center gap-1.5 text-[12.5px] text-kumo-subtle">
-        <StatusDot tone="quiet" />
-        Queued for reading
-      </span>
-    )
+    return <span className="inline-flex shrink-0 items-center gap-1.5 text-[11.5px] text-kumo-subtle">queued for reading</span>
   }
   return (
-    <span className="inline-flex shrink-0 items-center gap-1.5 text-[12.5px] text-kumo-danger">
+    <span className="inline-flex shrink-0 items-center gap-1.5 text-[11.5px] text-kumo-danger">
       <StatusDot tone="needsYou" />
-      Didn't upload
+      couldn't upload, try again
     </span>
   )
 }
