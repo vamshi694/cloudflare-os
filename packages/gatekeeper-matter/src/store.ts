@@ -649,7 +649,16 @@ export class MatterStore extends DurableObject<Cloudflare.Env> implements IntelS
     const row = D.answerDecision(this.#db, id, answer, by);
     if (!row) throw new Error("This decision is no longer open.");
     const declined = /^(not now|decline|deny|hold|reject|no\b)/i.test(answer.trim());
-    if (row.kind === "plan") this.#db.metaSet("plan_approved", declined ? "0" : "1");
+    if (row.kind === "plan") {
+      this.#db.metaSet("plan_approved", declined ? "0" : "1");
+      // The approved plan starts the drafting lane itself: drafting is a job, not a favor the
+      // counsel remembers to ask for. The counsel is woken when the letter lands (or is held).
+      if (!declined) {
+        await this.draftAll("system").catch(err => {
+          this.#log("system", `Could not start drafting on the approved plan: ${err instanceof Error ? err.message : String(err)}`);
+        });
+      }
+    }
     if (row.kind === "outreach" && row.message_id) {
       if (declined) C.deleteMessage(this.#db, row.message_id as string);
       else C.markMessageSent(this.#db, row.message_id as string);
