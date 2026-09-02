@@ -104,6 +104,8 @@ export const EXTRACTION_VERSION = 1;
 const MAX_READ_ATTEMPTS = 4;
 /** A queued or reading document older than this is a stalled read (the queue retries within it). */
 const STALLED_READ_MS = 20 * 60 * 1000;
+/** Wake events inside this window are delivered together, by alarm, as one turn. */
+const WAKE_COALESCE_MS = 20_000;
 const FIND_WINDOW = 150;
 const NARRATIVE_WINDOW_MS = 10 * 60 * 1000;
 
@@ -148,11 +150,31 @@ export class MatterStore extends DurableObject<Cloudflare.Env> implements IntelS
     if (!initiator) return;
     const lastAt = Number(this.#db.metaGet("wake_delivered_at") ?? 0);
     const at = Date.now();
-    if (at - lastAt < 20_000) return;
+    if (at - lastAt < WAKE_COALESCE_MS) {
+      // Inside the window: the reason is on the pending list; an alarm delivers the batch when the
+      // window closes. A coalesced event is delayed, never dropped.
+      this.ctx.waitUntil(this.ctx.storage.setAlarm(lastAt + WAKE_COALESCE_MS));
+      return;
+    }
     this.#db.metaSet("wake_delivered_at", String(at));
     this.ctx.waitUntil(this.#deliverWake(initiator, reason, at).catch(err => {
       this.#log("system", `Could not wake the counsel (${reason}): ${err instanceof Error ? err.message : String(err)}`);
     }));
+  }
+
+  /** The coalescing alarm: deliver whatever gathered inside the window as one wake. */
+  async alarm(): Promise<void> {
+    const pending = JSON.parse(this.#db.metaGet("wake_pending") ?? "[]") as string[];
+    if (pending.length === 0) return;
+    const meta = JSON.parse(this.#db.metaGet("matter") ?? "null") as MatterMeta | null;
+    if (!meta || meta.status !== "open") return;
+    const initiator = this.ctx.storage.kv.get<Fetcher<HookInitiator<MatterWatcherTarget>>>("watch_initiator");
+    if (!initiator) return;
+    const at = Date.now();
+    this.#db.metaSet("wake_delivered_at", String(at));
+    await this.#deliverWake(initiator, pending[pending.length - 1], at).catch(err => {
+      this.#log("system", `Could not wake the counsel (${pending[pending.length - 1]}): ${err instanceof Error ? err.message : String(err)}`);
+    });
   }
 
   async #deliverWake(initiator: Fetcher<HookInitiator<MatterWatcherTarget>>, reason: string, at: number): Promise<void> {
@@ -1272,7 +1294,12 @@ export class MatterStore extends DurableObject<Cloudflare.Env> implements IntelS
   // ownership moves the firm's admins make (a hold when an owner is removed, a transfer on reassignment).
 
   async listDirectives(): Promise<MatterDirective[]> { return D.listDirectives(this.#db); }
-  async addDirective(text: string, scope: MatterDirective["scope"] | undefined, by: string): Promise<MatterDirective> { return D.addDirective(this.#db, text, scope, by); }
+  async addDirective(text: string, scope: MatterDirective["scope"] | undefined, by: string): Promise<MatterDirective> {
+    const d = D.addDirective(this.#db, text, scope, by);
+    // A standing directive is the attorney speaking; the counsel hears it now, not on the next event.
+    if (by === "lawyer") this.#wake("directive given");
+    return d;
+  }
   async removeDirective(id: string, by: string): Promise<void> { D.removeDirective(this.#db, id, by); }
   async listMemoryNotes(): Promise<MemoryNote[]> { return D.listMemoryNotes(this.#db); }
   async addMemoryNote(text: string, by: MemoryNote["createdBy"]): Promise<MemoryNote> { return D.addMemoryNote(this.#db, text, by); }

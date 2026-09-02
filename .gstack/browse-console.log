@@ -876,3 +876,1028 @@
     at WE.evaluateWithDepth (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140963)
     at WE.evaluate (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140846)
     at uP.readLoop (https://ocios.app/assets/index-Qzs0D5Ay.js:10:158916)
+[2026-09-02T14:18:29.090Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T14:18:29.120Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T14:18:29.126Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-Qzs0D5Ay.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-Qzs0D5Ay.js:10:158916)
+[2026-09-02T14:18:29.126Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T14:18:29.162Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T14:18:29.162Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T14:18:29.164Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T14:18:29.166Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T14:18:29.166Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T14:18:29.167Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T14:18:34.082Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T14:18:34.149Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T14:18:39.076Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T14:18:39.226Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T14:18:44.081Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T14:18:44.159Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T14:18:49.079Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T14:18:49.182Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T14:18:54.084Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T14:18:54.159Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T14:18:59.144Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T14:18:59.145Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-Qzs0D5Ay.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-Qzs0D5Ay.js:10:158916)
+[2026-09-02T14:18:59.151Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T14:19:04.078Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T14:19:04.159Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T14:19:09.103Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T14:19:09.161Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T14:19:14.087Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T14:19:14.161Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T14:19:19.079Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T14:19:19.153Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T14:19:24.077Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T14:19:24.153Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T14:19:29.073Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T14:19:29.119Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-Qzs0D5Ay.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-Qzs0D5Ay.js:10:158916)
+[2026-09-02T14:19:29.151Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T14:19:31.949Z] [debug] Polled read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-Qzs0D5Ay.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-Qzs0D5Ay.js:10:158916)
+[2026-09-02T14:19:31.963Z] [debug] Polled read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-Qzs0D5Ay.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-Qzs0D5Ay.js:10:158916)
+[2026-09-02T14:19:34.076Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-Qzs0D5Ay.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-Qzs0D5Ay.js:10:158916)
+[2026-09-02T14:19:34.077Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T14:19:34.145Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-Qzs0D5Ay.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-Qzs0D5Ay.js:10:158916)
+[2026-09-02T14:19:34.145Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T14:19:39.074Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-Qzs0D5Ay.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-Qzs0D5Ay.js:10:158916)
+[2026-09-02T14:19:39.148Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-Qzs0D5Ay.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-Qzs0D5Ay.js:10:158916)
+[2026-09-02T14:19:44.077Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-Qzs0D5Ay.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-Qzs0D5Ay.js:10:158916)
+[2026-09-02T14:19:44.212Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-Qzs0D5Ay.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-Qzs0D5Ay.js:10:158916)
+[2026-09-02T14:19:49.075Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-Qzs0D5Ay.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-Qzs0D5Ay.js:10:158916)
+[2026-09-02T14:19:49.146Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-Qzs0D5Ay.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-Qzs0D5Ay.js:10:158916)
+[2026-09-02T14:19:54.079Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-Qzs0D5Ay.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-Qzs0D5Ay.js:10:158916)
+[2026-09-02T14:19:54.184Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-Qzs0D5Ay.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-Qzs0D5Ay.js:10:158916)
+[2026-09-02T14:19:59.055Z] [debug] Polled read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-Qzs0D5Ay.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-Qzs0D5Ay.js:10:158916)
+[2026-09-02T14:19:59.071Z] [debug] Polled read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-Qzs0D5Ay.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-Qzs0D5Ay.js:10:158916)
+[2026-09-02T14:19:59.071Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-Qzs0D5Ay.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-Qzs0D5Ay.js:10:158916)
+[2026-09-02T14:19:59.111Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-Qzs0D5Ay.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-Qzs0D5Ay.js:10:158916)
+[2026-09-02T14:19:59.145Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-Qzs0D5Ay.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-Qzs0D5Ay.js:10:158916)
+[2026-09-02T14:20:04.135Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-Qzs0D5Ay.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-Qzs0D5Ay.js:10:158916)
+[2026-09-02T14:20:04.146Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-Qzs0D5Ay.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-Qzs0D5Ay.js:10:158916)
+[2026-09-02T14:20:09.078Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-Qzs0D5Ay.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-Qzs0D5Ay.js:10:158916)
+[2026-09-02T14:20:09.147Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-Qzs0D5Ay.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-Qzs0D5Ay.js:10:158916)
+[2026-09-02T14:20:14.108Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-Qzs0D5Ay.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-Qzs0D5Ay.js:10:158916)
+[2026-09-02T14:20:14.148Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-Qzs0D5Ay.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-Qzs0D5Ay.js:10:158916)
+[2026-09-02T14:20:19.075Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-Qzs0D5Ay.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-Qzs0D5Ay.js:10:158916)
+[2026-09-02T14:20:19.145Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-Qzs0D5Ay.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-Qzs0D5Ay.js:10:158916)
+[2026-09-02T14:20:24.075Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-Qzs0D5Ay.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-Qzs0D5Ay.js:10:158916)
+[2026-09-02T14:20:24.144Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-Qzs0D5Ay.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-Qzs0D5Ay.js:10:158916)
+[2026-09-02T14:20:29.045Z] [debug] Polled read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-Qzs0D5Ay.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-Qzs0D5Ay.js:10:158916)
+[2026-09-02T14:20:29.069Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-Qzs0D5Ay.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-Qzs0D5Ay.js:10:158916)
+[2026-09-02T14:20:29.073Z] [debug] Polled read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-Qzs0D5Ay.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-Qzs0D5Ay.js:10:158916)
+[2026-09-02T14:20:29.109Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-Qzs0D5Ay.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-Qzs0D5Ay.js:10:158916)
+[2026-09-02T14:20:29.147Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at WE.evaluateImpl (https://ocios.app/assets/index-Qzs0D5Ay.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-Qzs0D5Ay.js:10:158916)
+[2026-09-02T14:20:33.846Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:20:48.726Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:21:03.677Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:21:18.679Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:21:33.677Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:21:48.680Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:22:03.697Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:22:18.681Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:22:27.813Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:22:27.834Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:22:33.459Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:22:33.679Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:22:48.683Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:23:03.459Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:23:03.679Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:23:03.987Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:23:18.682Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:23:33.681Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:23:33.989Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:23:34.222Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:23:48.684Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:24:03.465Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:24:03.737Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:24:18.680Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:24:33.463Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:24:33.680Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:24:48.686Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:25:03.535Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:25:03.678Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:25:18.733Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:25:33.466Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:25:33.679Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:25:48.744Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:26:03.468Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:26:03.681Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:26:18.683Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:26:33.469Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:26:33.712Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:26:48.686Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:27:03.480Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:27:03.681Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:27:18.682Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:27:33.481Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:27:33.516Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:27:33.680Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:27:48.680Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:28:03.464Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:28:03.682Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:28:18.685Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:28:33.486Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:28:33.748Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:28:48.686Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:29:03.471Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:29:03.683Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:29:18.686Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:29:44.386Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:29:59.384Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:30:07.707Z] [error] A decision failed to record: Error: no such table: contradictions: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:30:14.434Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:30:25.140Z] [error] A decision failed to record: Error: no such table: contradictions: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:30:29.389Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:30:44.386Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:30:59.501Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:31:14.398Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:31:28.397Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:31:28.416Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:31:29.412Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:31:44.384Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:31:44.609Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:31:59.389Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:32:14.388Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:32:14.547Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:32:29.384Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:32:44.378Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:32:44.386Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:32:59.386Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:33:14.329Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:33:14.390Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:33:29.450Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:33:44.396Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:33:44.396Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:33:59.385Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:34:14.340Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:34:14.384Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:34:29.383Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:34:44.324Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:34:44.442Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:34:59.383Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:35:14.327Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:35:14.357Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:35:14.384Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:35:29.384Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:35:44.339Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:35:44.398Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:35:59.415Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:36:14.343Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:36:14.500Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:36:29.386Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:36:44.333Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:36:44.384Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:36:59.387Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:37:14.391Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:37:14.399Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:37:29.389Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:37:44.344Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:37:44.387Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:37:59.391Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:38:14.362Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:38:14.386Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:38:14.545Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:38:29.394Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:38:44.393Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:38:44.575Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:38:59.388Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:39:14.338Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:39:14.455Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:39:29.398Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:39:44.362Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:39:44.397Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:39:44.409Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:39:59.411Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:40:14.365Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:40:14.413Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:40:29.454Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:40:44.366Z] [error] Polled read failed: Error: Too many API requests by single Worker invocation. To configure this limit, refer to https://developers.cloudflare.com/workers/wrangler/configuration/#limits
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:40:44.415Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:40:59.415Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:41:05.731Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:41:13.831Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:41:21.958Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:41:29.833Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:41:37.888Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:41:45.834Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:41:47.397Z] [debug] Polled read failed: Error: Network connection lost.
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:41:53.881Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:42:01.835Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:42:09.836Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:44:53.042Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:45:08.042Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:46:27.273Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:46:42.090Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
+[2026-09-02T14:46:57.088Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-BrExI4k2.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-BrExI4k2.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-BrExI4k2.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-BrExI4k2.js:10:158916)
