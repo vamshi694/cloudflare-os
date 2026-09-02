@@ -24,12 +24,27 @@ Rules:
 
 type RawClaim = { statement?: unknown; criteria?: unknown; entities?: unknown; fact_indexes?: unknown };
 
+// The knowledge lane runs on a fast model: the deep reader (READER_MODEL) timed out on Workers AI
+// (3046) even on a 14-fact record. One retry on a transient failure, then the build stops early
+// and says so.
 async function askModel(env: Cloudflare.Env, system: string, user: string): Promise<string> {
-  const out = await env.AI.run((env.READER_MODEL || WORKERS_AI_MODEL) as Parameters<Ai["run"]>[0], {
-    messages: [{ role: "system", content: system }, { role: "user", content: user }],
-    max_tokens: 8192,
-    response_format: { type: "json_object" },
-  }) as { response?: unknown; choices?: { message?: { content?: unknown } }[] };
+  const model = (env.KNOWLEDGE_MODEL || WORKERS_AI_MODEL) as Parameters<Ai["run"]>[0];
+  type ModelOut = { response?: unknown; choices?: { message?: { content?: unknown } }[] };
+  let out: ModelOut | undefined;
+  for (let attempt = 1; ; attempt++) {
+    try {
+      out = await env.AI.run(model, {
+        messages: [{ role: "system", content: system }, { role: "user", content: user }],
+        max_tokens: 4096,
+        response_format: { type: "json_object" },
+      }) as ModelOut;
+      break;
+    } catch (error) {
+      if (attempt >= 2) throw error;
+      console.warn(`[knowledge] model call failed (attempt ${attempt}), retrying: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  }
+  if (!out) throw new Error("The knowledge reader returned nothing.");
   return typeof out.response === "string" ? out.response
     : typeof out.choices?.[0]?.message?.content === "string" ? out.choices[0].message.content
     : JSON.stringify(out);

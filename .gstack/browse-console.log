@@ -967,3 +967,329 @@
   - label prop: <Input label='Email' />
   - aria-label: <Input aria-label='Email address' />
   - aria-labelledby for custom label association
+[2026-09-02T06:58:52.833Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T06:58:52.840Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T06:58:57.746Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T06:58:57.791Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T06:59:02.809Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T06:59:02.810Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T06:59:07.749Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T06:59:07.792Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T06:59:12.777Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T06:59:12.789Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T06:59:17.746Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T06:59:17.791Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T06:59:20.801Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T06:59:22.747Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T06:59:22.791Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T06:59:27.753Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T06:59:27.790Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T06:59:32.781Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T06:59:32.820Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T06:59:37.745Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T06:59:37.791Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T06:59:42.751Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T06:59:42.790Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T06:59:47.754Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T06:59:47.790Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T06:59:50.798Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T06:59:52.746Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T06:59:52.790Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T06:59:57.758Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T06:59:57.859Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T07:00:02.751Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T07:00:02.793Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T07:00:07.813Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T07:00:07.820Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T07:00:12.752Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T07:00:12.796Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T07:00:17.778Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T07:00:17.791Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T07:00:20.798Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T07:00:22.756Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T07:00:22.792Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T07:00:27.756Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at sE.evaluateImpl (https://ocios.app/assets/index-CBMVRKCK.js:10:143136)
+    at sE.evaluateWithDepth (https://ocios.app/assets/index-CBMVRKCK.js:10:140846)
+    at sE.evaluate (https://ocios.app/assets/index-CBMVRKCK.js:10:140729)
+    at AP.readLoop (https://ocios.app/assets/index-CBMVRKCK.js:10:158799)
+[2026-09-02T07:00:27.756Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T07:00:27.811Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at sE.evaluateImpl (https://ocios.app/assets/index-CBMVRKCK.js:10:143136)
+    at sE.evaluateWithDepth (https://ocios.app/assets/index-CBMVRKCK.js:10:140846)
+    at sE.evaluate (https://ocios.app/assets/index-CBMVRKCK.js:10:140729)
+    at AP.readLoop (https://ocios.app/assets/index-CBMVRKCK.js:10:158799)
+[2026-09-02T07:00:27.812Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T07:00:32.741Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at sE.evaluateImpl (https://ocios.app/assets/index-CBMVRKCK.js:10:143136)
+    at sE.evaluateWithDepth (https://ocios.app/assets/index-CBMVRKCK.js:10:140846)
+    at sE.evaluate (https://ocios.app/assets/index-CBMVRKCK.js:10:140729)
+    at AP.readLoop (https://ocios.app/assets/index-CBMVRKCK.js:10:158799)
+[2026-09-02T07:00:32.789Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at sE.evaluateImpl (https://ocios.app/assets/index-CBMVRKCK.js:10:143136)
+    at sE.evaluateWithDepth (https://ocios.app/assets/index-CBMVRKCK.js:10:140846)
+    at sE.evaluate (https://ocios.app/assets/index-CBMVRKCK.js:10:140729)
+    at AP.readLoop (https://ocios.app/assets/index-CBMVRKCK.js:10:158799)
+[2026-09-02T07:00:37.741Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at sE.evaluateImpl (https://ocios.app/assets/index-CBMVRKCK.js:10:143136)
+    at sE.evaluateWithDepth (https://ocios.app/assets/index-CBMVRKCK.js:10:140846)
+    at sE.evaluate (https://ocios.app/assets/index-CBMVRKCK.js:10:140729)
+    at AP.readLoop (https://ocios.app/assets/index-CBMVRKCK.js:10:158799)
+[2026-09-02T07:00:37.791Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at sE.evaluateImpl (https://ocios.app/assets/index-CBMVRKCK.js:10:143136)
+    at sE.evaluateWithDepth (https://ocios.app/assets/index-CBMVRKCK.js:10:140846)
+    at sE.evaluate (https://ocios.app/assets/index-CBMVRKCK.js:10:140729)
+    at AP.readLoop (https://ocios.app/assets/index-CBMVRKCK.js:10:158799)
+[2026-09-02T07:00:42.753Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at sE.evaluateImpl (https://ocios.app/assets/index-CBMVRKCK.js:10:143136)
+    at sE.evaluateWithDepth (https://ocios.app/assets/index-CBMVRKCK.js:10:140846)
+    at sE.evaluate (https://ocios.app/assets/index-CBMVRKCK.js:10:140729)
+    at AP.readLoop (https://ocios.app/assets/index-CBMVRKCK.js:10:158799)
+[2026-09-02T07:00:42.792Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at sE.evaluateImpl (https://ocios.app/assets/index-CBMVRKCK.js:10:143136)
+    at sE.evaluateWithDepth (https://ocios.app/assets/index-CBMVRKCK.js:10:140846)
+    at sE.evaluate (https://ocios.app/assets/index-CBMVRKCK.js:10:140729)
+    at AP.readLoop (https://ocios.app/assets/index-CBMVRKCK.js:10:158799)
+[2026-09-02T07:00:47.744Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at sE.evaluateImpl (https://ocios.app/assets/index-CBMVRKCK.js:10:143136)
+    at sE.evaluateWithDepth (https://ocios.app/assets/index-CBMVRKCK.js:10:140846)
+    at sE.evaluate (https://ocios.app/assets/index-CBMVRKCK.js:10:140729)
+    at AP.readLoop (https://ocios.app/assets/index-CBMVRKCK.js:10:158799)
+[2026-09-02T07:00:47.793Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at sE.evaluateImpl (https://ocios.app/assets/index-CBMVRKCK.js:10:143136)
+    at sE.evaluateWithDepth (https://ocios.app/assets/index-CBMVRKCK.js:10:140846)
+    at sE.evaluate (https://ocios.app/assets/index-CBMVRKCK.js:10:140729)
+    at AP.readLoop (https://ocios.app/assets/index-CBMVRKCK.js:10:158799)
+[2026-09-02T07:00:50.807Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at sE.evaluateImpl (https://ocios.app/assets/index-CBMVRKCK.js:10:143136)
+    at sE.evaluateWithDepth (https://ocios.app/assets/index-CBMVRKCK.js:10:140846)
+    at sE.evaluate (https://ocios.app/assets/index-CBMVRKCK.js:10:140729)
+    at AP.readLoop (https://ocios.app/assets/index-CBMVRKCK.js:10:158799)
+[2026-09-02T07:00:50.808Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T07:00:52.750Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at sE.evaluateImpl (https://ocios.app/assets/index-CBMVRKCK.js:10:143136)
+    at sE.evaluateWithDepth (https://ocios.app/assets/index-CBMVRKCK.js:10:140846)
+    at sE.evaluate (https://ocios.app/assets/index-CBMVRKCK.js:10:140729)
+    at AP.readLoop (https://ocios.app/assets/index-CBMVRKCK.js:10:158799)
+[2026-09-02T07:00:52.787Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at sE.evaluateImpl (https://ocios.app/assets/index-CBMVRKCK.js:10:143136)
+    at sE.evaluateWithDepth (https://ocios.app/assets/index-CBMVRKCK.js:10:140846)
+    at sE.evaluate (https://ocios.app/assets/index-CBMVRKCK.js:10:140729)
+    at AP.readLoop (https://ocios.app/assets/index-CBMVRKCK.js:10:158799)
+[2026-09-02T07:00:57.752Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at sE.evaluateImpl (https://ocios.app/assets/index-CBMVRKCK.js:10:143136)
+    at sE.evaluateWithDepth (https://ocios.app/assets/index-CBMVRKCK.js:10:140846)
+    at sE.evaluate (https://ocios.app/assets/index-CBMVRKCK.js:10:140729)
+    at AP.readLoop (https://ocios.app/assets/index-CBMVRKCK.js:10:158799)
+[2026-09-02T07:00:57.788Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at sE.evaluateImpl (https://ocios.app/assets/index-CBMVRKCK.js:10:143136)
+    at sE.evaluateWithDepth (https://ocios.app/assets/index-CBMVRKCK.js:10:140846)
+    at sE.evaluate (https://ocios.app/assets/index-CBMVRKCK.js:10:140729)
+    at AP.readLoop (https://ocios.app/assets/index-CBMVRKCK.js:10:158799)
+[2026-09-02T07:01:02.744Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at sE.evaluateImpl (https://ocios.app/assets/index-CBMVRKCK.js:10:143136)
+    at sE.evaluateWithDepth (https://ocios.app/assets/index-CBMVRKCK.js:10:140846)
+    at sE.evaluate (https://ocios.app/assets/index-CBMVRKCK.js:10:140729)
+    at AP.readLoop (https://ocios.app/assets/index-CBMVRKCK.js:10:158799)
+[2026-09-02T07:01:02.851Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at sE.evaluateImpl (https://ocios.app/assets/index-CBMVRKCK.js:10:143136)
+    at sE.evaluateWithDepth (https://ocios.app/assets/index-CBMVRKCK.js:10:140846)
+    at sE.evaluate (https://ocios.app/assets/index-CBMVRKCK.js:10:140729)
+    at AP.readLoop (https://ocios.app/assets/index-CBMVRKCK.js:10:158799)
+[2026-09-02T07:01:07.743Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at sE.evaluateImpl (https://ocios.app/assets/index-CBMVRKCK.js:10:143136)
+    at sE.evaluateWithDepth (https://ocios.app/assets/index-CBMVRKCK.js:10:140846)
+    at sE.evaluate (https://ocios.app/assets/index-CBMVRKCK.js:10:140729)
+    at AP.readLoop (https://ocios.app/assets/index-CBMVRKCK.js:10:158799)
+[2026-09-02T07:01:07.789Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at sE.evaluateImpl (https://ocios.app/assets/index-CBMVRKCK.js:10:143136)
+    at sE.evaluateWithDepth (https://ocios.app/assets/index-CBMVRKCK.js:10:140846)
+    at sE.evaluate (https://ocios.app/assets/index-CBMVRKCK.js:10:140729)
+    at AP.readLoop (https://ocios.app/assets/index-CBMVRKCK.js:10:158799)
+[2026-09-02T07:01:12.814Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at sE.evaluateImpl (https://ocios.app/assets/index-CBMVRKCK.js:10:143136)
+    at sE.evaluateWithDepth (https://ocios.app/assets/index-CBMVRKCK.js:10:140846)
+    at sE.evaluate (https://ocios.app/assets/index-CBMVRKCK.js:10:140729)
+    at AP.readLoop (https://ocios.app/assets/index-CBMVRKCK.js:10:158799)
+[2026-09-02T07:01:12.827Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at sE.evaluateImpl (https://ocios.app/assets/index-CBMVRKCK.js:10:143136)
+    at sE.evaluateWithDepth (https://ocios.app/assets/index-CBMVRKCK.js:10:140846)
+    at sE.evaluate (https://ocios.app/assets/index-CBMVRKCK.js:10:140729)
+    at AP.readLoop (https://ocios.app/assets/index-CBMVRKCK.js:10:158799)
+[2026-09-02T07:01:17.746Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at sE.evaluateImpl (https://ocios.app/assets/index-CBMVRKCK.js:10:143136)
+    at sE.evaluateWithDepth (https://ocios.app/assets/index-CBMVRKCK.js:10:140846)
+    at sE.evaluate (https://ocios.app/assets/index-CBMVRKCK.js:10:140729)
+    at AP.readLoop (https://ocios.app/assets/index-CBMVRKCK.js:10:158799)
+[2026-09-02T07:01:17.844Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at sE.evaluateImpl (https://ocios.app/assets/index-CBMVRKCK.js:10:143136)
+    at sE.evaluateWithDepth (https://ocios.app/assets/index-CBMVRKCK.js:10:140846)
+    at sE.evaluate (https://ocios.app/assets/index-CBMVRKCK.js:10:140729)
+    at AP.readLoop (https://ocios.app/assets/index-CBMVRKCK.js:10:158799)
+[2026-09-02T07:01:20.808Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at sE.evaluateImpl (https://ocios.app/assets/index-CBMVRKCK.js:10:143136)
+    at sE.evaluateWithDepth (https://ocios.app/assets/index-CBMVRKCK.js:10:140846)
+    at sE.evaluate (https://ocios.app/assets/index-CBMVRKCK.js:10:140729)
+    at AP.readLoop (https://ocios.app/assets/index-CBMVRKCK.js:10:158799)
+[2026-09-02T07:01:22.789Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at sE.evaluateImpl (https://ocios.app/assets/index-CBMVRKCK.js:10:143136)
+    at sE.evaluateWithDepth (https://ocios.app/assets/index-CBMVRKCK.js:10:140846)
+    at sE.evaluate (https://ocios.app/assets/index-CBMVRKCK.js:10:140729)
+    at AP.readLoop (https://ocios.app/assets/index-CBMVRKCK.js:10:158799)
+[2026-09-02T07:01:22.793Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at sE.evaluateImpl (https://ocios.app/assets/index-CBMVRKCK.js:10:143136)
+    at sE.evaluateWithDepth (https://ocios.app/assets/index-CBMVRKCK.js:10:140846)
+    at sE.evaluate (https://ocios.app/assets/index-CBMVRKCK.js:10:140729)
+    at AP.readLoop (https://ocios.app/assets/index-CBMVRKCK.js:10:158799)
+[2026-09-02T07:01:27.743Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at sE.evaluateImpl (https://ocios.app/assets/index-CBMVRKCK.js:10:143136)
+    at sE.evaluateWithDepth (https://ocios.app/assets/index-CBMVRKCK.js:10:140846)
+    at sE.evaluate (https://ocios.app/assets/index-CBMVRKCK.js:10:140729)
+    at AP.readLoop (https://ocios.app/assets/index-CBMVRKCK.js:10:158799)
+[2026-09-02T07:01:27.789Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at sE.evaluateImpl (https://ocios.app/assets/index-CBMVRKCK.js:10:143136)
+    at sE.evaluateWithDepth (https://ocios.app/assets/index-CBMVRKCK.js:10:140846)
+    at sE.evaluate (https://ocios.app/assets/index-CBMVRKCK.js:10:140729)
+    at AP.readLoop (https://ocios.app/assets/index-CBMVRKCK.js:10:158799)
+[2026-09-02T07:01:32.751Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at sE.evaluateImpl (https://ocios.app/assets/index-CBMVRKCK.js:10:143136)
+    at sE.evaluateWithDepth (https://ocios.app/assets/index-CBMVRKCK.js:10:140846)
+    at sE.evaluate (https://ocios.app/assets/index-CBMVRKCK.js:10:140729)
+    at AP.readLoop (https://ocios.app/assets/index-CBMVRKCK.js:10:158799)
+[2026-09-02T07:01:32.789Z] [debug] A matter read failed: Error: Durable Object reset because its code was updated.
+    at sE.evaluateImpl (https://ocios.app/assets/index-CBMVRKCK.js:10:143136)
+    at sE.evaluateWithDepth (https://ocios.app/assets/index-CBMVRKCK.js:10:140846)
+    at sE.evaluate (https://ocios.app/assets/index-CBMVRKCK.js:10:140729)
+    at AP.readLoop (https://ocios.app/assets/index-CBMVRKCK.js:10:158799)

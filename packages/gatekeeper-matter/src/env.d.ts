@@ -15,6 +15,7 @@ declare namespace Cloudflare {
     READER_PROVIDER?: string;
     /** Workers AI model id for the reading lane. */
     READER_MODEL?: string;
+    KNOWLEDGE_MODEL?: string;
     /** Firm-level OpenRouter key for the reading lane (a Worker secret, never in config). */
     OPENROUTER_API_KEY?: string;
     /** Public origin of the deployment (e.g. https://ocios.app); empty means relative links. Set by deploy.ts. */
