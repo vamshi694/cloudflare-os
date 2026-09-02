@@ -838,3 +838,41 @@
   - label prop: <Input label='Email' />
   - aria-label: <Input aria-label='Email address' />
   - aria-labelledby for custom label association
+[2026-09-02T14:17:01.157Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T14:17:01.228Z] [warning] [Kumo Input]: Input must have an accessible name. Provide either:
+  - label prop: <Input label='Email' />
+  - aria-label: <Input aria-label='Email address' />
+  - aria-labelledby for custom label association
+[2026-09-02T14:17:03.599Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-Qzs0D5Ay.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-Qzs0D5Ay.js:10:158916)
+[2026-09-02T14:17:18.586Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-Qzs0D5Ay.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-Qzs0D5Ay.js:10:158916)
+[2026-09-02T14:17:33.593Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-Qzs0D5Ay.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-Qzs0D5Ay.js:10:158916)
+[2026-09-02T14:17:48.869Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-Qzs0D5Ay.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-Qzs0D5Ay.js:10:158916)
+[2026-09-02T14:18:03.593Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-Qzs0D5Ay.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-Qzs0D5Ay.js:10:158916)
+[2026-09-02T14:18:18.603Z] [error] A matter read failed: Error: no such table: gap_items: SQLITE_ERROR
+    at WE.evaluateImpl (https://ocios.app/assets/index-Qzs0D5Ay.js:10:143253)
+    at WE.evaluateWithDepth (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140963)
+    at WE.evaluate (https://ocios.app/assets/index-Qzs0D5Ay.js:10:140846)
+    at uP.readLoop (https://ocios.app/assets/index-Qzs0D5Ay.js:10:158916)

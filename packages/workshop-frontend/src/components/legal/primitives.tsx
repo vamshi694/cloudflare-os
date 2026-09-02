@@ -365,9 +365,11 @@ export function LegalDialog({
           />
         </div>
         {children && (
-          {/* The body scrolls; the header and the footer stay in reach on a short screen, so the
-              action is never below the fold (caught live: a 720px viewport hid "Open the matter"). */}
-          <div className={size === 'lg' ? 'max-h-[70vh] overflow-y-auto px-5 py-4' : 'max-h-[calc(88vh-150px)] overflow-y-auto px-5 py-4'}>
+          <div
+            // The body scrolls; the header and the footer stay in reach on a short screen, so the
+            // action is never below the fold (caught live: a 720px viewport hid "Open the matter").
+            className={size === 'lg' ? 'max-h-[70vh] overflow-y-auto px-5 py-4' : 'max-h-[calc(88vh-150px)] overflow-y-auto px-5 py-4'}
+          >
             {children}
           </div>
         )}
