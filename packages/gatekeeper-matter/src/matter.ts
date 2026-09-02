@@ -354,19 +354,24 @@ class DecisionsImpl extends RpcTarget implements MatterDecisions {
 
 @validateRpc()
 export class MatterSessionImpl extends RpcTarget implements MatterSession {
-  readonly files: MatterFiles;
-  readonly evidence: MatterEvidence;
-  readonly desk: MatterDesk;
-  readonly decisions: MatterDecisions;
+  readonly #files: FilesImpl;
+  readonly #evidence: EvidenceImpl;
+  readonly #desk: DeskImpl;
+  readonly #decisions: DecisionsImpl;
 
   constructor(private readonly q: ObservationQueue, private readonly store: DurableObjectStub<MatterStore>,
               env: Cloudflare.Env, matterId: string) {
     super();
-    this.files = new FilesImpl(q, store, env, matterId);
-    this.evidence = new EvidenceImpl(q, store, env, matterId);
-    this.desk = new DeskImpl(q, store);
-    this.decisions = new DecisionsImpl(q, store);
+    this.#files = new FilesImpl(q, store, env, matterId);
+    this.#evidence = new EvidenceImpl(q, store, env, matterId);
+    this.#desk = new DeskImpl(q, store);
+    this.#decisions = new DecisionsImpl(q, store);
   }
+
+  async files(): Promise<MatterFiles> { return this.#files; }
+  async evidence(): Promise<MatterEvidence> { return this.#evidence; }
+  async desk(): Promise<MatterDesk> { return this.#desk; }
+  async decisions(): Promise<MatterDecisions> { return this.#decisions; }
 
   async overview(): Promise<MatterOverview> {
     const o = await this.store.overview();

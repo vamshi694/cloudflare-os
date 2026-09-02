@@ -240,8 +240,12 @@ export interface MatterSession {
   note(summary: string): Promise<void>;
   /** Set the visa or filing type once the firm has decided it. */
   setCaseType(caseType: string): Promise<void>;
-  readonly files: MatterFiles;
-  readonly evidence: MatterEvidence;
-  readonly desk: MatterDesk;
-  readonly decisions: MatterDecisions;
+  /** The documents on the record. Call as `await env.MATTER.files()` then use the returned object, or chain: `env.MATTER.files().list()`. */
+  files(): Promise<MatterFiles>;
+  /** The facts read from the record with their verbatim sources. */
+  evidence(): Promise<MatterEvidence>;
+  /** The firm's working files for this matter (plan.md, notes). */
+  desk(): Promise<MatterDesk>;
+  /** Questions for the attorney. */
+  decisions(): Promise<MatterDecisions>;
 }
