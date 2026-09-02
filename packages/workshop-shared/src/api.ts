@@ -1137,7 +1137,8 @@ export type CloudflareAccountOption = {
 };
 
 /** Supported AI providers. */
-export type AiModelProvider = "openai" | "anthropic" | "google" | "cloudflare" | "ollama";
+export type AiModelProvider =
+  "openai" | "anthropic" | "google" | "cloudflare" | "ollama" | "openrouter";
 
 /** Information about the AI gateway configuration. Returned by `AuthenticatedApi.getAiConfig()`. */
 export type AiGatewayInfo = {
@@ -1220,6 +1221,14 @@ export const SUGGESTED_MODELS: Record<
     "gemini-3.6-flash": {name: "Gemini 3.6 Flash", contextWindow: 1048576},
   },
   "ollama": {
+  },
+  // OpenRouter model ids are "<vendor>/<model>". Context windows per openrouter.ai/models.
+  "openrouter": {
+    "anthropic/claude-sonnet-5": {name: "Claude Sonnet 5 (OpenRouter)", contextWindow: 1000000},
+    "anthropic/claude-opus-5": {name: "Claude Opus 5 (OpenRouter)", contextWindow: 1000000},
+    "x-ai/grok-4.5": {name: "Grok 4.5 (OpenRouter)", contextWindow: 1000000},
+    "deepseek/deepseek-v4-pro": {name: "DeepSeek V4 Pro (OpenRouter)", contextWindow: 1048576},
+    "qwen/qwen3.5-max": {name: "Qwen 3.5 Max (OpenRouter)", contextWindow: 262144},
   },
 };
 

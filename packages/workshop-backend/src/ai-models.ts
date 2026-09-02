@@ -134,6 +134,7 @@ function catalogModel(provider: AiModelConfig["provider"], modelId: string): Mod
     case "google": return (GOOGLE_MODELS as Record<string, Model<Api>>)[modelId];
     case "cloudflare": return (CLOUDFLARE_WORKERS_AI_MODELS as Record<string, Model<Api>>)[modelId];
     case "ollama": return undefined;
+    case "openrouter": return undefined;
     default: return undefined;
   }
 }
@@ -635,6 +636,25 @@ function getModelDirect(config: AiModelConfig, sessionAffinity?: string): ModelH
           ...window,
           thinkingLevelMap: catalog?.thinkingLevelMap,
           compat: catalog?.compat,
+        },
+        apiKey: config.apiToken,
+        sessionAffinity,
+      });
+    case "openrouter":
+      // OpenRouter fronts every vendor behind one OpenAI-compatible chat-completions endpoint.
+      // Cost is not in pi's catalog for these ids; the gateway/log path reports it after the fact.
+      return makeHandle({
+        model: {
+          id: config.model,
+          name: config.model,
+          api: "openai-completions",
+          provider: "openrouter",
+          baseUrl: `${stripTrailingSlashes(config.apiUrl ?? "https://openrouter.ai/api")
+              .replace(/\/v1$/, "")}/v1`,
+          reasoning: true,
+          input: ["text", "image"],
+          cost: ZERO_COST,
+          ...window,
         },
         apiKey: config.apiToken,
         sessionAffinity,
