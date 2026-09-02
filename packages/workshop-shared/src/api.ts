@@ -26,6 +26,7 @@
 import { RpcCompatible, RpcStub, RpcTarget } from "capnweb";
 import { AccountDescription, ActionKind, ActionDescription, AvatarImage, GatekeeperUiFrame, ObservationDescription, ResourceDescription, ResourceConfiguratorFrame, SupportedResource, VendorDescription, HookDescription } from "./gatekeeper.js";
 import type { CodeChange } from "./code-change.js";
+import type { LegalDesk } from "./legal.js";
 import type { UiFeatureFlags } from "./feature-flags.js";
 
 export const SERVICE_SALT = new Uint8Array([
@@ -717,6 +718,18 @@ export interface AuthenticatedApi extends RpcTarget {
    * managed here; it stays env-var driven.)
    */
   getAdminApi(): Promise<RpcStub<AdminApi> | null>;
+
+  /**
+   * Legal OS: the lawyer's desk over their matters, minted by the Matters gatekeeper account (which
+   * is provisioned on first use). Null when the Matters gatekeeper is disabled on this deployment.
+   */
+  getLegalDesk(): Promise<RpcStub<LegalDesk> | null>;
+
+  /**
+   * Legal OS: the workspace whose chat is this matter's conversation. Creates it on first use,
+   * binds the matter into it, records it on the matter, and returns its id.
+   */
+  ensureMatterWorkspace(matterId: string): Promise<string>;
 
   // TODO:
   // - Edit permissions on a connected account.

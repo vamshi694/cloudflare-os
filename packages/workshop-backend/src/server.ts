@@ -1,6 +1,7 @@
 import { RpcStub, RpcTarget, newHttpBatchRpcResponse, newWebSocketRpcSession, RpcSessionOptions } from "capnweb";
 import { validateRpc } from "capnweb-validate";
 import type { JWTPayload } from "jose";
+import type { LegalDesk, MatterDesk } from '@gadgets/workshop-shared/legal';
 import { PublicApi, AuthenticatedApi, Overseer, GadgetMetadataWithTimestamps, AiChatAuthorInfo, AiModelConfig, AiGatewayInfo, AiModelProvider, ConnectedAccountsSubscriber, ConnectedAccountsFilter, GatekeeperVendorFilter, ObserverConfigCallback, BlueprintLibrarySummary, BlueprintPublicInfo, BlueprintUserSummary, BlueprintBindingAssignment, AgentSpawnerConfig, WorkpieceId, BLUEPRINT_SCREENSHOT_PATH_PREFIX, BLUEPRINT_SCREENSHOT_R2_PREFIX, blueprintScreenshotUrl, ServerConfig, CloudflareUsageInfo, CloudflareAccountOption, LoginAttempt, GatekeeperAppInfo, AdminApi, GatekeeperVendorInfo, OutputFormatOffer, ListOutputsResult, createOpenGadgetError, getOpenGadgetErrorCode, OPEN_GADGET_ERROR_CODES, AUTH_ERROR_CODES, createAuthError } from '@gadgets/workshop-shared/api';
 import type { UiFeatureFlags } from "@gadgets/workshop-shared/feature-flags";
 import { getServerConfig } from "./deployment-config.js";
@@ -587,6 +588,36 @@ class AuthenticatedApiImpl extends RpcTarget implements AuthenticatedApi {
 
   async amIAdmin(): Promise<boolean> {
     return this.#isAdmin();
+  }
+
+  // --- Legal OS ---
+
+  async getLegalDesk(): Promise<RpcStub<LegalDesk> | null> {
+    // @ts-expect-error Cap'n Web RPC stubs and native RPC targets are compatible but the type
+    //     system doesn't know this.
+    return this.#user.startLegalDesk();
+  }
+
+  /**
+   * The workspace that is this matter's conversation: created once, titled after the matter, with
+   * the matter bound in as its first connection, and recorded on the matter itself.
+   */
+  async ensureMatterWorkspace(matterId: string): Promise<string> {
+    let accountId = await this.#user.matterAccountId();
+    let desk = await this.#user.startLegalDesk();
+    if (accountId === null || !desk) throw new Error("The Matters gatekeeper is not available on this deployment.");
+    // The stub's mapped types lose the nested RpcTarget's methods; the wire shape is MatterDesk.
+    let matter = await desk.openMatter(matterId) as unknown as MatterDesk;
+    let overview = await matter.overview();
+    if (overview.workspaceId) return overview.workspaceId;
+    let url = await desk.matterResourceUrl(matterId);
+    let id = this.overseers.newUniqueId().toString();
+    await this.#user.newGadget(id, `${overview.title} (${overview.clientName})`);
+    let overseer = await this.openGadget(id);
+    if (!overseer) throw new Error("Open failed despite newly-created workspace?");
+    await overseer.newGatekeeper(accountId, url);
+    await matter.setWorkspace(id);
+    return id;
   }
 
   async getAdminApi(): Promise<RpcStub<AdminApi> | null> {

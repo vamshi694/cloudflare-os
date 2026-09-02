@@ -89,10 +89,10 @@ async function callReader(env: Cloudflare.Env, filename: string, windowText: str
     (windows > 1 ? `This is window ${windowIndex + 1} of ${windows} of the document.\n` : "") +
     `\n${fence(windowText, nonce)}`;
   const key = env.OPENROUTER_API_KEY;
-  if (!key) {
-    // No firm key yet: read on Workers AI so the record still gets built. The model is weaker at
-    // long documents, so this is a bootstrap path, not the production lane.
-    const out = await env.AI.run(WORKERS_AI_READER as Parameters<Ai["run"]>[0], {
+  // Workers AI is the default reading lane (owner decision 2026-09-02); OpenRouter only when the
+  // deployment sets READER_PROVIDER=openrouter and a key is present.
+  if (env.READER_PROVIDER !== "openrouter" || !key) {
+    const out = await env.AI.run((env.READER_MODEL || WORKERS_AI_READER) as Parameters<Ai["run"]>[0], {
       messages: [{ role: "system", content: UNDERSTAND_SYSTEM }, { role: "user", content: user }],
       max_tokens: 8192,
       response_format: { type: "json_object" },
@@ -104,7 +104,7 @@ async function callReader(env: Cloudflare.Env, filename: string, windowText: str
     try {
       return parseUnderstanding(raw, windowText);
     } catch (error) {
-      console.error(`[ingest] reader reply unparseable (workers-ai ${WORKERS_AI_READER}): ${raw.slice(0, 400)}`);
+      console.error(`[ingest] reader reply unparseable (workers-ai ${env.READER_MODEL || WORKERS_AI_READER}): ${raw.slice(0, 400)}`);
       throw error;
     }
   }

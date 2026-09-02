@@ -22,6 +22,8 @@ import TYPES_CODE from "./types.txt";
 import { MatterStore, type MatterMeta } from "./store.js";
 import { normalizePath, parseMatterUrl } from "./pure.js";
 import { MatterConfiguratorUI } from "./configurator.js";
+import { LegalDeskImpl } from "./desk.js";
+import type { LegalDesk } from "@gadgets/workshop-shared/legal";
 import MATTER_CONFIGURATOR_HTML from "./generated/matter-configurator-ui.txt";
 
 export const MATTER_ICON = {
@@ -144,6 +146,11 @@ export class MatterUser extends WorkerEntrypoint<Cloudflare.Env, AccountProps> i
   async startResourceConfigurator(resourceUrlPattern: string): Promise<ResourceConfiguratorFrame> {
     if (resourceUrlPattern !== MATTER_RESOURCE.urlPattern) throw new Error(`Unknown resource type: ${resourceUrlPattern}`);
     return { iframeHtml: MATTER_CONFIGURATOR_HTML, ui: new RpcStub(new MatterConfiguratorUI(this.#account())) };
+  }
+
+  /** Legal OS: the lawyer's own desk over their matters (see AuthenticatedApi.getLegalDesk). */
+  async startLegalDesk(): Promise<LegalDesk> {
+    return new LegalDeskImpl(this.#account(), this.env);
   }
 
   async ensureResources(_patterns: string[]): Promise<{ url?: string }> { return {}; }

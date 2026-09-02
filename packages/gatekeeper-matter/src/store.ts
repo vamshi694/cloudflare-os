@@ -19,6 +19,8 @@ export type MatterMeta = {
   caseType: string | null;
   clientName: string;
   ownerAccountId: string;
+  /** The workspace whose chat is this matter's conversation, once the lawyer opened one. */
+  workspaceId?: string | null;
   status: "open" | "paused" | "closed";
   createdAt: string;
 };
@@ -177,6 +179,11 @@ export class MatterStore extends DurableObject<Cloudflare.Env> {
     const meta = await this.#requireMeta();
     this.#metaSet("matter", JSON.stringify({ ...meta, status }));
     this.#log(actor, status === "paused" ? "Stopped all work on the matter." : `Matter is now ${status}.`);
+  }
+
+  async setWorkspace(workspaceId: string): Promise<void> {
+    const meta = await this.#requireMeta();
+    this.#metaSet("matter", JSON.stringify({ ...meta, workspaceId }));
   }
 
   async note(actor: string, summary: string): Promise<void> {

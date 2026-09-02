@@ -1,4 +1,5 @@
 import { RpcStub } from "capnweb";
+import type { LegalDesk } from '@gadgets/workshop-shared/legal';
 import { GadgetMetadataWithTimestamps, AiChatAuthorInfo, AiModelConfig, SUGGESTED_MODELS, CollaboratorRole, ConnectedAccountsSubscriber, ConnectedAccountsFilter, GatekeeperVendorFilter, GadgetMetadata, BlueprintMetadata, BlueprintLibrarySummary, BlueprintSource, BlueprintUserSummary, BLUEPRINT_SCREENSHOT_R2_PREFIX, GatekeeperVendorInfo, BlueprintOutput, OutputSummary, WorkpieceId, ListOutputsResult, AUTH_ERROR_CODES, createAuthError } from '@gadgets/workshop-shared/api';
 import { Gatekeeper, GatekeeperUser, GatekeeperUserVerifier, GatekeeperVendor, AccountDescription, VendorDescription, GatekeeperConnectCallback, SupportedResource, ResourceConfiguratorFrame, AppUiContext, GatekeeperUiFrame } from "@gadgets/workshop-shared/gatekeeper";
 import { shouldAutoProvisionAccount, ambientGatekeeperMode } from "./provisioning-policy.js";
@@ -1366,6 +1367,33 @@ export class UserDurableObject extends DurableObject<Cloudflare.Env> {
     let record = this.storage.connectedAccounts.get(accountId);
     if (!record?.description.providesUi) throw new Error("No such app.");
     return (record.account as unknown as SingletonAccountStub).startAppUi(context);
+  }
+
+  // --- Legal OS ---
+
+  /** The user's Matters account, provisioning it on first use. Null when the vendor is disabled. */
+  async #matterAccount(): Promise<ConnectedAccountRecord | null> {
+    const vendorId = "matter";
+    if (!this.vendors.has(vendorId)) return null;
+    if (!this.#hasAccountForVendor(vendorId)) {
+      try { await this.provisionAmbientAccount(vendorId); } catch { return null; }
+    }
+    for (let record of this.storage.connectedAccounts.list()) {
+      if (record.vendorId === vendorId) return record;
+    }
+    return null;
+  }
+
+  async startLegalDesk(): Promise<RpcStub<LegalDesk> | null> {
+    const record = await this.#matterAccount();
+    if (!record) return null;
+    return (record.account as unknown as { startLegalDesk(): Promise<RpcStub<LegalDesk>> }).startLegalDesk();
+  }
+
+  /** The connected-account id of the user's Matters account (provisioned on first use), or null. */
+  async matterAccountId(): Promise<number | null> {
+    const record = await this.#matterAccount();
+    return record?.id ?? null;
   }
 
   async ensureAccountResources(accountId: number, resourceUrlPatterns: string[]): Promise<{url?: string}> {

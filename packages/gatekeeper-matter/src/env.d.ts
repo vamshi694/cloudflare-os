@@ -9,8 +9,12 @@ declare namespace Cloudflare {
     /** One message per uploaded document; consumed by this worker's queue() handler. */
     INGEST_QUEUE: Queue<import("./store.js").IngestMessage>;
     AI: Ai;
-    /** OpenRouter model for the reading lane (a var). */
+    /** OpenRouter model for the reading lane (a var), used only when READER_PROVIDER=openrouter. */
     UNDERSTAND_MODEL: string;
+    /** "workers-ai" (default) or "openrouter". */
+    READER_PROVIDER?: string;
+    /** Workers AI model id for the reading lane. */
+    READER_MODEL?: string;
     /** Firm-level OpenRouter key for the reading lane (a Worker secret, never in config). */
     OPENROUTER_API_KEY?: string;
     /** The per-matter case store. */
