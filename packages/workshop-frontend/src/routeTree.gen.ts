@@ -15,6 +15,7 @@ import { Route as BlueprintsRouteImport } from './routes/blueprints'
 import { Route as ContextRouteImport } from './routes/context'
 import { Route as ExploreRouteImport } from './routes/explore'
 import { Route as GatekeepersRouteImport } from './routes/gatekeepers'
+import { Route as MattersRouteImport } from './routes/matters'
 import { Route as OutputsRouteImport } from './routes/outputs'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as ProvidersRouteImport } from './routes/providers'
@@ -23,6 +24,7 @@ import { Route as WorkspacesRouteImport } from './routes/workspaces'
 import { Route as BlueprintIdRouteImport } from './routes/blueprint.$id'
 import { Route as GadgetIdRouteImport } from './routes/gadget.$id'
 import { Route as GatekeepersAppIdRouteImport } from './routes/gatekeepers_.$appId'
+import { Route as MatterIdRouteImport } from './routes/matter.$id'
 import { Route as WorkspaceIdRouteImport } from './routes/workspace.$id'
 
 const IndexRoute = IndexRouteImport.update({
@@ -53,6 +55,11 @@ const ExploreRoute = ExploreRouteImport.update({
 const GatekeepersRoute = GatekeepersRouteImport.update({
   id: '/gatekeepers',
   path: '/gatekeepers',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MattersRoute = MattersRouteImport.update({
+  id: '/matters',
+  path: '/matters',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OutputsRoute = OutputsRouteImport.update({
@@ -95,6 +102,11 @@ const GatekeepersAppIdRoute = GatekeepersAppIdRouteImport.update({
   path: '/gatekeepers/$appId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MatterIdRoute = MatterIdRouteImport.update({
+  id: '/matter/$id',
+  path: '/matter/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const WorkspaceIdRoute = WorkspaceIdRouteImport.update({
   id: '/workspace/$id',
   path: '/workspace/$id',
@@ -108,6 +120,7 @@ export interface FileRoutesByFullPath {
   '/context': typeof ContextRoute
   '/explore': typeof ExploreRoute
   '/gatekeepers': typeof GatekeepersRoute
+  '/matters': typeof MattersRoute
   '/outputs': typeof OutputsRoute
   '/profile': typeof ProfileRoute
   '/providers': typeof ProvidersRoute
@@ -116,6 +129,7 @@ export interface FileRoutesByFullPath {
   '/blueprint/$id': typeof BlueprintIdRoute
   '/gadget/$id': typeof GadgetIdRoute
   '/gatekeepers/$appId': typeof GatekeepersAppIdRoute
+  '/matter/$id': typeof MatterIdRoute
   '/workspace/$id': typeof WorkspaceIdRoute
 }
 export interface FileRoutesByTo {
@@ -125,6 +139,7 @@ export interface FileRoutesByTo {
   '/context': typeof ContextRoute
   '/explore': typeof ExploreRoute
   '/gatekeepers': typeof GatekeepersRoute
+  '/matters': typeof MattersRoute
   '/outputs': typeof OutputsRoute
   '/profile': typeof ProfileRoute
   '/providers': typeof ProvidersRoute
@@ -133,6 +148,7 @@ export interface FileRoutesByTo {
   '/blueprint/$id': typeof BlueprintIdRoute
   '/gadget/$id': typeof GadgetIdRoute
   '/gatekeepers/$appId': typeof GatekeepersAppIdRoute
+  '/matter/$id': typeof MatterIdRoute
   '/workspace/$id': typeof WorkspaceIdRoute
 }
 export interface FileRoutesById {
@@ -143,6 +159,7 @@ export interface FileRoutesById {
   '/context': typeof ContextRoute
   '/explore': typeof ExploreRoute
   '/gatekeepers': typeof GatekeepersRoute
+  '/matters': typeof MattersRoute
   '/outputs': typeof OutputsRoute
   '/profile': typeof ProfileRoute
   '/providers': typeof ProvidersRoute
@@ -151,6 +168,7 @@ export interface FileRoutesById {
   '/blueprint/$id': typeof BlueprintIdRoute
   '/gadget/$id': typeof GadgetIdRoute
   '/gatekeepers_/$appId': typeof GatekeepersAppIdRoute
+  '/matter/$id': typeof MatterIdRoute
   '/workspace/$id': typeof WorkspaceIdRoute
 }
 export interface FileRouteTypes {
@@ -162,6 +180,7 @@ export interface FileRouteTypes {
     | '/context'
     | '/explore'
     | '/gatekeepers'
+    | '/matters'
     | '/outputs'
     | '/profile'
     | '/providers'
@@ -170,6 +189,7 @@ export interface FileRouteTypes {
     | '/blueprint/$id'
     | '/gadget/$id'
     | '/gatekeepers/$appId'
+    | '/matter/$id'
     | '/workspace/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -179,6 +199,7 @@ export interface FileRouteTypes {
     | '/context'
     | '/explore'
     | '/gatekeepers'
+    | '/matters'
     | '/outputs'
     | '/profile'
     | '/providers'
@@ -187,6 +208,7 @@ export interface FileRouteTypes {
     | '/blueprint/$id'
     | '/gadget/$id'
     | '/gatekeepers/$appId'
+    | '/matter/$id'
     | '/workspace/$id'
   id:
     | '__root__'
@@ -196,6 +218,7 @@ export interface FileRouteTypes {
     | '/context'
     | '/explore'
     | '/gatekeepers'
+    | '/matters'
     | '/outputs'
     | '/profile'
     | '/providers'
@@ -204,6 +227,7 @@ export interface FileRouteTypes {
     | '/blueprint/$id'
     | '/gadget/$id'
     | '/gatekeepers_/$appId'
+    | '/matter/$id'
     | '/workspace/$id'
   fileRoutesById: FileRoutesById
 }
@@ -214,6 +238,7 @@ export interface RootRouteChildren {
   ContextRoute: typeof ContextRoute
   ExploreRoute: typeof ExploreRoute
   GatekeepersRoute: typeof GatekeepersRoute
+  MattersRoute: typeof MattersRoute
   OutputsRoute: typeof OutputsRoute
   ProfileRoute: typeof ProfileRoute
   ProvidersRoute: typeof ProvidersRoute
@@ -222,6 +247,7 @@ export interface RootRouteChildren {
   BlueprintIdRoute: typeof BlueprintIdRoute
   GadgetIdRoute: typeof GadgetIdRoute
   GatekeepersAppIdRoute: typeof GatekeepersAppIdRoute
+  MatterIdRoute: typeof MatterIdRoute
   WorkspaceIdRoute: typeof WorkspaceIdRoute
 }
 
@@ -267,6 +293,13 @@ declare module '@tanstack/react-router' {
       path: '/gatekeepers'
       fullPath: '/gatekeepers'
       preLoaderRoute: typeof GatekeepersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/matters': {
+      id: '/matters'
+      path: '/matters'
+      fullPath: '/matters'
+      preLoaderRoute: typeof MattersRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/outputs': {
@@ -325,6 +358,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GatekeepersAppIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/matter/$id': {
+      id: '/matter/$id'
+      path: '/matter/$id'
+      fullPath: '/matter/$id'
+      preLoaderRoute: typeof MatterIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/workspace/$id': {
       id: '/workspace/$id'
       path: '/workspace/$id'
@@ -342,6 +382,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContextRoute: ContextRoute,
   ExploreRoute: ExploreRoute,
   GatekeepersRoute: GatekeepersRoute,
+  MattersRoute: MattersRoute,
   OutputsRoute: OutputsRoute,
   ProfileRoute: ProfileRoute,
   ProvidersRoute: ProvidersRoute,
@@ -350,6 +391,7 @@ const rootRouteChildren: RootRouteChildren = {
   BlueprintIdRoute: BlueprintIdRoute,
   GadgetIdRoute: GadgetIdRoute,
   GatekeepersAppIdRoute: GatekeepersAppIdRoute,
+  MatterIdRoute: MatterIdRoute,
   WorkspaceIdRoute: WorkspaceIdRoute,
 }
 export const routeTree = rootRouteImport

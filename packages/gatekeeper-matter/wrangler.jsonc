@@ -24,7 +24,10 @@
   "ai": { "binding": "AI" },
   "vectorize": [{ "binding": "FACT_VECTORS", "index_name": "legal-os-facts" }],
   "vars": {
-    // OpenRouter model used to read documents into facts. Reasoning is disabled for this lane.
+    // The reading lane runs on Workers AI by default. Set READER_PROVIDER to "openrouter" (plus the
+    // OPENROUTER_API_KEY secret) to read on OpenRouter with UNDERSTAND_MODEL instead.
+    "READER_PROVIDER": "workers-ai",
+    "READER_MODEL": "@cf/deepseek-ai/deepseek-v4-pro-0813",
     "UNDERSTAND_MODEL": "deepseek/deepseek-v4-pro"
   },
   "observability": {

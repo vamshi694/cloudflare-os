@@ -6,6 +6,7 @@ import {
   Hexagon,
   House,
   MagnifyingGlass,
+  Scales,
   SidebarSimple,
   SquaresFour,
   Stack,
@@ -117,6 +118,15 @@ export default function Sidebar({
         <div className="flex shrink-0 flex-col gap-3 pt-3">
           {/* Primary nav */}
           <nav className="flex flex-col gap-0.5 px-2">
+            {/* Legal OS: the lawyer's matters lead the rail — the per-case drill-down is the
+                desk they work from; the matter page itself lives under /matter/$id. */}
+            <SidebarItem
+              to="/matters"
+              label="Matters"
+              icon={<Scales size={14} weight="regular" />}
+              collapsed={collapsed}
+              matchPrefix
+            />
             <SidebarItem
               to="/"
               label="Home"
