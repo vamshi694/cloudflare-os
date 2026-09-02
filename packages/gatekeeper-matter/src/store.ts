@@ -219,6 +219,8 @@ export class MatterStore extends DurableObject<Cloudflare.Env> {
         stillArriving: reading > 0,
       },
       needsYou: { openDecisions, unreadableDocuments: counts.failed ?? 0 },
+      lastReadNote: this.#sql<{ note: string }>(
+        "SELECT note FROM documents WHERE note IS NOT NULL AND status IN ('queued','reading','failed') ORDER BY updated_at DESC LIMIT 1")[0]?.note ?? null,
       planHead: plan ? plan.content.split("\n").slice(0, 12).join("\n") : null,
       today: now().slice(0, 10),
     };

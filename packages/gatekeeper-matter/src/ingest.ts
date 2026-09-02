@@ -95,8 +95,18 @@ async function callReader(env: Cloudflare.Env, filename: string, windowText: str
     const out = await env.AI.run(WORKERS_AI_READER as Parameters<Ai["run"]>[0], {
       messages: [{ role: "system", content: UNDERSTAND_SYSTEM }, { role: "user", content: user }],
       max_tokens: 8192,
-    }) as { response?: string };
-    return parseUnderstanding(out.response ?? "", windowText);
+      response_format: { type: "json_object" },
+    }) as { response?: unknown; choices?: { message?: { content?: unknown } }[] };
+    // Workers AI models answer in one of two shapes: {response} (classic) or OpenAI-style choices.
+    const raw = typeof out.response === "string" ? out.response
+      : typeof out.choices?.[0]?.message?.content === "string" ? out.choices[0].message.content
+      : JSON.stringify(out);
+    try {
+      return parseUnderstanding(raw, windowText);
+    } catch (error) {
+      console.error(`[ingest] reader reply unparseable (workers-ai ${WORKERS_AI_READER}): ${raw.slice(0, 400)}`);
+      throw error;
+    }
   }
   const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
     method: "POST",
@@ -183,9 +193,12 @@ export async function handleIngestBatch(batch: MessageBatch<IngestMessage>, env:
     const store = storeFor(env, msg.matterId);
     try {
       await readDocument(env, msg);
+      console.log(`[ingest] read ok matter=${msg.matterId} doc=${msg.documentId}`);
       message.ack();
     } catch (error) {
       const err = error instanceof ReadError ? error : new ReadError(error instanceof Error ? error.message : String(error), true);
+      // Loud, never silent: the failure note lands on the document AND in the worker logs.
+      console.error(`[ingest] read failed matter=${msg.matterId} doc=${msg.documentId} attempt=${message.attempts} retryable=${err.retryable}: ${err.message}`);
       const outcome = await store.recordFailure(msg.documentId, err.message, err.retryable);
       if (outcome === "requeued") {
         message.retry({ delaySeconds: Math.min(600, 30 * (message.attempts + 1)) });

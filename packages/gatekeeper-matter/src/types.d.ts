@@ -124,6 +124,8 @@ export interface MatterOverview {
     openDecisions: number;
     unreadableDocuments: number;
   };
+  /** The most recent reading problem on a document still queued, reading or failed, in plain words. Null when reading is clean. */
+  lastReadNote: string | null;
   /** The first lines of the matter plan (desk file "plan.md"), or null when no plan exists yet. */
   planHead: string | null;
   /** Today's date in the firm's timezone, ISO. Use this for every date computation. */
