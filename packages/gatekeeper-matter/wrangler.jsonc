@@ -8,7 +8,10 @@
   "compatibility_date": "2026-08-04",
   "compatibility_flags": ["allow_irrevocable_stub_storage", "nodejs_compat"],
   "rules": [
-    { "type": "Text", "globs": ["**/*.txt", "**/*.svg"], "fallthrough": false }
+    { "type": "Text", "globs": ["**/*.txt", "**/*.svg"], "fallthrough": false },
+    // WP-15: anydoc's WebAssembly module (Word, PowerPoint, Excel, OpenDocument, RTF, EPUB, CSV,
+    // text-layer PDFs to Markdown in the worker, no model) is imported as a compiled module.
+    { "type": "CompiledWasm", "globs": ["**/*.wasm"], "fallthrough": false }
   ],
   "migrations": [
     { "tag": "v0", "new_sqlite_classes": ["MatterAccount", "MatterGatekeeper", "MatterStore"] },
@@ -28,6 +31,9 @@
     "consumers": [{ "queue": "legal-os-ingest", "max_batch_size": 1, "max_retries": 6, "max_concurrency": 20 }]
   },
   "ai": { "binding": "AI" },
+  // WP-13: the daily docket sweep (13:00 UTC, before the US workday): derived windows, RFE clocks
+  // and reminders 30/14/7/1/0 days out, once each, waking the counsel on every matter that has one.
+  "triggers": { "crons": ["0 13 * * *"] },
   // The firm's method (playbooks, rules) for readiness, the knowledge build and the letter's order.
   // deploy.ts points this at the deployed firm worker; the dev name is the package's.
   "services": [{ "binding": "FIRM_LIBRARY", "service": "custom-gatekeeper", "entrypoint": "FirmLibraryApi" }],

@@ -50,6 +50,8 @@ export type SpecialistContext = {
   facts: BriefFact[];
   /** The playbook's passage for the scope, when the firm wrote one. */
   style: string | null;
+  /** How the firm argued this criterion in past filings (WP-14): method and voice, never facts for this letter. */
+  exemplars?: { precedentTitle: string; outcome: string | null; heading: string; passage: string }[];
   /** Standing rules for this case type and the firm. */
   rules: { rule: string; why: string | null }[];
   /** The attorney's directives on this matter. */
@@ -202,6 +204,10 @@ export function composeBrief(role: SpecialistRole, ctx: SpecialistContext): { ti
   if (ctx.instruction) parts.push(`The counsel's instruction for this job: ${ctx.instruction}`);
   if (ctx.directives.length) parts.push("The attorney's standing directives on this matter, which outrank everything below:\n" + ctx.directives.map(d => `- ${d}`).join("\n"));
   if (ctx.style) parts.push("The firm's petition style for this scope, from its playbook:\n" + ctx.style);
+  if (role === "drafter" && ctx.exemplars?.length) {
+    parts.push("How this firm argued the same criterion in past filings. Take the structure and the voice; take no facts, names or numbers from them:\n" +
+      ctx.exemplars.map(e => `From "${e.precedentTitle}"${e.outcome ? ` (outcome: ${e.outcome})` : ""}, under "${e.heading}":\n${e.passage}`).join("\n\n"));
+  }
   if (ctx.rules.length) parts.push("The firm's standing rules:\n" + ctx.rules.map(r => `- ${r.rule}${r.why ? ` (why: ${r.why})` : ""}`).join("\n"));
   if (ctx.sections.length) {
     const withDraft = role !== "gap_analyst";

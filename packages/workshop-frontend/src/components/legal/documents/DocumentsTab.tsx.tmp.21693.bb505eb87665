@@ -294,12 +294,13 @@ export function DocumentsTab({ desk, onChanged }: { desk: RpcStub<MatterDesk>; o
   )
 }
 
-function Viewer({ viewer, dossiers, onClose, onDetails }: { viewer: { doc: LegalDocument; url: string | null; text: string | null }; dossiers: ReturnType<typeof useDossiers>; onClose: () => void; onDetails?: () => void }) {
+function Viewer({ viewer, dossiers, onClose, onDetails }: { viewer: { doc: LegalDocument; url: string | null; text: string | null; page?: number | null }; dossiers: ReturnType<typeof useDossiers>; onClose: () => void; onDetails?: () => void }) {
   useEffect(() => dossiers.ensure([viewer.doc.id]), [viewer.doc.id, dossiers])
   return (
     <DocViewer
       name={documentTitle(viewer.doc)}
       exhibitNo={viewer.doc.exhibitNo}
+      page={viewer.page ?? null}
       src={viewer.url}
       mime={viewer.doc.mime}
       text={viewer.url ? null : viewer.text ?? 'Fetching the document…'}

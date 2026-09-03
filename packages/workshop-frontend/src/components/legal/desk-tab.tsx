@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import type { RpcStub } from 'capnweb'
-import type { MatterDesk, MatterDirective, MemoryNote } from '@gadgets/workshop-shared/legal'
+import type { AuditExport, MatterDesk, MatterDirective, MemoryNote } from '@gadgets/workshop-shared/legal'
 import { MarkdownMessage } from '../../ChatInterface'
 import styles from '../../ChatInterface.module.css'
 import { logRpcFailure } from '../../rpcErrors'
@@ -128,8 +128,73 @@ export function DeskTab({ desk }: { desk: RpcStub<MatterDesk> }) {
         </div>
       )}
     </ThreeState>
+    <ExportRecord desk={desk} />
     </div>
   )
+}
+
+/**
+ * WP-16: the matter's record as an archive the firm owns. One control, one honest receipt: what
+ * the archive holds and a link that lasts fifteen minutes. Never a silent download.
+ */
+function ExportRecord({ desk }: { desk: RpcStub<MatterDesk> }) {
+  const [state, setState] = useState<
+    { kind: 'idle' } | { kind: 'working' } | { kind: 'ready'; result: AuditExport } | { kind: 'failed' }
+  >({ kind: 'idle' })
+
+  const run = async () => {
+    setState({ kind: 'working' })
+    try {
+      const result = await desk.exportAudit()
+      setState({ kind: 'ready', result })
+    } catch (err) {
+      logRpcFailure('Failed to export the matter record:', err)
+      setState({ kind: 'failed' })
+    }
+  }
+
+  return (
+    <section className="border-t border-kumo-line pt-5">
+      <div className="mb-2 px-1">
+        <Eyebrow>The record, for audit</Eyebrow>
+      </div>
+      <p className="m-0 mb-3 max-w-[64ch] text-[13px] leading-[19px] text-kumo-subtle">
+        Everything on this matter as one archive the firm keeps: the activity trail, every decision and
+        answer, standing directives, the document list with fingerprints, petition versions with their
+        signed manifests, forms and rulings, and signatures.
+      </p>
+      <div className="flex flex-wrap items-center gap-3">
+        <button
+          type="button"
+          onClick={() => void run()}
+          disabled={state.kind === 'working'}
+          className="press inline-flex h-8 cursor-pointer items-center rounded-lg border border-kumo-line bg-kumo-base px-3 text-[13px] font-medium text-kumo-default transition-colors hover:bg-kumo-elevated disabled:cursor-default disabled:opacity-60"
+        >
+          {state.kind === 'working' ? 'Assembling the archive…' : "Export the matter's record"}
+        </button>
+        {state.kind === 'ready' && (
+          <span className="text-[12.5px] leading-[18px] text-kumo-subtle">
+            <a href={state.result.url} className="text-kumo-default underline underline-offset-2">
+              {state.result.file}
+            </a>{' '}
+            · {formatBytes(state.result.bytes)} · {state.result.counts.activity} activity entries, {state.result.counts.documents} documents,{' '}
+            {state.result.counts.decisions} decisions · the link lasts fifteen minutes
+          </span>
+        )}
+        {state.kind === 'failed' && (
+          <span role="alert" className="text-[12.5px] leading-[18px] text-kumo-danger">
+            The archive wasn&apos;t made. Nothing on the matter changed — try again.
+          </span>
+        )}
+      </div>
+    </section>
+  )
+}
+
+function formatBytes(n: number): string {
+  if (n < 1024) return `${n} B`
+  if (n < 1024 * 1024) return `${Math.round(n / 1024)} KB`
+  return `${(n / (1024 * 1024)).toFixed(1)} MB`
 }
 
 /**

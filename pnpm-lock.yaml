@@ -439,6 +439,9 @@ importers:
 
   packages/gatekeeper-matter:
     dependencies:
+      '@firecrawl/anydoc-wasm':
+        specifier: ^0.2.4
+        version: 0.2.4
       '@gadgets/backend-utils':
         specifier: workspace:*
         version: link:../backend-utils
@@ -1703,6 +1706,9 @@ packages:
     engines: {node: '>=18'}
     cpu: [x64]
     os: [win32]
+
+  '@firecrawl/anydoc-wasm@0.2.4':
+    resolution: {integrity: sha512-ZqrTXBrwi1Ct4kB5R72KQC9fOxwq4W08bZh6T+o84Mork3xCKLpH8TRe+KM3vJ+XqRVlV1dxHvQp0cnkO2r5TQ==}
 
   '@floating-ui/core@1.8.0':
     resolution: {integrity: sha512-0CIZ5itps/8x7BG8dEIhs53BvCUH2PCoogtakwRTut+Arm58sJooJ0AuZhLw2HJYIR5cMLNPBSS728sPho2khQ==}
@@ -6077,6 +6083,8 @@ snapshots:
 
   '@esbuild/win32-x64@0.28.1':
     optional: true
+
+  '@firecrawl/anydoc-wasm@0.2.4': {}
 
   '@floating-ui/core@1.8.0':
     dependencies:

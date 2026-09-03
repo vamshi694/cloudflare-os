@@ -192,6 +192,8 @@ export type FormFieldValue = {
   value: string | null;
   /** The fact the value came from, when the firm filled it. */
   sourceFactId: string | null;
+  /** WP-11: fact (from the record), intake (the client's own statement), firm (entered by hand), null when blank. */
+  sourceKind?: "fact" | "intake" | "firm" | null;
   acceptedBy: "attorney" | null;
   /**
    * proposed: the firm filled it and the attorney has not ruled. accepted: the attorney accepted
@@ -284,6 +286,8 @@ export type PortalView = {
   received: { id: string; name: string; state: "reading" | "trouble" | "read"; label: string | null }[];
   /** Forms the client is asked to sign; empty when none. */
   signatures: PortalSignatureRequest[];
+  /** WP-11: the intake questionnaire's standing, when the firm has asked for it. */
+  intake: { requested: boolean; done: number; total: number; sectionsLeft: string[]; complete: boolean } | null;
 };
 
 // ── Needs-you, phase, the brief ─────────────────────────────────────────────────────────────────
@@ -343,6 +347,32 @@ export type FirmBrief = {
   resting: number;
   docket: (Deadline & { matterId: string; matterTitle: string })[];
   today: string;
+};
+
+// ── WP-16: the audit export and the conflict check ───────────────────────────────────────────────
+
+/** One matter's record as an archive the firm owns: a signed, time-limited link and what it holds. */
+export type AuditExport = {
+  /** The archive's file name, audit-<UTC stamp>.zip. */
+  file: string;
+  url: string;
+  exportedAt: string;
+  bytes: number;
+  counts: { activity: number; decisions: number; documents: number; versions: number; filings: number; forms: number; signatures: number };
+  /** Every file inside the archive. */
+  files: string[];
+};
+
+/** A party name that already appears on a matter of the firm: the matter, whose it is, and where the name sits. */
+export type ConflictHit = {
+  matterId: string;
+  title: string;
+  ownerUserId: string | null;
+  /** The name on that matter the query matched. */
+  matched: string;
+  /** "client", "title", or the case-map entity's kind (person, organization, ...). */
+  role: string;
+  query: string;
 };
 
 // ── The firm's playbooks (the library, from the lawyer's side) ───────────────────────────────────
@@ -614,4 +644,163 @@ export type Deliverable = {
   updatedAt: string;
   updatedBy: string;
   words: number;
+};
+
+// ── Tabular review and the precedent library (WP-14) ────────────────────────────────────────────
+
+/** One column of the review grid: a question every document is asked. */
+export type TableColumn = {
+  key: string;
+  question: string;
+  /** False for the firm's own columns (date, issuer, what it proves, criterion, pages). */
+  custom: boolean;
+  askedBy: string | null;
+};
+
+/** One cell: the answer with the page and the verbatim words it rests on, or why there is none yet. */
+export type TableCell = {
+  /** pending: not asked yet · running: the firm is reading · answered · failed: the note says why. */
+  status: "pending" | "running" | "answered" | "failed";
+  /** Null when answered means the document does not state it. */
+  answer: string | null;
+  page: number | null;
+  quote: string | null;
+  note: string | null;
+};
+
+export type TableRow = {
+  documentId: string;
+  title: string;
+  docType: string | null;
+  mime: string;
+  cells: Record<string, TableCell>;
+};
+
+export type TableView = {
+  columns: TableColumn[];
+  rows: TableRow[];
+  /** Cells still being answered across the grid, so the screen can say "Answering 12 of 40". */
+  running: number;
+  total: number;
+};
+
+/** A past filing in the firm's library, kept as exemplar passages per criterion. */
+export type Precedent = {
+  slug: string;
+  title: string;
+  caseType: string;
+  /** What happened to the filing, as the firm recorded it ("approved", "RFE then approved", "denied"), or null. */
+  outcome: string | null;
+  uploadedBy: string;
+  uploadedAt: string;
+  exemplars: number;
+};
+
+/** A passage from a past filing that argued one criterion, with the heading it sat under. */
+export type Exemplar = {
+  precedentSlug: string;
+  precedentTitle: string;
+  caseType: string;
+  outcome: string | null;
+  /** The criterion the passage argued, as the playbook names it. */
+  heading: string;
+  passage: string;
+};
+
+// ── WP-11 · The client intake questionnaire ─────────────────────────────────────────────────────
+
+export type IntakeQuestionType = "text" | "date" | "country" | "select" | "yesno" | "textarea";
+
+export type IntakeQuestion = {
+  key: string;
+  label: string;
+  type: IntakeQuestionType;
+  help?: string;
+  options?: string[];
+  required?: boolean;
+  /** Shown only when another answer equals this value. */
+  showWhen?: { key: string; equals: string };
+};
+
+export type IntakeSection = { key: string; title: string; intro: string; questions: IntakeQuestion[] };
+
+export type IntakeAnswer = { key: string; value: string; source: "client" | "lawyer"; updatedAt: string };
+
+/** The questionnaire as the lawyer and the portal see it: the schema for the case type, the answers, and the count. */
+export type IntakeView = {
+  caseType: string | null;
+  sections: IntakeSection[];
+  answers: IntakeAnswer[];
+  completion: { done: number; total: number; sectionsLeft: string[]; complete: boolean };
+  /** When the firm asked the client to fill it, and when the client finished. */
+  requestedAt: string | null;
+  completedAt: string | null;
+  lastAnsweredAt: string | null;
+  /** Which forms each answered key feeds, for "these answers fill…". */
+  feeds: Record<string, string[]>;
+};
+
+// ── WP-13 · The docket's key dates, derived windows and the RFE workbench ──────────────────────
+
+/** The dates a matter turns on. ISO dates or null. */
+export type KeyDates = {
+  i94Expiry: string | null;
+  statusEnd: string | null;
+  eadExpiry: string | null;
+  /** The fiscal year of the H-1B cap the matter targets (e.g. 2027). */
+  h1bCapYear: number | null;
+  premiumFiledOn: string | null;
+  priorityDate: string | null;
+  /** EB1, EB2, EB3 …, for the Visa Bulletin. */
+  preferenceCategory: string | null;
+  /** Country of chargeability, for the Visa Bulletin. */
+  chargeability: string | null;
+};
+
+/** One docket item with where it came from: docketed by a person, derived from a key date, or an RFE clock. */
+export type DocketItem = Deadline & {
+  provenance: "docketed" | "derived" | "rfe";
+  derivedFrom: string | null;
+};
+
+export type DocketView = {
+  items: DocketItem[];
+  keyDates: KeyDates;
+  /** The priority date against the current Visa Bulletin, when the research service answered; null otherwise. */
+  priority: { current: boolean | null; note: string } | null;
+};
+
+export type RfeAsk = {
+  id: string;
+  n: number;
+  title: string;
+  ask: string;
+  criterion: string | null;
+  evidenceRequested: string;
+};
+
+export type RfeResponse = {
+  askId: string;
+  body: string;
+  citedFactIds: string[];
+  /** Quoted spans the record does not contain; approval waits until this is zero. */
+  unverified: number;
+  status: "drafted" | "approved";
+  version: number;
+  updatedAt: string;
+  updatedBy: string;
+};
+
+export type RfeState = {
+  id: string;
+  documentId: string;
+  documentTitle: string | null;
+  receivedOn: string | null;
+  responseDue: string | null;
+  summary: string;
+  status: "open" | "responded" | "closed";
+  asks: RfeAsk[];
+  responses: RfeResponse[];
+  /** Per ask, the facts on the record that touch it, with exhibit numbers, for the evidence column. */
+  evidence: { askId: string; facts: { id: string; statement: string; documentTitle: string; exhibitNo: number | null; page: number | null }[] }[];
 };

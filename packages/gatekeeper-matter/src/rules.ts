@@ -232,6 +232,9 @@ export function wakeInstruction(reason: string): string {
     case "client submission":
     case "client replied": return `${base} Read (await MATTER.client()).submissions() and messages(); decide whether the record needs a document and ask through client().draft if so.`;
     case "knowledge built, decision raised": return `${base} Read readiness and the open decisions; propose the plan if none is proposed.`;
+    case "deadline approaching": return `${base} Read (await MATTER.docket()).list(): a date is close. Say which, what the firm must file or send before it, and what is still missing; docket any dependent step; ask the attorney with decisions().raise only if the path needs their call.`;
+    case "rfe read": return `${base} A Request for Evidence is on the record. Read (await MATTER.rfe()).current() and its asks; docket the response deadline if it is not already on the docket; for each ask, draft the response with rfe().draftResponse(askId) and report which asks the record answers and which need the client.`;
+    case "rfe response drafted": return `${base} Read (await MATTER.rfe()).responses(); say which responses verify cleanly and which quote words the record lacks, then fix those with rfe().respond.`;
     default: return base;
   }
 }

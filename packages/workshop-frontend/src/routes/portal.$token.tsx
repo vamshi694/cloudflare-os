@@ -10,6 +10,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useCallback, useEffect, useRef, useState, type ChangeEvent, type DragEvent } from 'react'
 import type { PortalSignatureRequest, PortalView } from '@gadgets/workshop-shared/legal'
 import BrandMark from '../components/BrandMark'
+import { IntakeForm } from '../components/portal/IntakeForm'
 
 export const Route = createFileRoute('/portal/$token')({ component: PortalPage })
 
@@ -113,6 +114,15 @@ function PortalPage() {
           </p>
         </div>
       </Section>
+
+      {view.intake?.requested && (
+        <Section label="About you">
+          <IntakeForm
+            apiBase={apiBase(token)}
+            onProgress={(c) => setView((v) => (v && v.intake ? { ...v, intake: { ...v.intake, ...c } } : v))}
+          />
+        </Section>
+      )}
 
       {view.requests.length > 0 && (
         <Section label="From your legal team">

@@ -19,6 +19,8 @@ CREATE TABLE IF NOT EXISTS form_signatures (
 export type StoredField = {
   name: string; label: string; value: string | null; sourceFactId: string | null; acceptedBy: "attorney" | null;
   review?: FormFieldValue["review"]; pdfField?: string | null;
+  /** WP-11: where a value without a fact came from: the client's intake, or the firm's own entry. */
+  sourceKind?: FormFieldValue["sourceKind"];
 };
 
 export type TemplateRecord = {
@@ -86,6 +88,7 @@ export function listForms(db: Db, spec: CaseTypeSpec | null): GovernmentForm[] {
     const fields: FormFieldValue[] = stored.fields.map(x => ({
       name: x.name, label: x.label, value: x.value, sourceFactId: x.sourceFactId, acceptedBy: x.acceptedBy,
       review: x.review ?? (x.acceptedBy ? "accepted" : "proposed"), pdfField: x.pdfField ?? t.mapping[x.name] ?? null,
+      sourceKind: x.sourceFactId ? "fact" : x.sourceKind ?? (x.value ? "firm" : null),
     }));
     return {
       code: f.code, title: f.title, filedOnline: f.filedOnline, status: stored.status, fields,
@@ -112,13 +115,27 @@ export function renderableValues(db: Db, code: string): { pdfField: string; valu
 
 export function formStatus(db: Db, code: string): FormStatus { return readForm(db, code).status; }
 
-export function prepareForm(db: Db, code: string, prefill: { name: string; value: string }[]): void {
+export function prepareForm(db: Db, code: string, prefill: { name: string; value: string; sourceKind?: FormFieldValue["sourceKind"] }[]): void {
   const f = readForm(db, code);
   const fields = f.fields.map(x => {
     const p = prefill.find(v => v.name === x.name);
-    return p && !x.value ? { ...x, value: p.value, sourceFactId: null, review: "proposed" as const } : x;
+    return p && !x.value ? { ...x, value: p.value, sourceFactId: null, sourceKind: p.sourceKind ?? "firm", review: "proposed" as const } : x;
   });
   writeForm(db, code, nextStatus(f.status, "prepare"), fields);
+}
+
+/** WP-11: the client's intake landed after the form was opened; fill what is still blank. */
+export function applyIntakePrefill(db: Db, code: string, prefill: { name: string; value: string }[]): number {
+  const f = readForm(db, code);
+  let changed = 0;
+  const fields = f.fields.map(x => {
+    const p = prefill.find(v => v.name === x.name);
+    if (!p || x.value) return x;
+    changed += 1;
+    return { ...x, value: p.value, sourceFactId: null, sourceKind: "intake" as const, review: "proposed" as const };
+  });
+  if (changed > 0) { writeForm(db, code, f.status, fields); invalidateRender(db, code); }
+  return changed;
 }
 
 export function fillForm(db: Db, code: string, values: { name: string; value: string | null; sourceFactId: string | null }[]): void {

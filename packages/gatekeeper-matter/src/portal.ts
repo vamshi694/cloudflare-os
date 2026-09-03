@@ -97,7 +97,7 @@ export async function handlePublic(request: Request, env: Cloudflare.Env): Promi
   }
 
   // Portal routes: /portal/<64 hex: matter id + secret>[/upload|/words|/reply|/sign|/forms/<id>.pdf].
-  const portal = /^\/portal\/([0-9a-f]{32})([0-9a-f]{32})(\/upload|\/words|\/reply|\/sign|\/forms\/[0-9a-f]{32}\.pdf)?$/.exec(path);
+  const portal = /^\/portal\/([0-9a-f]{32})([0-9a-f]{32})(\/upload|\/words|\/reply|\/sign|\/intake|\/forms\/[0-9a-f]{32}\.pdf)?$/.exec(path);
   if (!portal) return null;
   const [, matterId, token, action] = portal;
   const store = await matterForToken(env, matterId, token);
@@ -106,6 +106,18 @@ export async function handlePublic(request: Request, env: Cloudflare.Env): Promi
   if (!action && request.method === "GET") {
     await store.touchPortal();
     return json(await store.portalView());
+  }
+  // WP-11: the intake questionnaire. GET is the schema and what the client has answered so far;
+  // POST saves a batch of answers (the client saves as they go) and returns the count.
+  if (action === "/intake") {
+    if (request.method === "GET") return json(await store.intakeForPortal());
+    if (request.method !== "POST") return json({ error: "Method not allowed." }, 405);
+    const body = await request.json().catch(() => ({})) as { answers?: unknown };
+    if (!body.answers || typeof body.answers !== "object" || Array.isArray(body.answers)) return json({ error: "Nothing to save." }, 400);
+    const entries: Record<string, string> = {};
+    for (const [k, v] of Object.entries(body.answers as Record<string, unknown>)) if (typeof v === "string") entries[k] = v;
+    const view = await store.saveIntake(entries, "client");
+    return json({ completion: view.completion });
   }
   // The filled form the client reviews before signing: the client never signs what they could not read.
   if (action?.startsWith("/forms/") && request.method === "GET") {

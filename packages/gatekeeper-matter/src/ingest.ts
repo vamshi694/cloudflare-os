@@ -10,9 +10,12 @@
 import { MatterStore, type IngestMessage, type Understanding, EXTRACTION_VERSION } from "./store.js";
 import { ReadError, evidenceVocabulary, hasTextLayer, pagesToText, parseUnderstanding } from "./pure.js";
 import { pdfPages } from "./pdf-text.js";
+import { anydocFormatFor, anydocReadsFirst } from "./anydoc-format.js";
+import { anydocToMarkdown } from "./anydoc.js";
 import { caseTypeSpec } from "./case-types.js";
 import { laneModel } from "./process.js";
 import { runLaneMessage } from "./jobs.js";
+import { draftRfeResponse, onRfeRead } from "./rfe.js";
 
 // Documents are read whole (owner rule: no truncation on any LLM path). Long documents are read in
 // windows of this many characters, each window carrying the page markers inside it.
@@ -38,6 +41,21 @@ async function extractText(env: Cloudflare.Env, filename: string, mime: string, 
   if (mime.startsWith("text/") || /\.(txt|md|eml|csv|json)$/i.test(filename)) {
     return { text: new TextDecoder().decode(bytes), pageCount: null };
   }
+  // ── WP-15: anydoc (WebAssembly, in the worker, no model) is the first reader for Word,
+  // PowerPoint, Excel, OpenDocument, RTF, EPUB and CSV. It hands over to the Workers AI lane below
+  // when it cannot produce complete Markdown (unsupported, malformed, encrypted, needs OCR).
+  const anydocFormat = anydocFormatFor(filename, mime);
+  if (anydocReadsFirst(anydocFormat)) {
+    try {
+      const markdown = await anydocToMarkdown(bytes, anydocFormat!);
+      if (markdown.trim()) return { text: markdown, pageCount: null };
+      console.warn(`[ingest] anydoc produced no text for ${filename}; using Workers AI`);
+    } catch (error) {
+      const e = error as Error & { code?: string };
+      console.warn(`[ingest] anydoc could not read ${filename} (${e.code ?? "unknown"}): ${e.message}; using Workers AI`);
+    }
+  }
+  // ── end WP-15
   let scannedPages: number | null = null;
   if (mime === "application/pdf" || /\.pdf$/i.test(filename)) {
     try {
@@ -46,7 +64,18 @@ async function extractText(env: Cloudflare.Env, filename: string, mime: string, 
       scannedPages = totalPages;
       console.log(`[ingest] no text layer in ${filename} (${totalPages} pages); reading it as a scan`);
     } catch (error) {
-      console.warn(`[ingest] pdf.js could not open ${filename}, reading it as a scan: ${error instanceof Error ? error.message : String(error)}`);
+      console.warn(`[ingest] pdf.js could not open ${filename}, trying anydoc: ${error instanceof Error ? error.message : String(error)}`);
+      // ── WP-15: a PDF pdf.js cannot open may still carry a text layer anydoc's pdf-inspector reads.
+      // Page markers are lost on this path; the reader notes the whole document instead of a page.
+      try {
+        const markdown = await anydocToMarkdown(bytes, "pdf");
+        if (markdown.trim()) return { text: markdown, pageCount: null };
+      } catch (err) {
+        const e = err as Error & { code?: string; pageCount?: number };
+        if (e.code === "needsOcr" && typeof e.pageCount === "number") scannedPages = e.pageCount;
+        console.warn(`[ingest] anydoc could not read ${filename} (${e.code ?? "unknown"}): ${e.message}; reading it as a scan`);
+      }
+      // ── end WP-15
     }
   }
   let results: ToMarkdownResult[];
@@ -209,6 +238,12 @@ async function readDocument(env: Cloudflare.Env, msg: DocumentMessage): Promise<
   const stored = await store.recordUnderstanding(msg.documentId, understanding);
   if (stored.length > 0) await embedFacts(env, msg.matterId, msg.documentId, stored);
   await store.supersedeOlderVersions(msg.documentId, text.length);
+  // WP-13: a Request for Evidence on the record is read as the officer wrote it (asks, clock) and
+  // the counsel is woken. A failure here never fails the document read; it lands on the trail.
+  if (understanding.docType === "rfe") {
+    try { await onRfeRead(env, store, msg.documentId); }
+    catch (error) { await store.note("system", `Could not read the RFE's asks from "${claim.filename}": ${error instanceof Error ? error.message : String(error)}`); }
+  }
 }
 
 /** One document message: read it, record the outcome, settle the record when it was the last. */
@@ -245,6 +280,22 @@ async function handleLaneMessage(message: Message<IngestMessage>, env: Cloudflar
   }
 }
 
+/** WP-13: draft one RFE ask's response from the record; the outcome lands on the matter either way. */
+async function handleRfeDraftMessage(message: Message<IngestMessage>, msg: { matterId: string; askId: string }, env: Cloudflare.Env): Promise<void> {
+  const store = storeFor(env, msg.matterId);
+  try {
+    const result = await draftRfeResponse(env, store, msg.askId);
+    await store.saveRfeResponse(msg.askId, result.body, result.citedFactIds, result.unverified.length, "agent");
+    message.ack();
+  } catch (error) {
+    const text = error instanceof Error ? error.message : String(error);
+    console.error(`[rfe] draft failed matter=${msg.matterId} ask=${msg.askId} attempt=${message.attempts}: ${text}`);
+    if (message.attempts < 2) { message.retry({ delaySeconds: 30 }); return; }
+    await store.note("system", `Could not draft an RFE response: ${text}`);
+    message.ack();
+  }
+}
+
 /**
  * The queue consumer. Every message in a batch runs at once (the consumer is configured for one
  * message per batch and twenty batches in flight, so a thousand-document drop reads twenty wide);
@@ -253,6 +304,8 @@ async function handleLaneMessage(message: Message<IngestMessage>, env: Cloudflar
 export async function handleIngestBatch(batch: MessageBatch<IngestMessage>, env: Cloudflare.Env): Promise<void> {
   const results = await Promise.allSettled(batch.messages.map(message => {
     const msg = message.body;
+    // WP-13: an RFE response draft is its own small job.
+    if ("type" in msg && msg.type === "rfe-draft") return handleRfeDraftMessage(message, msg, env);
     if ("type" in msg) return handleLaneMessage(message, env);
     return handleDocumentMessage(message, msg as DocumentMessage, env);
   }));

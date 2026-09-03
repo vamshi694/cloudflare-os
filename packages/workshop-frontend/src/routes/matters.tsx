@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { useCallback, useEffect, useMemo, useState, type ChangeEvent } from 'react'
 import type { RpcStub } from 'capnweb'
 import { Plus, Trash } from '@phosphor-icons/react'
-import type { LegalDesk, MatterListEntry } from '@gadgets/workshop-shared/legal'
+import type { ConflictHit, LegalDesk, MatterListEntry } from '@gadgets/workshop-shared/legal'
 import { useDocumentTitle } from '../useDocumentTitle'
 import { logRpcFailure } from '../rpcErrors'
 import { WorkshopButton, WorkshopInput } from '../components/WorkshopControls'
@@ -205,7 +205,14 @@ function MattersPage() {
         )}
       </div>
 
-      {creating && <NewMatterDialog onCancel={() => setCreating(false)} onCreate={handleCreate} />}
+      {creating && (
+        <NewMatterDialog
+          onCancel={() => setCreating(false)}
+          onCreate={handleCreate}
+          // WP-16: the conflict check runs on the names typed before the matter opens.
+          onConflictCheck={api ? (names) => api.conflictCheck(names) : undefined}
+        />
+      )}
       {deleting && (
         <DeleteMatterDialog matter={deleting} onCancel={() => setDeleting(null)} onConfirm={handleDelete} />
       )}
@@ -259,9 +266,12 @@ const UNDECIDED = '__undecided__'
 function NewMatterDialog({
   onCancel,
   onCreate,
+  onConflictCheck,
 }: {
   onCancel: () => void
   onCreate: (input: { title: string; clientName: string; caseType: string | null; clientEmail: string | null }) => Promise<void>
+  /** WP-16: every matter in the firm that already names one of these parties. Absent when the desk is not open. */
+  onConflictCheck?: (names: string[]) => Promise<ConflictHit[]>
 }) {
   const [title, setTitle] = useState('')
   const [clientName, setClientName] = useState('')
@@ -269,14 +279,36 @@ function NewMatterDialog({
   const [category, setCategory] = useState<string>(UNDECIDED)
   const [busy, setBusy] = useState(false)
   const [failure, setFailure] = useState<string | null>(null)
+  // WP-16: the conflict check. `checked` remembers the name it ran on; hits stay on screen until
+  // the attorney opens the matter anyway or changes the name. A check that could not run says so
+  // and never blocks: the attorney decides, the firm records that they saw it.
+  const [conflicts, setConflicts] = useState<{ name: string; hits: ConflictHit[] } | null>(null)
+  const [conflictsFailed, setConflictsFailed] = useState(false)
 
   const emailOk = clientEmail.trim() === '' || /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(clientEmail.trim())
   const canSubmit = title.trim() !== '' && clientName.trim() !== '' && emailOk && !busy
+  const conflictsStand = conflicts !== null && conflicts.name === clientName.trim() && conflicts.hits.length > 0
 
   const submit = async () => {
     if (!canSubmit) return
     setBusy(true)
     setFailure(null)
+    // First press: run the conflict check; hits hold the door open for a second, deliberate press.
+    if (onConflictCheck && !conflictsStand && (conflicts === null || conflicts.name !== clientName.trim())) {
+      try {
+        const hits = await onConflictCheck([clientName.trim(), title.trim()])
+        setConflicts({ name: clientName.trim(), hits })
+        setConflictsFailed(false)
+        if (hits.length > 0) {
+          setBusy(false)
+          return
+        }
+      } catch (err) {
+        logRpcFailure('Conflict check failed:', err)
+        setConflictsFailed(true)
+        setConflicts({ name: clientName.trim(), hits: [] })
+      }
+    }
     try {
       await onCreate({
         title: title.trim(),
@@ -306,7 +338,7 @@ function NewMatterDialog({
             Cancel
           </WorkshopButton>
           <WorkshopButton tone="primary" className="!h-9" onClick={() => void submit()} disabled={!canSubmit}>
-            {busy ? 'Opening…' : 'Open the matter'}
+            {busy ? 'Opening…' : conflictsStand ? 'Open the matter anyway' : 'Open the matter'}
           </WorkshopButton>
         </>
       }
@@ -374,6 +406,33 @@ function NewMatterDialog({
             </RadioRow>
           </div>
         </div>
+        {/* WP-16: the conflict check's hits, calm and specific: the firm already knows this name. */}
+        {conflictsStand && conflicts && (
+          <div role="status" className="rounded-[10px] border border-amber-500/30 bg-amber-500/[0.06] px-3.5 py-3">
+            <p className="m-0 text-[13px] leading-[18px] font-medium text-kumo-default">
+              The firm already has {conflicts.hits.length === 1 ? 'a matter' : `${conflicts.hits.length} matters`} naming this party.
+            </p>
+            <ul className="m-0 mt-1.5 list-none space-y-1 p-0">
+              {conflicts.hits.slice(0, 5).map((h) => (
+                <li key={`${h.matterId}:${h.role}:${h.matched}`} className="text-[12.5px] leading-[18px] text-kumo-subtle">
+                  <span className="text-kumo-default">{h.title}</span>
+                  {h.ownerUserId ? ` · ${h.ownerUserId}` : ''} · {h.role === 'client' ? 'the client' : h.role === 'title' ? 'the matter title' : `${h.role.replace(/_/g, ' ')} on the case map`}: {h.matched}
+                </li>
+              ))}
+              {conflicts.hits.length > 5 && (
+                <li className="text-[12.5px] leading-[18px] text-kumo-subtle">and {conflicts.hits.length - 5} more</li>
+              )}
+            </ul>
+            <p className="m-0 mt-1.5 text-[12.5px] leading-[18px] text-kumo-subtle">
+              Nothing is opened yet. Check for a conflict of interest first; opening anyway is recorded on the new matter.
+            </p>
+          </div>
+        )}
+        {conflictsFailed && (
+          <p role="status" className="m-0 text-[12.5px] leading-[18px] text-kumo-subtle">
+            The conflict check couldn&apos;t run just now, so this name was not checked against the firm&apos;s matters.
+          </p>
+        )}
         {failure && (
           <p role="alert" className="m-0 text-[12.5px] leading-[18px] text-kumo-danger">
             {failure}

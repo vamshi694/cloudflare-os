@@ -20,6 +20,8 @@ declare namespace Cloudflare {
     DRAFT_MODEL?: string;
     /** The firm gatekeeper's FirmLibraryApi over a service binding (deploy.ts wires it); absent in tests. */
     FIRM_LIBRARY?: import("./firm-library.js").FirmLibraryBinding;
+    /** The research gatekeeper's ResearchApi (Visa Bulletin, processing times, eCFR) over a service binding; absent in tests. Typed structurally by its readers. */
+    RESEARCH_API?: import("./store-docket.js").ResearchBinding;
     /** Firm-level OpenRouter key for the reading lane (a Worker secret, never in config). */
     OPENROUTER_API_KEY?: string;
     /** Public origin of the deployment (e.g. https://ocios.app); empty means relative links. Set by deploy.ts. */

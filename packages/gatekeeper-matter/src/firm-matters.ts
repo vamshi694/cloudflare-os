@@ -70,6 +70,14 @@ export class FirmMattersSessionImpl extends RpcTarget implements FirmMattersSess
     return { overview, openDecisions: decisions.filter(d => d.status === "open"), activity };
   }
 
+  // WP-16: the conflict check, for the counsel at intake ("is this party already on a matter?").
+  async conflictCheck(names: string[]): Promise<{ hits: { matterId: string; title: string; ownerUserId: string | null; matched: string; role: string; query: string }[]; matters: number; unreachable: number }> {
+    const cleaned = names.map(n => n.trim()).filter(Boolean).slice(0, 20);
+    const r = cleaned.length === 0 ? { hits: [], matters: 0, unreachable: 0 } : await this.env.FIRM_INDEX.getByName("").conflictCheck(cleaned);
+    await observe(this.q, "Check for conflicts", `Checked ${cleaned.length} names against ${r.matters} matters: ${r.hits.length} hits.`);
+    return r;
+  }
+
   async brief(): Promise<{ needsYou: number; active: FirmBriefRow[]; resting: number; today: string }> {
     const overviews = await this.#overviews();
     const rows: FirmBriefRow[] = [];

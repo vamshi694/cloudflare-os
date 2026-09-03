@@ -14,6 +14,7 @@ import { validateRpc } from "capnweb-validate";
 import type { MatterStore } from "./store.js";
 import type { MatterAccount } from "./matter.js";
 import { ownershipTransition } from "./process.js";
+import { findConflicts, type ConflictHit, type PartyNames } from "./conflicts.js";
 
 export type FirmIndexEntry = {
   matterId: string;
@@ -154,6 +155,30 @@ export class FirmIndex extends DurableObject<Cloudflare.Env> {
     return this.ctx.storage.sql.exec(
       "SELECT owner_user_id AS userId, removed_at AS removedAt, removed_by AS removedBy FROM owners WHERE removed_at IS NOT NULL ORDER BY removed_at DESC")
       .toArray() as { userId: string; removedAt: string; removedBy: string }[];
+  }
+
+  // ---- WP-16: the conflict check ----------------------------------------------------------------
+
+  /**
+   * Every matter in the firm whose client, title, or case-map entity matches a party name. Reads
+   * each matter's names live; a store that does not answer is skipped (a conflict check that
+   * fails open is still a check; the screen says how many matters it could not read).
+   */
+  async conflictCheck(names: string[], options?: { excludeMatterId?: string }): Promise<{ hits: ConflictHit[]; matters: number; unreachable: number }> {
+    const entries = await this.list();
+    const parties: PartyNames[] = [];
+    let unreachable = 0;
+    await Promise.all(entries.map(async e => {
+      try {
+        const store = this.env.MATTER_STORE.get(this.env.MATTER_STORE.idFromName(e.matterId));
+        const p = await store.partyNames();
+        parties.push({ ...p, ownerUserId: e.ownerUserId ?? p.ownerUserId });
+      } catch {
+        unreachable += 1;
+        parties.push({ matterId: e.matterId, title: e.title, clientName: e.clientName, ownerUserId: e.ownerUserId, entities: [] });
+      }
+    }));
+    return { hits: findConflicts(names, parties, options), matters: entries.length, unreachable };
   }
 
   async laneModels(): Promise<LaneModels> {

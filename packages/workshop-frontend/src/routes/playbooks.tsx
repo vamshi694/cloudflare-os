@@ -1,13 +1,13 @@
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState, type ChangeEvent } from 'react'
 import type { RpcStub } from 'capnweb'
 import type { AuthenticatedApi } from '@gadgets/workshop-shared/api'
-import type { LearningRun, PlaybookChange, PlaybookDesk, PlaybookEntry } from '@gadgets/workshop-shared/legal'
+import type { Exemplar, LearningRun, PlaybookChange, PlaybookDesk, PlaybookEntry, Precedent } from '@gadgets/workshop-shared/legal'
 import { logRpcFailure } from '../rpcErrors'
-import { WorkshopButton } from '../components/WorkshopControls'
+import { WorkshopButton, WorkshopInput, WorkshopInputArea } from '../components/WorkshopControls'
 import { useDocumentTitle } from '../useDocumentTitle'
 import { useDesk, usePolled } from '../components/firm/useDesk'
-import { EmptyLine, Eyebrow, Notice, Pill, SegmentedTabs, Skeleton, ThreeState, tidy, formatDate } from '../components/legal/primitives'
+import { CASE_TYPES, EmptyLine, Eyebrow, FieldLabel, Notice, Pill, SegmentedTabs, Skeleton, ThreeState, tidy, formatDate } from '../components/legal/primitives'
 
 export const Route = createFileRoute('/playbooks')({
   component: PlaybooksPage,
@@ -23,7 +23,7 @@ const CATEGORY_LABEL: Record<PlaybookEntry['category'], string> = {
 }
 const CATEGORY_ORDER: PlaybookEntry['category'][] = ['case-type', 'firm', 'work-type', 'reference']
 
-type View = 'playbook' | 'learning'
+type View = 'playbook' | 'precedents' | 'learning'
 
 /**
  * THE PLAYBOOK — how this firm practices, one document at a time: the law and criteria per visa,
@@ -71,6 +71,7 @@ function PlaybooksPage() {
             onChange={setView}
             tabs={[
               { key: 'playbook', label: 'Playbook' },
+              { key: 'precedents', label: 'Precedents' },
               { key: 'learning', label: 'Teach the firm' },
             ]}
           />
@@ -149,6 +150,8 @@ function PlaybooksPage() {
               </div>
             )}
           </ThreeState>
+        ) : view === 'precedents' ? (
+          <Precedents api={api} />
         ) : (
           <>
           <LearningRuns api={api} references={(list.data ?? []).filter((e) => e.category === 'reference')} />
@@ -296,5 +299,164 @@ function LearningRuns({ api, references }: { api: RpcStub<PlaybookDesk> | null; 
         )}
       </div>
     </section>
+  )
+}
+
+/**
+ * THE PRECEDENT LIBRARY (WP-14): the firm's past filings, read into exemplar passages per criterion
+ * the way the case type's playbook names them. The drafter quotes two of these for structure and
+ * voice; they are never evidence.
+ */
+function Precedents({ api }: { api: RpcStub<PlaybookDesk> | null }) {
+  const readPrecedents = useCallback(() => (api ? api.precedents() : Promise.reject(new Error('no desk'))), [api])
+  const precedents = usePolled<Precedent[]>(api ? readPrecedents : null, 0)
+  const [title, setTitle] = useState('')
+  const [caseType, setCaseType] = useState(CASE_TYPES[0].value)
+  const [outcome, setOutcome] = useState('')
+  const [text, setText] = useState('')
+  const [busy, setBusy] = useState<string | null>(null)
+  const [note, setNote] = useState<string | null>(null)
+  const [browse, setBrowse] = useState(CASE_TYPES[0].value)
+  const readExemplars = useCallback(() => (api ? api.exemplars(browse) : Promise.reject(new Error('no desk'))), [api, browse])
+  const exemplars = usePolled<Exemplar[]>(api ? readExemplars : null, 0, [browse, precedents.data?.length])
+
+  const onFile = (e: ChangeEvent<HTMLInputElement>) => {
+    const f = e.target.files?.[0]
+    if (!f) return
+    if (!title) setTitle(f.name.replace(/\.[^.]+$/, ''))
+    void f.text().then(setText)
+  }
+
+  const upload = async () => {
+    if (!api || busy) return
+    setBusy('upload')
+    setNote(null)
+    try {
+      const p = await api.uploadPrecedent({ title, caseType, text, outcome: outcome || null })
+      setNote(p.exemplars === 0
+        ? `Added "${p.title}". No exemplar passages matched the ${p.caseType} playbook's criteria; the filing is still searchable and usable for Teach the firm.`
+        : `Added "${p.title}" with ${p.exemplars} exemplar passage${p.exemplars === 1 ? '' : 's'}.`)
+      setTitle(''); setOutcome(''); setText('')
+      precedents.refresh()
+    } catch (err) {
+      logRpcFailure('Failed to upload a precedent:', err)
+      setNote(`That didn't save: ${err instanceof Error ? err.message : 'try again'}. The library is unchanged.`)
+    } finally {
+      setBusy(null)
+    }
+  }
+
+  const remove = async (slug: string) => {
+    if (!api || busy) return
+    setBusy(slug)
+    setNote(null)
+    try {
+      await api.removePrecedent(slug)
+      precedents.refresh()
+    } catch (err) {
+      logRpcFailure('Failed to remove a precedent:', err)
+      setNote(`That didn't remove: ${err instanceof Error ? err.message : 'try again'}.`)
+    } finally {
+      setBusy(null)
+    }
+  }
+
+  const grouped = useMemo(() => {
+    const by = new Map<string, Exemplar[]>()
+    for (const e of exemplars.data ?? []) by.set(e.heading, [...(by.get(e.heading) ?? []), e])
+    return [...by.entries()]
+  }, [exemplars.data])
+
+  return (
+    <div className="space-y-6">
+      <section className="rounded-xl border border-kumo-line bg-kumo-base px-5 py-4">
+        <Eyebrow>Add a past filing</Eyebrow>
+        <p className="m-0 mt-1 text-[12.5px] leading-4 text-kumo-subtle">
+          Paste or upload the petition letter (markdown or plain text). The firm reads it into one passage per criterion it argued; the drafter quotes them for structure and voice, never for facts.
+        </p>
+        <div className="mt-3 grid gap-3 sm:grid-cols-3">
+          <div><FieldLabel>Title</FieldLabel><WorkshopInput value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Dr. Example, I-140 (2025)" /></div>
+          <div>
+            <FieldLabel>Case type</FieldLabel>
+            <select value={caseType} onChange={(e) => setCaseType(e.target.value)} className="h-8 w-full rounded-lg border border-kumo-line bg-kumo-base px-2 text-[13px] text-kumo-default">
+              {CASE_TYPES.map((c) => <option key={c.value} value={c.value}>{c.label}</option>)}
+            </select>
+          </div>
+          <div><FieldLabel hint="optional">Outcome</FieldLabel><WorkshopInput value={outcome} onChange={(e) => setOutcome(e.target.value)} placeholder="approved · RFE then approved · denied" /></div>
+        </div>
+        <div className="mt-3">
+          <FieldLabel>The filing</FieldLabel>
+          <WorkshopInputArea value={text} onChange={(e) => setText(e.target.value)} rows={8} placeholder="Paste the petition letter here, or choose a file below." />
+        </div>
+        <div className="mt-3 flex flex-wrap items-center gap-3">
+          <input type="file" accept=".md,.txt,text/plain,text/markdown" onChange={onFile} className="text-[12.5px] text-kumo-subtle" />
+          <WorkshopButton className="!h-8" tone="primary" disabled={!api || busy !== null || !title.trim() || text.trim().length < 200} onClick={() => void upload()}>
+            {busy === 'upload' ? 'Reading…' : 'Add to the library'}
+          </WorkshopButton>
+        </div>
+        {note && <p className="m-0 mt-2 text-[12.5px] leading-4 text-kumo-subtle">{note}</p>}
+      </section>
+
+      <section>
+        <Eyebrow>On file</Eyebrow>
+        <div className="mt-2">
+          {precedents.data === null ? (
+            precedents.failed ? <p className="m-0 text-[12.5px] italic text-kumo-subtle">The precedents couldn&apos;t be read just now.</p> : <Skeleton className="h-[40px]" />
+          ) : precedents.data.length === 0 ? (
+            <EmptyLine title="No precedents yet" body="Add a past filing above. Its passages become the examples the drafter writes from." />
+          ) : (
+            <ul className="m-0 list-none divide-y divide-kumo-line rounded-xl border border-kumo-line bg-kumo-base p-0">
+              {precedents.data.map((p) => (
+                <li key={p.slug} className="flex flex-wrap items-center justify-between gap-2 px-4 py-3">
+                  <div className="min-w-0">
+                    <p className="m-0 flex flex-wrap items-center gap-2 text-[14px] leading-5 font-medium tracking-[-0.25px] text-kumo-default">
+                      <Link to="/playbooks/$slug" params={{ slug: p.slug }} className="truncate hover:underline">{p.title}</Link>
+                      <Pill tone="neutral">{p.caseType}</Pill>
+                      {p.outcome && <Pill tone={/denied|revok/i.test(p.outcome) ? 'warning' : 'ready'}>{p.outcome}</Pill>}
+                    </p>
+                    <p className="m-0 mt-0.5 text-[12px] leading-4 text-kumo-subtle">
+                      {p.exemplars} exemplar passage{p.exemplars === 1 ? '' : 's'} · {p.uploadedBy} · {formatDate(p.uploadedAt)}
+                    </p>
+                  </div>
+                  <WorkshopButton className="!h-7" disabled={busy !== null} onClick={() => void remove(p.slug)}>{busy === p.slug ? 'Removing…' : 'Remove'}</WorkshopButton>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </section>
+
+      <section>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <Eyebrow>Exemplars by criterion</Eyebrow>
+          <select value={browse} onChange={(e) => setBrowse(e.target.value)} className="h-8 rounded-lg border border-kumo-line bg-kumo-base px-2 text-[13px] text-kumo-default">
+            {CASE_TYPES.map((c) => <option key={c.value} value={c.value}>{c.label}</option>)}
+          </select>
+        </div>
+        <div className="mt-2">
+          {exemplars.data === null ? (
+            exemplars.failed ? <p className="m-0 text-[12.5px] italic text-kumo-subtle">The exemplars couldn&apos;t be read just now.</p> : <Skeleton className="h-[40px]" />
+          ) : grouped.length === 0 ? (
+            <p className="m-0 text-[13px] text-kumo-subtle">No exemplar passages for {browse} yet.</p>
+          ) : (
+            <div className="space-y-4">
+              {grouped.map(([heading, items]) => (
+                <div key={heading}>
+                  <p className="m-0 mb-1.5 text-[13px] leading-[18px] font-medium tracking-[-0.2px] text-kumo-default">{heading}</p>
+                  <ul className="m-0 list-none divide-y divide-kumo-line rounded-xl border border-kumo-line bg-kumo-base p-0">
+                    {items.map((e) => (
+                      <li key={e.precedentSlug + e.heading} className="px-4 py-3">
+                        <p className="m-0 text-[12px] leading-4 text-kumo-subtle">{e.precedentTitle}{e.outcome ? ` · ${e.outcome}` : ''}</p>
+                        <p className="m-0 mt-1 whitespace-pre-wrap text-[13px] leading-5 text-kumo-default">{e.passage}</p>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+    </div>
   )
 }

@@ -22,7 +22,11 @@ export interface FirmLibraryBinding {
   rules(scope: string, layer?: string): Promise<FirmRule[]>;
   method(caseType: string | null, layer?: string): Promise<{ documents: FirmLibraryEntry[]; rules: FirmRule[] }>;
   rememberRule(scope: string, rule: string, rationale: string, by: string, layer?: string): Promise<{ slug: string }>;
+  exemplars(caseType: string, section?: { title: string } | null, limit?: number): Promise<FirmExemplar[]>;
 }
+
+/** A passage from one of the firm's past filings that argued a criterion (WP-14). */
+export type FirmExemplar = { precedentSlug: string; precedentTitle: string; caseType: string; outcome: string | null; heading: string; passage: string };
 
 type Env = { FIRM_LIBRARY?: FirmLibraryBinding };
 
@@ -102,4 +106,12 @@ export function orderSections(spec: CaseTypeSpec, plan: string[] | null, evidenc
   }
   for (const s of spec.sections) if (!seen.has(s.key)) out.push(s);
   return out;
+}
+
+/** The firm's past-filing passages for a section of this case type, best two first. Empty without the firm or precedents. */
+export async function firmExemplars(env: Env, caseType: string | null, sectionTitle: string | null): Promise<FirmExemplar[]> {
+  const lib = env.FIRM_LIBRARY;
+  if (!lib || !caseType) return [];
+  return quiet("exemplars", [] as FirmExemplar[], () =>
+    cached(`exemplars:${caseType}:${sectionTitle ?? ""}`, () => lib.exemplars(caseType, sectionTitle ? { title: sectionTitle } : null, 2)));
 }

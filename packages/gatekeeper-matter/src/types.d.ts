@@ -747,3 +747,99 @@ export interface MatterSession {
   /** The specialists you can brief and spawn. */
   specialists(): Promise<MatterSpecialists>;
 }
+
+// ── WP-13 · The docket's key dates and the Request for Evidence ─────────────────────────────────
+// Delimited block. Interface merging adds to MatterDocket and MatterSession.
+
+/** The dates the matter turns on. ISO dates or null. Set what you learn from the record or the attorney; windows derive from them. */
+export interface KeyDates {
+  i94Expiry: string | null;
+  statusEnd: string | null;
+  eadExpiry: string | null;
+  /** The fiscal year of the H-1B cap the matter targets (e.g. 2027). */
+  h1bCapYear: number | null;
+  premiumFiledOn: string | null;
+  priorityDate: string | null;
+  /** EB1, EB2, EB3 and so on, for the Visa Bulletin. */
+  preferenceCategory: string | null;
+  /** Country of chargeability, for the Visa Bulletin. */
+  chargeability: string | null;
+}
+
+export interface DocketItemView extends Deadline {
+  /** docketed: the attorney or you put it on. derived: from the key dates. rfe: an RFE clock. */
+  provenance: "docketed" | "derived" | "rfe";
+  /** Which key date a derived window comes from. */
+  derivedFrom: string | null;
+}
+
+export interface MatterDocket {
+  /** The whole docket: docketed deadlines, windows derived from the key dates, RFE clocks. Unmet first, soonest first. */
+  full(): Promise<DocketItemView[]>;
+  keyDates(): Promise<KeyDates>;
+  /** Set one or more key dates. Windows derive at once. Confirm dates with the record or the attorney before setting them. */
+  setKeyDates(input: Partial<KeyDates>): Promise<KeyDates>;
+  /** Where the priority date stands against the current Visa Bulletin, when the research service is available; null when it is not. */
+  priorityStanding(): Promise<{ current: boolean | null; note: string } | null>;
+}
+
+export interface RfeAsk {
+  id: string;
+  n: number;
+  title: string;
+  /** The officer's ask, in the notice's terms. */
+  ask: string;
+  /** The petition section key it targets, or null. */
+  criterion: string | null;
+  evidenceRequested: string;
+}
+
+export interface RfeResponse {
+  askId: string;
+  body: string;
+  citedFactIds: string[];
+  /** Quoted spans the record does not contain. Rewrite until zero; the attorney cannot approve otherwise. */
+  unverified: number;
+  status: "drafted" | "approved";
+  version: number;
+}
+
+/** The Request for Evidence on the record, and the firm's response to it. */
+export interface MatterRfe {
+  /** The open RFE: the notice, when it was received, when the response is due, the officer's asks. Null when none is on the record. */
+  current(): Promise<{ id: string; documentId: string; receivedOn: string | null; responseDue: string | null; summary: string; asks: RfeAsk[] } | null>;
+  /** Draft the response to one ask from the record and the playbook's RFE doctrine. Lands as a draft; read `responses()` for the verifier's count. */
+  draftResponse(askId: string): Promise<RfeResponse>;
+  /** Land your own response to an ask. `citedFactIds` are the facts it rests on; quote only their verbatim words. */
+  respond(askId: string, body: string, citedFactIds: string[]): Promise<RfeResponse>;
+  responses(): Promise<RfeResponse[]>;
+}
+
+export interface MatterSession {
+  /** The Request for Evidence, when one is on the record. */
+  rfe(): Promise<MatterRfe>;
+}
+
+// ── WP-16: the conflict check (the firm-wide desk) ───────────────────────────────────────────────
+
+/** A party name that already appears on a matter of the firm, and where. */
+export interface ConflictHit {
+  matterId: string;
+  title: string;
+  ownerUserId: string | null;
+  /** The name on that matter the query matched. */
+  matched: string;
+  /** "client", "title", or the case-map entity's kind (person, organization, ...). */
+  role: string;
+  query: string;
+}
+
+export interface FirmMattersSession {
+  /**
+   * Whether any party name (the client, an employer, a co-author, an opposing party) already
+   * appears on a matter of the firm. Run it before opening a matter or advising on a new party;
+   * tell the attorney every hit with the matter it sits on. `unreachable` counts matters whose
+   * record could not be read, so a clean result is honest about its coverage.
+   */
+  conflictCheck(names: string[]): Promise<{ hits: ConflictHit[]; matters: number; unreachable: number }>;
+}

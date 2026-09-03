@@ -15,7 +15,7 @@ import { draftedCount, totalPages } from './petition-utils'
 import { FormRoom } from './forms/FormRoom'
 import { FORM_CHIP } from './forms/form-chip'
 
-type Area = { kind: 'home' } | { kind: 'letter' } | { kind: 'form'; code: string } | { kind: 'file'; path: string } | { kind: 'recommenders' }
+type Area = { kind: 'home' } | { kind: 'letter' } | { kind: 'form'; code: string } | { kind: 'file'; path: string } | { kind: 'recommenders' } | { kind: 'rfe' }
 
 
 /**

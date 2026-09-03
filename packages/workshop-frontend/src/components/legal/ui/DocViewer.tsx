@@ -19,6 +19,7 @@ export function DocViewer({
   text,
   citations,
   aside,
+  page,
   onClose,
 }: {
   name: string
@@ -30,6 +31,8 @@ export function DocViewer({
   citations?: Citation[]
   /** A caller-supplied rail (the Documents tab passes the firm's read). */
   aside?: ReactNode
+  /** Open a PDF at this page (the review grid lands on the page an answer cites). */
+  page?: number | null
   onClose: () => void
 }) {
   const frame = useRef<HTMLIFrameElement>(null)
@@ -100,7 +103,7 @@ export function DocViewer({
         <div className="flex min-h-0 flex-1">
           <div className="min-w-0 flex-1 bg-[#525659]">
             {src && isPdf ? (
-              <iframe ref={frame} title={name} src={`${src}#view=FitH`} className="h-full w-full border-0" />
+              <iframe ref={frame} title={name} src={`${src}#${page ? `page=${page}&` : ''}view=FitH`} className="h-full w-full border-0" />
             ) : src && isImage ? (
               <div className="flex h-full items-center justify-center overflow-auto p-4">
                 <img src={src} alt={name} className="max-h-full max-w-full" />

@@ -7,9 +7,13 @@ import { validateRpc } from "capnweb-validate";
 import type {
   CaseMap, CaseTypeSpec, ClientMessage, ClientRecord, Deadline, Deliverable, Filing, FirmBrief, GovernmentForm, LegalActivity, LegalDecision,
   LegalDesk, LegalDocument, LegalFact, MatterDesk, MatterListEntry, MatterMethod, MatterOverviewView, Petition, PetitionSection, Readiness,
-  RecommendationLetter, Recommender,
+  RecommendationLetter, Recommender, IntakeView,
 } from "@gadgets/workshop-shared/legal";
-import type { FirmInbox, InboxItem, MatterDirective, MemoryNote, SearchResult } from "@gadgets/workshop-shared/legal";
+import type { AuditExport, ConflictHit, FirmInbox, InboxItem, MatterDirective, MemoryNote, SearchResult } from "@gadgets/workshop-shared/legal";
+import type { TableColumn, TableView } from "@gadgets/workshop-shared/legal";
+// WP-13: the docket and the RFE workbench.
+import type { DocketView, KeyDates, RfeResponse, RfeState } from "@gadgets/workshop-shared/legal";
+import { unverifiedQuotes } from "./rfe.js";
 import { orderInbox, rankSearch } from "./process.js";
 // WP-5 types (case intelligence)
 import type {
@@ -130,6 +134,13 @@ export class MatterDeskImpl extends RpcTarget implements MatterDesk {
     if (factIds.length) await this.env.FACT_VECTORS.deleteByIds(factIds).catch(() => {});
   }
   dossier(documentId: string): ReturnType<MatterDesk["dossier"]> { return this.store.dossier(documentId); }
+
+  // ── Tabular review (WP-14) ──
+  tableView(): Promise<TableView> { return this.store.tableView(); }
+  addTableQuestion(question: string): Promise<TableColumn> { return this.store.addTableQuestion(question, "lawyer"); }
+  removeTableQuestion(key: string): Promise<void> { return this.store.removeTableQuestion(key, "lawyer"); }
+  refreshTable(): Promise<{ queued: number }> { return this.store.refreshTable("lawyer"); }
+  tableCsv(): Promise<string> { return this.store.tableCsv(); }
   setSupports(documentId: string, criteria: string[]): Promise<void> { return this.store.setSupports(documentId, criteria, "lawyer"); }
   fileUrl(documentId: string): Promise<string> { return signFileUrl(this.env, this.matterId, documentId); }
 
@@ -217,7 +228,24 @@ export class MatterDeskImpl extends RpcTarget implements MatterDesk {
 
   deadlines(): Promise<Deadline[]> { return this.store.deadlines(); }
   addDeadline(input: { title: string; dueOn: string; kind: Deadline["kind"] }): Promise<Deadline> { return this.store.addDeadline(input, "attorney"); }
-  markDeadlineMet(id: string): Promise<void> { return this.store.markDeadlineMet(id, "lawyer"); }
+  markDeadlineMet(id: string): Promise<void> { return this.store.markDocketMet(id, "lawyer"); }
+  // WP-13: the docket with its key dates and derived windows, and the RFE workbench.
+  docket(): Promise<DocketView> { return this.store.docketView(); }
+  setKeyDates(input: Partial<KeyDates>): Promise<KeyDates> { return this.store.setKeyDates(input, "lawyer"); }
+  rfe(): Promise<RfeState | null> { return this.store.rfeState(); }
+  draftRfeResponse(askId: string): Promise<void> { return this.store.rfeDraftStart(askId, "lawyer"); }
+  async saveRfeResponse(askId: string, body: string): Promise<RfeResponse> {
+    const prior = (await this.store.rfeState())?.responses.find(r => r.askId === askId);
+    const ctx = await this.store.rfeContext(askId);
+    if (!ctx) throw new Error("That RFE ask is not on the matter.");
+    const cited = prior?.citedFactIds ?? [];
+    const facts = cited.length > 0 ? ctx.facts.filter(f => cited.includes(f.id)) : ctx.facts;
+    const unverified = unverifiedQuotes(body, facts).length;
+    const r = await this.store.saveRfeResponse(askId, body, cited, unverified, "lawyer");
+    return { askId: r.askId, body: r.body, citedFactIds: r.citedFactIds, unverified: r.unverified, status: r.status, version: r.version, updatedAt: r.updatedAt, updatedBy: r.updatedBy };
+  }
+  approveRfeResponse(askId: string): Promise<void> { return this.store.approveRfeResponse(askId, "lawyer"); }
+  closeRfe(status: "responded" | "closed"): Promise<void> { return this.store.closeRfe(status, "lawyer"); }
 
   // ---- the client and the messages -------------------------------------------------------------
 
@@ -228,6 +256,11 @@ export class MatterDeskImpl extends RpcTarget implements MatterDesk {
   sendMessage(body: string, subject?: string | null): Promise<ClientMessage> { return this.store.sendMessage(body, subject ?? null, "lawyer"); }
   releaseOutreach(itemId: string): Promise<void> { return this.store.releaseOutreach(itemId); }
   declineItem(itemId: string, reason: string): Promise<void> { return this.store.declineItem(itemId, reason); }
+
+  // WP-11: the client intake questionnaire.
+  intake(): Promise<IntakeView> { return this.store.intakeView(); }
+  saveIntake(answers: Record<string, string>): Promise<IntakeView> { return this.store.saveIntake(answers, "lawyer"); }
+  sendIntake(): Promise<IntakeView> { return this.store.sendIntake(); }
 
   // Case intelligence (WP-5).
   chronology(): Promise<Chronology> { return this.store.chronology(); }
@@ -252,6 +285,11 @@ export class MatterDeskImpl extends RpcTarget implements MatterDesk {
 
   buildPacket(): Promise<Filing> { return this.store.buildPacket("lawyer"); }
   filings(): Promise<Filing[]> { return this.store.filings(); }
+  // WP-16: the matter's record as an archive the firm owns.
+  async exportAudit(): Promise<AuditExport> {
+    const r = await this.store.exportAudit("lawyer");
+    return { file: r.file, url: r.url, exportedAt: r.exportedAt, bytes: r.bytes, counts: r.counts, files: r.files };
+  }
   exportWord(): Promise<{ url: string; versionId: string }> { return this.store.exportWord(); }
   deliverables(): Promise<Deliverable[]> { return this.store.deliverables(); }
   deliverableWord(path: string): Promise<{ url: string }> { return this.store.deliverableWord(path); }
@@ -348,6 +386,14 @@ export class LegalDeskImpl extends RpcTarget implements LegalDesk {
   }
 
   /** Facts and documents across the lawyer's matters that mention the query, best first. */
+  // WP-16: the conflict check at intake, across every matter in the firm.
+  async conflictCheck(names: string[]): Promise<ConflictHit[]> {
+    const cleaned = names.map(n => n.trim()).filter(Boolean).slice(0, 20);
+    if (cleaned.length === 0) return [];
+    const r = await this.env.FIRM_INDEX.getByName("").conflictCheck(cleaned);
+    return r.hits;
+  }
+
   async search(query: string, options?: { limit?: number }): Promise<SearchResult[]> {
     const q = query.trim();
     if (q.length < 3) return [];

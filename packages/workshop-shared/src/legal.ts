@@ -5,15 +5,19 @@
 
 import type { RpcTarget } from "capnweb";
 import type {
+  AuditExport, ConflictHit,
   CaseMap, CaseTypeSpec, ClientMessage, ClientRecord, Deadline, FirmBrief, GovernmentForm,
   BlastRadius, Chronology, Contradiction, CriteriaFindings, EntityPath, GapAudit, Grounding, IntelRun,
   OrganizeProposal, RecordInventory, ReviewState,
   FirmInbox, MatterDirective, MatterPhase, MatterStatusLine, MemoryNote, NeedsYouItem, Petition, PetitionSection,
-  PlaybookChange, PlaybookEntry, Readiness, SearchResult,
+  PlaybookChange, PlaybookEntry, Readiness, SearchResult, IntakeView,
+  Exemplar, Precedent, TableColumn, TableView,
   Deliverable, Filing, RecommendationLetter, Recommender,
 } from "./legal-contract.js";
 
 export * from "./legal-contract.js";
+// WP-13
+import type { DocketView, KeyDates, RfeResponse, RfeState } from "./legal-contract.js";
 
 export type MatterListEntry = {
   id: string;
@@ -198,6 +202,19 @@ export interface MatterDesk extends RpcTarget, MatterProcessDesk {
   deadlines(): Promise<Deadline[]>;
   addDeadline(input: { title: string; dueOn: string; kind: Deadline["kind"] }): Promise<Deadline>;
   markDeadlineMet(id: string): Promise<void>;
+  // ── WP-13 · The docket's key dates and derived windows; the RFE workbench ──
+  /** The whole docket: docketed deadlines, windows derived from the key dates, RFE clocks, and the priority date's standing. */
+  docket(): Promise<DocketView>;
+  setKeyDates(input: Partial<KeyDates>): Promise<KeyDates>;
+  /** The open Request for Evidence with its asks, evidence and response drafts; null when none is on the record. */
+  rfe(): Promise<RfeState | null>;
+  /** Ask the firm to draft the response to one ask from the record and the playbook's RFE doctrine. Returns at once; rfe() shows the draft when it lands. */
+  draftRfeResponse(askId: string): Promise<void>;
+  /** Save the attorney's own wording of a response; quotes are re-verified against the record. */
+  saveRfeResponse(askId: string, body: string): Promise<RfeResponse>;
+  /** Approve a response; refused while any quote in it is unverified. */
+  approveRfeResponse(askId: string): Promise<void>;
+  closeRfe(status: "responded" | "closed"): Promise<void>;
 
   // The client and the messages.
   client(): Promise<ClientRecord>;
@@ -210,6 +227,14 @@ export interface MatterDesk extends RpcTarget, MatterProcessDesk {
   /** Release an agent-drafted outreach exactly as shown, or decline it with a reason the firm re-plans from. */
   releaseOutreach(itemId: string): Promise<void>;
   declineItem(itemId: string, reason: string): Promise<void>;
+
+  // WP-11: the client intake questionnaire. Answers are the client's statements, used for the
+  // forms and the counsel's context, never as evidence for the petition.
+  intake(): Promise<IntakeView>;
+  /** The lawyer correcting or entering answers on the client's behalf. Empty string clears. */
+  saveIntake(answers: Record<string, string>): Promise<IntakeView>;
+  /** Ask the client to fill it: the portal shows the questionnaire first from now on. */
+  sendIntake(): Promise<IntakeView>;
 
   // Case intelligence (WP-5). Long passes (contradictions, reviews, findings, gaps, strategy,
   // organize) return at once; the matching read reports `running` and a note when one stopped early.
@@ -256,6 +281,21 @@ export interface MatterDesk extends RpcTarget, MatterProcessDesk {
 
   // Deleting the matter is two-factor: the phrase to type is the matter title.
   deleteMatter(confirmTitle: string): Promise<void>;
+
+  // WP-16: the matter's audit export, a zip the firm owns (activity, decisions, directives, the
+  // document list with fingerprints, petition versions and signed manifests, forms rulings, signatures).
+  exportAudit(): Promise<AuditExport>;
+
+  // ── Tabular review (WP-14) ──
+  /** The review grid: every document a row, every question a column. Cells fill as the firm answers. */
+  tableView(): Promise<TableView>;
+  /** Ask a question of every document on the record; a new column, answered one lane job per document. */
+  addTableQuestion(question: string): Promise<TableColumn>;
+  removeTableQuestion(key: string): Promise<void>;
+  /** Answer the firm's own columns for any document not yet answered (and re-ask a failed one). */
+  refreshTable(): Promise<{ queued: number }>;
+  /** The grid as CSV, ready to save. */
+  tableCsv(): Promise<string>;
 }
 
 /** The lawyer's matters. */
@@ -272,6 +312,12 @@ export interface LegalDesk extends RpcTarget {
   inbox(): Promise<FirmInbox>;
   /** Facts and documents across the lawyer's matters that mention the query, best first. */
   search(query: string, options?: { limit?: number }): Promise<SearchResult[]>;
+  /**
+   * WP-16: the conflict check at intake. Every matter in the firm (not only this lawyer's) whose
+   * client, title, or case-map entity matches one of the party names, so a new matter never opens
+   * against a party the firm already represents or opposes without the attorney seeing it.
+   */
+  conflictCheck(names: string[]): Promise<ConflictHit[]>;
 }
 
 /** Per-matter standing directives and memory notes, on the desk. */
@@ -318,4 +364,17 @@ export interface PlaybookDesk extends RpcTarget {
   startLearningRun(referenceSlug: string): Promise<{ run: LearningRun; seed: string }>;
   /** Undo what an adopted run changed; the document returns to its previous version. */
   revertLearningRun(runId: string): Promise<void>;
+
+  // ── The precedent library (WP-14) ──
+  /** The firm's past filings on file, with how many exemplar passages each yielded. */
+  precedents(): Promise<Precedent[]>;
+  /**
+   * Add a past filing (markdown or plain text of the petition letter). The firm reads it into
+   * exemplar passages per criterion, using the case type's playbook to name the criteria. Client
+   * names stay in the passages only as the filing wrote them; nothing here is evidence.
+   */
+  uploadPrecedent(input: { title: string; caseType: string; text: string; outcome?: string | null }): Promise<Precedent>;
+  removePrecedent(slug: string): Promise<void>;
+  /** Exemplar passages for a case type, grouped by the criterion heading they argued. */
+  exemplars(caseType: string): Promise<Exemplar[]>;
 }

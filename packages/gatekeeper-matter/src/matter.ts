@@ -34,6 +34,8 @@ import type { FirmMattersSession } from "./types.js";
 import type { FirmAdminApi } from "./firm-index.js";
 import type { LetterState, MatterIntelligence, MatterRecommenders, RecommenderState } from "./types.js";
 import { IntelligenceImpl } from "./intel-session.js";
+import type { DocketItemView, KeyDates, MatterRfe, RfeAsk, RfeResponse } from "./types.js";
+import { unverifiedQuotes } from "./rfe.js";
 import { SPECIALIST_ROLES, composeBrief, specialistRunning } from "./specialists.js";
 import type { MatterSpecialists, SpecialistRole, SpecialistScope } from "./types.js";
 import type { RecommendationLetter, Recommender } from "@gadgets/workshop-shared/legal";
@@ -638,8 +640,29 @@ class DocketImpl extends RpcTarget implements MatterDocket {
     await observe(this.q, "Docket a deadline", `${title} on ${dueOn}.`);
     return { id: d.id };
   }
+  // WP-13: the whole docket, the key dates, the priority date's standing.
+  async full(): Promise<DocketItemView[]> {
+    const v = await this.store.docketView();
+    await observe(this.q, "Read the docket", `${v.items.length} items, ${v.items.filter(i => !i.met).length} open.`);
+    return v.items.map(i => ({ id: i.id, title: i.title, dueOn: i.dueOn, kind: i.kind, met: i.met, daysLeft: i.daysLeft, provenance: i.provenance, derivedFrom: i.derivedFrom }));
+  }
+  async keyDates(): Promise<KeyDates> {
+    const k = await this.store.keyDates();
+    await observe(this.q, "Read the key dates", "Read the matter's key dates.");
+    return k;
+  }
+  async setKeyDates(input: Partial<KeyDates>): Promise<KeyDates> {
+    const k = await this.store.setKeyDates(input, "agent");
+    await observe(this.q, "Set key dates", `Set ${Object.keys(input).join(", ") || "nothing"}.`);
+    return k;
+  }
+  async priorityStanding(): Promise<{ current: boolean | null; note: string } | null> {
+    const p = await this.store.priorityStanding();
+    await observe(this.q, "Check the priority date", p?.note ?? "No priority date on the matter.");
+    return p;
+  }
   async markMet(id: string): Promise<void> {
-    await this.store.markDeadlineMet(id, "agent");
+    await this.store.markDocketMet(id, "agent");
     await observe(this.q, "Mark a deadline met", id);
   }
 }
@@ -700,6 +723,43 @@ class SpecialistsImpl extends RpcTarget implements MatterSpecialists {
     const files = await this.store.deskList();
     return specialistRunning(files.map(f => ({ path: f.path, updatedAt: f.updatedAt })), role, scope, new Date());
   }
+}
+
+/** WP-13: the Request for Evidence, for the agent. */
+@validateRpc()
+class RfeImpl extends RpcTarget implements MatterRfe {
+  constructor(private readonly q: ObservationQueue, private readonly store: DurableObjectStub<MatterStore>) { super(); }
+
+  async current(): Promise<{ id: string; documentId: string; receivedOn: string | null; responseDue: string | null; summary: string; asks: RfeAsk[] } | null> {
+    const s = await this.store.rfeState();
+    await observe(this.q, "Read the RFE", s ? `${s.asks.length} asks, response due ${s.responseDue ?? "not stated"}.` : "No RFE on the record.");
+    return s ? { id: s.id, documentId: s.documentId, receivedOn: s.receivedOn, responseDue: s.responseDue, summary: s.summary, asks: s.asks } : null;
+  }
+  async draftResponse(askId: string): Promise<RfeResponse> {
+    await this.store.rfeDraftStart(askId, "agent");
+    await observe(this.q, "Draft an RFE response", "Asked the firm to draft the response to one ask; it lands on the matter.");
+    const existing = (await this.store.rfeState())?.responses.find(r => r.askId === askId);
+    return existing ? toRfeResponse(existing) : { askId, body: "", citedFactIds: [], unverified: 0, status: "drafted", version: 0 };
+  }
+  async respond(askId: string, body: string, citedFactIds: string[]): Promise<RfeResponse> {
+    if (!body.trim()) throw new Error("A response needs a body.");
+    const ctx = await this.store.rfeContext(askId);
+    if (!ctx) throw new Error("That RFE ask is not on the matter.");
+    const cited = ctx.facts.filter(f => citedFactIds.includes(f.id));
+    const unverified = unverifiedQuotes(body, cited.length > 0 ? cited : ctx.facts).length;
+    const r = await this.store.saveRfeResponse(askId, body, citedFactIds, unverified, "agent");
+    await observe(this.q, "Write an RFE response", unverified > 0 ? `${unverified} quotes do not verify.` : "Every quote verifies.");
+    return toRfeResponse(r);
+  }
+  async responses(): Promise<RfeResponse[]> {
+    const s = await this.store.rfeState();
+    await observe(this.q, "Read the RFE responses", `${s?.responses.length ?? 0} responses.`);
+    return (s?.responses ?? []).map(toRfeResponse);
+  }
+}
+
+function toRfeResponse(r: { askId: string; body: string; citedFactIds: string[]; unverified: number; status: "drafted" | "approved"; version: number }): RfeResponse {
+  return { askId: r.askId, body: r.body, citedFactIds: r.citedFactIds, unverified: r.unverified, status: r.status, version: r.version };
 }
 
 /** Recommenders and their letters, for the agent (WP-6 wiring). */
@@ -792,6 +852,8 @@ export class MatterSessionImpl extends RpcTarget implements MatterSession {
   // WP-6 and WP-5: recommenders and the case intelligence.
   async recommenders(): Promise<MatterRecommenders> { return new RecommendersImpl(this.q, this.store); }
   async intelligence(): Promise<MatterIntelligence> { return new IntelligenceImpl(this.q, this.store); }
+  // WP-13: the Request for Evidence.
+  async rfe(): Promise<MatterRfe> { return new RfeImpl(this.q, this.store); }
   // WP-10: the specialists the counsel briefs and spawns.
   async specialists(): Promise<MatterSpecialists> { return new SpecialistsImpl(this.q, this.store); }
 
